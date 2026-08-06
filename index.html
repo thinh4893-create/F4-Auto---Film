@@ -1,44 +1,161 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>F4 AUTO</title>
-
-<link rel="stylesheet" href="style.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiến Thịnh Auto - Quản Lý Dán Film</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-slate-100 min-h-screen p-3 md:p-8">
 
-<body>
+  <div class="max-w-4xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="bg-white p-5 rounded-xl shadow-md text-center border-t-4 border-blue-600">
+      <h1 class="text-2xl font-bold text-slate-800 uppercase tracking-wide">TIẾN THỊNH AUTO - QUẢN LÝ THI CÔNG</h1>
+      <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & năng suất nhân viên hàng ngày</p>
+    </div>
 
-<div class="container">
+    <!-- Form Nhập Liệu -->
+    <div class="bg-white p-6 rounded-xl shadow-md">
+      <h2 class="text-lg font-bold mb-4 text-slate-700 border-b pb-2 flex items-center gap-2">
+        <span>📋</span> Nhập Xe Dán Mới
+      </h2>
+      <form id="carForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Tên/Biển Số Xe</label>
+          <input type="text" id="carName" placeholder="VD: Ford Everest - 30H.1234" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Loại Film Dán</label>
+          <input type="text" id="filmType" placeholder="VD: 3M Crystalline / Ceramic" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Vị Trí / Số Lượng Dán</label>
+          <input type="text" id="position" placeholder="VD: Full xe / Kính lái + 2 kính sườn" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Nhân Viên Phụ Trách</label>
+          <input type="text" id="workerName" placeholder="VD: Tuấn, Huy" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Thời Gian Thi Công</label>
+          <input type="datetime-local" id="timestamp" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+        </div>
+        <div class="md:col-span-2 mt-2">
+          <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-lg transition duration-200">
+            Lưu Thông Tin Thi Công
+          </button>
+        </div>
+      </form>
+    </div>
 
-    <h1>🚗 F4 AUTO</h1>
+    <!-- Bảng Hiển Thị Dữ Liệu -->
+    <div class="bg-white p-6 rounded-xl shadow-md overflow-hidden">
+      <h2 class="text-lg font-bold mb-4 text-slate-700 border-b pb-2 flex items-center gap-2">
+        <span>🚗</span> Nhật Ký Thi Công Hàng Ngày
+      </h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm border-collapse min-w-[600px]">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 uppercase text-xs">
+              <th class="p-3 rounded-l-lg">Thời gian</th>
+              <th class="p-3">Thông tin Xe</th>
+              <th class="p-3">Loại Film</th>
+              <th class="p-3">Vị trí dán</th>
+              <th class="p-3 rounded-r-lg">Nhân viên</th>
+            </tr>
+          </thead>
+          <tbody id="dataTable" class="divide-y divide-slate-100 text-slate-700">
+            <tr>
+              <td colspan="5" class="p-4 text-center text-slate-400">Đang tải dữ liệu từ máy chủ...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-    <p class="sub">
-        Quản lý xe dán phim cách nhiệt
-    </p>
+  <!-- Firebase Integration -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    <button id="addCarBtn">
-        ➕ Thêm xe
-    </button>
+    // Cấu hình Firebase Tiến Thịnh
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnVSwPC-vyu75Qxfv0BnHGZGLPej9wzSc",
+      authDomain: "tienthinh.firebaseapp.com",
+      databaseURL: "https://tienthinh-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "tienthinh",
+      storageBucket: "tienthinh.firebasestorage.app",
+      messagingSenderId: "514440756279",
+      appId: "1:514440756279:web:859af8b81a54a06083d3b2",
+      measurementId: "G-J9YNKNRQN0"
+    };
 
-    <button id="listBtn">
-        🚘 Danh sách xe
-    </button>
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    <button id="employeeBtn">
-        👥 Nhân viên
-    </button>
+    const setPresetTime = () => {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      document.getElementById('timestamp').value = now.toISOString().slice(0, 16);
+    };
+    setPresetTime();
 
-    <button id="reportBtn">
-        📊 Thống kê
-    </button>
+    const carForm = document.getElementById('carForm');
+    carForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Đang lưu...";
 
-</div>
+      try {
+        await addDoc(collection(db, "danh_sach_dan_film"), {
+          carName: document.getElementById('carName').value.trim(),
+          filmType: document.getElementById('filmType').value.trim(),
+          position: document.getElementById('position').value.trim(),
+          workerName: document.getElementById('workerName').value.trim(),
+          timestamp: document.getElementById('timestamp').value,
+          createdAt: new Date()
+        });
 
-<script src="script.js"></script>
+        carForm.reset();
+        setPresetTime();
+        alert("✅ Đã lưu dữ liệu thành công!");
+      } catch (error) {
+        alert("❌ Đã có lỗi xảy ra: " + error.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Lưu Thông Tin Thi Công";
+      }
+    });
 
+    const q = query(collection(db, "danh_sach_dan_film"), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+      const tbody = document.getElementById('dataTable');
+      tbody.innerHTML = '';
+
+      if (snapshot.empty) {
+        tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào được ghi nhận.</td></tr>';
+        return;
+      }
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const displayTime = data.timestamp ? data.timestamp.replace('T', ' ') : 'N/A';
+        
+        const row = `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="p-3 font-mono text-xs text-slate-500">${displayTime}</td>
+            <td class="p-3 font-bold text-slate-800">${data.carName}</td>
+            <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs font-medium">${data.filmType}</span></td>
+            <td class="p-3 text-slate-600">${data.position}</td>
+            <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-semibold">${data.workerName}</span></td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    });
+  </script>
 </body>
 </html>
