@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>F4 Auto - Quản Lý Dán Film</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Thu vien xuat Excel -->
+  <!-- Thư viện xuất Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body class="bg-slate-100 min-h-screen p-3 md:p-8">
@@ -13,7 +13,7 @@
   <div class="max-w-4xl mx-auto space-y-6">
     <!-- Header -->
     <div class="bg-white p-5 rounded-xl shadow-md text-center border-t-4 border-blue-600">
-      <h1 class="text-2xl font-bold text-slate-800 uppercase tracking-wide">TIẾN THỊNH AUTO - QUẢN LÝ THI CÔNG</h1>
+      <h1 class="text-2xl font-bold text-slate-800 uppercase tracking-wide">F4 AUTO - QUẢN LÝ THI CÔNG</h1>
       <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & năng suất nhân viên hàng ngày</p>
     </div>
 
@@ -32,36 +32,41 @@
           <input type="text" id="filmType" placeholder="VD: 3M Crystalline / Ceramic" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
         </div>
 
-        <!-- Chọn Vị Trí & Tự động tính tiền -->
+        <!-- Chọn Vị Trí Độc Lập & Bảng Giá Mới -->
         <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <label class="block text-sm font-bold text-slate-700 mb-2">Chọn Vị Trí Dán Film & Bảng Giá</label>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Chọn Vị Trí Dán Film & Giá Độc Lập</label>
           
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-sm">
-            <label class="flex items-center space-x-2 bg-white p-2 rounded border cursor-pointer hover:bg-blue-50">
-              <input type="checkbox" id="pos_full" class="price-checkbox accent-blue-600" value="Full xe">
-              <span>Full xe</span>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
+              <input type="checkbox" id="pos_full" class="price-checkbox accent-blue-600 w-4 h-4" data-price="160000" value="Full xe">
+              <span class="font-medium">Full Xe (160k)</span>
             </label>
 
-            <label class="flex items-center space-x-2 bg-white p-2 rounded border cursor-pointer hover:bg-blue-50">
-              <input type="checkbox" id="pos_lai" class="price-checkbox accent-blue-600" data-price="180000" value="Kính Lái">
-              <span>Kính Lái (180k)</span>
+            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
+              <input type="checkbox" id="pos_full_noc" class="price-checkbox accent-blue-600 w-4 h-4" data-price="200000" value="Full xe + Nóc">
+              <span class="font-medium">Full Xe + Nóc (200k)</span>
             </label>
 
-            <label class="flex items-center space-x-2 bg-white p-2 rounded border cursor-pointer hover:bg-blue-50">
-              <input type="checkbox" id="pos_hau" class="price-checkbox accent-blue-600" data-price="50000" value="Kính Hậu">
-              <span>Kính Hậu (50k)</span>
+            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
+              <input type="checkbox" id="pos_lai" class="price-checkbox accent-blue-600 w-4 h-4" data-price="50000" value="Kính Lái">
+              <span class="font-medium">Kính Lái (50k)</span>
             </label>
 
-            <label class="flex items-center space-x-2 bg-white p-2 rounded border cursor-pointer hover:bg-blue-50">
-              <input type="checkbox" id="pos_noc" class="price-checkbox accent-blue-600" data-price="50000" value="Nóc">
-              <span>Kính Nóc (50k)</span>
+            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
+              <input type="checkbox" id="pos_hau" class="price-checkbox accent-blue-600 w-4 h-4" data-price="30000" value="Hậu">
+              <span class="font-medium">Hậu (30k)</span>
+            </label>
+
+            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
+              <input type="checkbox" id="pos_noc" class="price-checkbox accent-blue-600 w-4 h-4" data-price="30000" value="Nóc">
+              <span class="font-medium">Nóc (30k)</span>
             </label>
           </div>
 
           <!-- Chọn số lượng Sườn -->
           <div class="mt-3 pt-3 border-t border-slate-200 flex flex-wrap items-center gap-3 text-sm">
-            <span class="font-semibold text-slate-700">Dán Kính Sườn:</span>
-            <select id="suon_count" class="border rounded p-1.5 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+            <span class="font-semibold text-slate-700">Kính Sườn (20k / 1 sườn):</span>
+            <select id="suon_count" class="border rounded-lg p-2 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="0">Không dán sườn</option>
               <option value="1">1 Sườn (20k)</option>
               <option value="2">2 Sườn (40k)</option>
@@ -70,7 +75,7 @@
             </select>
           </div>
 
-          <!-- Tổng tiền hiển thị -->
+          <!-- Hiển thị Tổng tiền -->
           <div class="mt-4 pt-2 flex justify-between items-center text-base font-bold text-blue-700 border-t border-slate-200">
             <span>TỔNG TIỀN DÁN:</span>
             <span id="totalPriceDisplay" class="text-xl">0 VNĐ</span>
@@ -119,7 +124,7 @@
           </thead>
           <tbody id="dataTable" class="divide-y divide-slate-100 text-slate-700">
             <tr>
-              <td colspan="6" class="p-4 text-center text-slate-400">Đang tải dữ liệu từ máy chủ...</td>
+              <td colspan="6" class="p-4 text-center text-slate-400">Đang tải dữ liệu...</td>
             </tr>
           </tbody>
         </table>
@@ -127,10 +132,10 @@
     </div>
   </div>
 
-  <!-- Firebase Integration -->
+  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDnVSwPC-vyu75Qxfv0BnHGZGLPej9wzSc",
@@ -148,7 +153,6 @@
 
     let globalDataList = [];
 
-    // Tự động set thời gian hiện tại
     const setPresetTime = () => {
       const now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -156,54 +160,31 @@
     };
     setPresetTime();
 
-    // Hàm tính tiền & tổng hợp vị trí
+    // Tính tổng tiền theo lựa chọn độc lập
     function calculateTotal() {
       let total = 0;
       let selectedPositions = [];
 
-      if (document.getElementById('pos_full').checked) {
-        selectedPositions.push("Full xe");
-      }
-
       const checkboxes = document.querySelectorAll('.price-checkbox:checked');
       checkboxes.forEach(cb => {
-        if (cb.id !== 'pos_full') {
-          selectedPositions.push(cb.value);
-          total += parseInt(cb.getAttribute('data-price') || 0);
-        }
+        selectedPositions.push(cb.value);
+        total += parseInt(cb.getAttribute('data-price') || 0);
       });
 
       const suonCount = parseInt(document.getElementById('suon_count').value);
       if (suonCount > 0) {
         const suonPrice = suonCount * 20000;
         total += suonPrice;
-        selectedPositions.push(`${suonCount} sườn`);
+        selectedPositions.push(`${suonCount} Sườn`);
       }
 
       document.getElementById('totalPriceDisplay').innerText = total.toLocaleString('vi-VN') + " VNĐ";
       return { total, positionsText: selectedPositions.length > 0 ? selectedPositions.join(', ') : 'Chưa chọn' };
     }
 
-    // Lắng nghe sự kiện thay đổi chọn vị trí
     document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
     document.getElementById('suon_count').addEventListener('change', calculateTotal);
 
-    // Xử lý nút Full xe
-    document.getElementById('pos_full').addEventListener('change', function() {
-      if (this.checked) {
-        document.getElementById('pos_lai').checked = true;
-        document.getElementById('pos_hau').checked = true;
-        document.getElementById('pos_noc').checked = false;
-        document.getElementById('suon_count').value = "4";
-      } else {
-        document.getElementById('pos_lai').checked = false;
-        document.getElementById('pos_hau').checked = false;
-        document.getElementById('suon_count').value = "0";
-      }
-      calculateTotal();
-    });
-
-    // Reset Form
     function resetFormFields() {
       document.getElementById('carForm').reset();
       document.querySelectorAll('.price-checkbox').forEach(cb => cb.checked = false);
@@ -212,13 +193,13 @@
       setPresetTime();
     }
 
-    // Lưu thông tin xe
+    // Xử lý lưu dữ liệu siêu tốc
     const carForm = document.getElementById('carForm');
     carForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const calc = calculateTotal();
       if (calc.positionsText === 'Chưa chọn') {
-        alert("⚠️ Vui lòng tích chọn ít nhất 1 vị trí dán!");
+        alert("⚠️ Vui lòng chọn ít nhất 1 vị trí dán!");
         return;
       }
 
@@ -234,20 +215,20 @@
           totalPrice: calc.total,
           workerName: document.getElementById('workerName').value.trim(),
           timestamp: document.getElementById('timestamp').value,
-          createdAt: new Date()
+          createdAt: serverTimestamp()
         });
 
         resetFormFields();
         alert("✅ Đã lưu dữ liệu thành công!");
       } catch (error) {
-        alert("❌ Đã có lỗi xảy ra: " + error.message);
+        alert("❌ Lỗi khi lưu dữ liệu: " + error.message);
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = "Lưu Thông Tin Thi Công";
       }
     });
 
-    // Tải danh sách xe realtime
+    // Lắng nghe dữ liệu
     const q = query(collection(db, "danh_sach_dan_film"), orderBy("createdAt", "desc"));
     onSnapshot(q, (snapshot) => {
       const tbody = document.getElementById('dataTable');
@@ -282,7 +263,7 @@
     // Xuất file Excel
     document.getElementById('exportExcelBtn').addEventListener('click', () => {
       if (globalDataList.length === 0) {
-        alert("Không có dữ liệu để xuất file Excel!");
+        alert("Chưa có dữ liệu để xuất file Excel!");
         return;
       }
 
@@ -298,8 +279,8 @@
 
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "NhatKyThiCong");
-      XLSX.writeFile(workbook, `TienThinhAuto_BaoCao_${new Date().toISOString().slice(0,10)}.xlsx`);
+      XLSX.utils.book_append_sheet(workbook, worksheet, "NhatKyF4Auto");
+      XLSX.writeFile(workbook, `F4Auto_BaoCao_${new Date().toISOString().slice(0,10)}.xlsx`);
     });
   </script>
 </body>
