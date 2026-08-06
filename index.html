@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>F4 Auto - Quản Lý Dán Film</title>
+
+  <!-- ==================== CẤU HÌNH ICON F4 (NỀN TRẮNG, CHỮ F ĐEN, SỐ 4 ĐỎ) ==================== -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23ffffff'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-family='Arial, sans-serif' font-weight='900' font-size='320'%3E%3Ctspan fill='%23000000'%3EF%3C/tspan%3E%3Ctspan fill='%23e11d48'%3E4%3C/tspan%3E%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23ffffff'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-family='Arial, sans-serif' font-weight='900' font-size='320'%3E%3Ctspan fill='%23000000'%3EF%3C/tspan%3E%3Ctspan fill='%23e11d48'%3E4%3C/tspan%3E%3C/text%3E%3C/svg%3E">
+  <!-- =========================================================================================== -->
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -181,7 +187,6 @@
 
     let globalDataList = [];
 
-    // Tự động đặt bộ lọc tháng về Tháng / Năm hiện tại
     const initMonthFilter = () => {
       const now = new Date();
       const year = now.getFullYear();
@@ -189,11 +194,10 @@
       document.getElementById('monthFilter').value = `${year}-${month}`;
     };
 
-    // Hàm chuyển đổi thời gian sang định dạng DD/MM/YYYY HH:mm
     function formatDateTimeVN(isoString) {
       if (!isoString) return 'N/A';
       const dateObj = new Date(isoString);
-      if (isNaN(dateObj.getTime())) return isoString.replace('T', ' '); // Nếu là chuỗi đã format sẵn thì giữ nguyên
+      if (isNaN(dateObj.getTime())) return isoString.replace('T', ' ');
 
       const day = String(dateObj.getDate()).padStart(2, '0');
       const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -204,7 +208,6 @@
       return `${day}/${month}/${year} ${hours}:${minutes}`;
     }
 
-    // --- QUẢN LÝ DANH SÁCH NHÂN VIÊN ---
     const defaultWorkers = ["Tuấn", "Huy", "Nam", "Hoàng"];
     let workerList = JSON.parse(localStorage.getItem('f4_workers')) || defaultWorkers;
 
@@ -259,7 +262,6 @@
     document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.add('hidden'));
     document.getElementById('doneWorkerBtn').addEventListener('click', () => modal.classList.add('hidden'));
 
-    // --- TÍNH NĂNG CHÍNH ---
     const setPresetTime = () => {
       const now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -302,12 +304,11 @@
         .catch(err => console.error("Lỗi tải dữ liệu:", err));
     }
 
-    // Lọc & Tính tổng tiền theo Tháng được chọn
     function renderTable() {
       const tbody = document.getElementById('dataTable');
       tbody.innerHTML = '';
 
-      const selectedMonthYear = document.getElementById('monthFilter').value; // Dạng YYYY-MM
+      const selectedMonthYear = document.getElementById('monthFilter').value;
       let monthlyTotal = 0;
       let filteredList = [];
 
@@ -332,7 +333,6 @@
       }
 
       filteredList.forEach(item => {
-        // Áp dụng định dạng Ngày/Tháng/Năm Giờ:Phút
         const displayTime = formatDateTimeVN(item.timestamp);
         const formattedPrice = (Number(item.totalPrice) || 0).toLocaleString('vi-VN') + " đ";
 
@@ -442,7 +442,6 @@
       XLSX.writeFile(workbook, `F4Auto_BaoCao_${new Date().toISOString().slice(0,10)}.xlsx`);
     });
 
-    // Khởi tạo ứng dụng
     initMonthFilter();
     setPresetTime();
     saveAndRenderWorkers();
