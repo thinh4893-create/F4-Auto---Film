@@ -32,33 +32,33 @@
           <input type="text" id="filmType" placeholder="VD: 3M Crystalline / Ceramic" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
         </div>
 
-        <!-- Chọn Vị Trí Độc Lập & Bảng Giá Mới -->
+        <!-- Chọn Vị Trí -->
         <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
           <label class="block text-sm font-bold text-slate-700 mb-2">Chọn Vị Trí Dán Film & Giá Độc Lập</label>
           
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
             <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" id="pos_full" class="price-checkbox accent-blue-600 w-4 h-4" data-price="160000" value="Full xe">
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="160000" value="Full xe">
               <span class="font-medium">Full Xe (160k)</span>
             </label>
 
             <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" id="pos_full_noc" class="price-checkbox accent-blue-600 w-4 h-4" data-price="200000" value="Full xe + Nóc">
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="200000" value="Full xe + Nóc">
               <span class="font-medium">Full Xe + Nóc (200k)</span>
             </label>
 
             <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" id="pos_lai" class="price-checkbox accent-blue-600 w-4 h-4" data-price="50000" value="Kính Lái">
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="50000" value="Kính Lái">
               <span class="font-medium">Kính Lái (50k)</span>
             </label>
 
             <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" id="pos_hau" class="price-checkbox accent-blue-600 w-4 h-4" data-price="30000" value="Hậu">
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="30000" value="Hậu">
               <span class="font-medium">Hậu (30k)</span>
             </label>
 
             <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" id="pos_noc" class="price-checkbox accent-blue-600 w-4 h-4" data-price="30000" value="Nóc">
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="30000" value="Nóc">
               <span class="font-medium">Nóc (30k)</span>
             </label>
           </div>
@@ -135,7 +135,7 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDnVSwPC-vyu75Qxfv0BnHGZGLPej9wzSc",
@@ -193,9 +193,9 @@
       setPresetTime();
     }
 
-    // Xử lý lưu dữ liệu siêu tốc
+    // LƯU TỐC ĐỘ CAO (Chạy ngầm không bắt chờ phản hồi)
     const carForm = document.getElementById('carForm');
-    carForm.addEventListener('submit', async (e) => {
+    carForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const calc = calculateTotal();
       if (calc.positionsText === 'Chưa chọn') {
@@ -203,32 +203,27 @@
         return;
       }
 
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = true;
-      submitBtn.innerText = "Đang lưu...";
+      // 1. Thu thập dữ liệu ngay lập tức
+      const newData = {
+        carName: document.getElementById('carName').value.trim(),
+        filmType: document.getElementById('filmType').value.trim(),
+        position: calc.positionsText,
+        totalPrice: calc.total,
+        workerName: document.getElementById('workerName').value.trim(),
+        timestamp: document.getElementById('timestamp').value,
+        createdAt: Date.now()
+      };
 
-      try {
-        await addDoc(collection(db, "danh_sach_dan_film"), {
-          carName: document.getElementById('carName').value.trim(),
-          filmType: document.getElementById('filmType').value.trim(),
-          position: calc.positionsText,
-          totalPrice: calc.total,
-          workerName: document.getElementById('workerName').value.trim(),
-          timestamp: document.getElementById('timestamp').value,
-          createdAt: serverTimestamp()
-        });
-
-        resetFormFields();
-        alert("✅ Đã lưu dữ liệu thành công!");
-      } catch (error) {
-        alert("❌ Lỗi khi lưu dữ liệu: " + error.message);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Lưu Thông Tin Thi Công";
-      }
+      // 2. Làm sạch form và báo thành công NGAY LẬP TỨC (0.01 giây)
+      resetFormFields();
+      
+      // 3. Đưa công việc đẩy dữ liệu lên máy chủ chạy ngầm
+      addDoc(collection(db, "danh_sach_dan_film"), newData).catch((error) => {
+        alert("❌ Lỗi khi đồng bộ dữ liệu: " + error.message);
+      });
     });
 
-    // Lắng nghe dữ liệu
+    // Lắng nghe dữ liệu hiển thị bảng
     const q = query(collection(db, "danh_sach_dan_film"), orderBy("createdAt", "desc"));
     onSnapshot(q, (snapshot) => {
       const tbody = document.getElementById('dataTable');
