@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>F4 Auto - Quản Lý Dán Film</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Thư viện xuất Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body class="bg-slate-100 min-h-screen p-3 md:p-8">
@@ -32,7 +31,7 @@
           <input type="text" id="filmType" placeholder="VD: 3M Crystalline / Ceramic" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
         </div>
 
-        <!-- Chọn Vị Trí -->
+        <!-- Chọn Vị Trí Độc Lập -->
         <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
           <label class="block text-sm font-bold text-slate-700 mb-2">Chọn Vị Trí Dán Film & Giá Độc Lập</label>
           
@@ -119,12 +118,13 @@
               <th class="p-3">Loại Film</th>
               <th class="p-3">Vị trí dán</th>
               <th class="p-3">Tổng Tiền</th>
-              <th class="p-3 rounded-r-lg">Nhân viên</th>
+              <th class="p-3">Nhân viên</th>
+              <th class="p-3 rounded-r-lg text-center">Thao tác</th>
             </tr>
           </thead>
           <tbody id="dataTable" class="divide-y divide-slate-100 text-slate-700">
             <tr>
-              <td colspan="6" class="p-4 text-center text-slate-400">Đang tải dữ liệu...</td>
+              <td colspan="7" class="p-4 text-center text-slate-400">Đang tải dữ liệu...</td>
             </tr>
           </tbody>
         </table>
@@ -132,26 +132,8 @@
     </div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDnVSwPC-vyu75Qxfv0BnHGZGLPej9wzSc",
-      authDomain: "tienthinh.firebaseapp.com",
-      databaseURL: "https://tienthinh-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "tienthinh",
-      storageBucket: "tienthinh.firebasestorage.app",
-      messagingSenderId: "514440756279",
-      appId: "1:514440756279:web:859af8b81a54a06083d3b2",
-      measurementId: "G-J9YNKNRQN0"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let globalDataList = [];
+  <script>
+    let globalDataList = JSON.parse(localStorage.getItem('f4auto_data') || '[]');
 
     const setPresetTime = () => {
       const now = new Date();
@@ -160,7 +142,6 @@
     };
     setPresetTime();
 
-    // Tính tổng tiền theo lựa chọn độc lập
     function calculateTotal() {
       let total = 0;
       let selectedPositions = [];
@@ -185,6 +166,44 @@
     document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
     document.getElementById('suon_count').addEventListener('change', calculateTotal);
 
+    function renderData() {
+      const tbody = document.getElementById('dataTable');
+      tbody.innerHTML = '';
+
+      if (globalDataList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào.</td></tr>';
+        return;
+      }
+
+      globalDataList.forEach((item, index) => {
+        const displayTime = item.timestamp ? item.timestamp.replace('T', ' ') : 'N/A';
+        const formattedPrice = (item.totalPrice || 0).toLocaleString('vi-VN') + " đ";
+
+        const row = `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="p-3 font-mono text-xs text-slate-500">${displayTime}</td>
+            <td class="p-3 font-bold text-slate-800">${item.carName}</td>
+            <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs font-medium">${item.filmType}</span></td>
+            <td class="p-3 text-slate-600">${item.position}</td>
+            <td class="p-3 font-bold text-emerald-600">${formattedPrice}</td>
+            <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-semibold">${item.workerName}</span></td>
+            <td class="p-3 text-center">
+              <button onclick="deleteRow(${index})" class="text-red-500 hover:text-red-700 font-bold text-xs bg-red-50 hover:bg-red-100 px-2 py-1 rounded transition">Xóa</button>
+            </td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function deleteRow(index) {
+      if (confirm("Bạn có chắc chắn muốn xóa dòng này không?")) {
+        globalDataList.splice(index, 1);
+        localStorage.setItem('f4auto_data', JSON.stringify(globalDataList));
+        renderData();
+      }
+    }
+
     function resetFormFields() {
       document.getElementById('carForm').reset();
       document.querySelectorAll('.price-checkbox').forEach(cb => cb.checked = false);
@@ -193,9 +212,8 @@
       setPresetTime();
     }
 
-    // LƯU TỐC ĐỘ CAO (Chạy ngầm không bắt chờ phản hồi)
-    const carForm = document.getElementById('carForm');
-    carForm.addEventListener('submit', (e) => {
+    // Xử lý lưu ngay tức thì
+    document.getElementById('carForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const calc = calculateTotal();
       if (calc.positionsText === 'Chưa chọn') {
@@ -203,7 +221,6 @@
         return;
       }
 
-      // 1. Thu thập dữ liệu ngay lập tức
       const newData = {
         carName: document.getElementById('carName').value.trim(),
         filmType: document.getElementById('filmType').value.trim(),
@@ -214,48 +231,15 @@
         createdAt: Date.now()
       };
 
-      // 2. Làm sạch form và báo thành công NGAY LẬP TỨC (0.01 giây)
+      globalDataList.unshift(newData);
+      localStorage.setItem('f4auto_data', JSON.stringify(globalDataList));
+
       resetFormFields();
-      
-      // 3. Đưa công việc đẩy dữ liệu lên máy chủ chạy ngầm
-      addDoc(collection(db, "danh_sach_dan_film"), newData).catch((error) => {
-        alert("❌ Lỗi khi đồng bộ dữ liệu: " + error.message);
-      });
+      renderData();
+      alert("✅ Đã lưu dữ liệu thành công!");
     });
 
-    // Lắng nghe dữ liệu hiển thị bảng
-    const q = query(collection(db, "danh_sach_dan_film"), orderBy("createdAt", "desc"));
-    onSnapshot(q, (snapshot) => {
-      const tbody = document.getElementById('dataTable');
-      tbody.innerHTML = '';
-      globalDataList = [];
-
-      if (snapshot.empty) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào.</td></tr>';
-        return;
-      }
-
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        globalDataList.push(data);
-        const displayTime = data.timestamp ? data.timestamp.replace('T', ' ') : 'N/A';
-        const formattedPrice = (data.totalPrice || 0).toLocaleString('vi-VN') + " đ";
-
-        const row = `
-          <tr class="hover:bg-slate-50 transition">
-            <td class="p-3 font-mono text-xs text-slate-500">${displayTime}</td>
-            <td class="p-3 font-bold text-slate-800">${data.carName}</td>
-            <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs font-medium">${data.filmType}</span></td>
-            <td class="p-3 text-slate-600">${data.position}</td>
-            <td class="p-3 font-bold text-emerald-600">${formattedPrice}</td>
-            <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-semibold">${data.workerName}</span></td>
-          </tr>
-        `;
-        tbody.innerHTML += row;
-      });
-    });
-
-    // Xuất file Excel
+    // Xuất Excel
     document.getElementById('exportExcelBtn').addEventListener('click', () => {
       if (globalDataList.length === 0) {
         alert("Chưa có dữ liệu để xuất file Excel!");
@@ -277,6 +261,9 @@
       XLSX.utils.book_append_sheet(workbook, worksheet, "NhatKyF4Auto");
       XLSX.writeFile(workbook, `F4Auto_BaoCao_${new Date().toISOString().slice(0,10)}.xlsx`);
     });
+
+    // Hiển thị dữ liệu khi mở web
+    renderData();
   </script>
 </body>
 </html>
