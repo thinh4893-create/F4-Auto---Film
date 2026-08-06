@@ -137,8 +137,8 @@
   </div>
 
   <script>
-    // URL Google Apps Script đã được lưu
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7PWYNTcMwUR8TVk6XvSxpzAH4L6XkfBrgIdkgkmU9iSWvHQ0mx9BCBdB54B0JCvgq/exec";
+    // URL Google Apps Script mới nhất đã cập nhật
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZtLL4kfOjkOfanD9bCbs6au9JkFMM9cYXx0yfszWd19WrgAx2XHnYdqc9B7dlp2Ak/exec";
 
     let globalDataList = [];
 
@@ -220,7 +220,6 @@
       setPresetTime();
     }
 
-    // Gửi dữ liệu về Google Sheets
     document.getElementById('carForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const calc = calculateTotal();
@@ -260,7 +259,6 @@
       });
     });
 
-    // Xuất Excel
     document.getElementById('exportExcelBtn').addEventListener('click', () => {
       if (globalDataList.length === 0) {
         alert("Chưa có dữ liệu để xuất file Excel!");
@@ -283,7 +281,6 @@
       XLSX.writeFile(workbook, `F4Auto_BaoCao_${new Date().toISOString().slice(0,10)}.xlsx`);
     });
 
-    // Tải dữ liệu ban đầu
     fetchSheetData();
   </script>
 </body>
