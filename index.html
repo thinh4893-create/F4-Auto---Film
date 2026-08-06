@@ -5,135 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>F4 Auto - Quản Lý Dán Film</title>
 
-  <!-- Icon Logo hiển thị khi Thêm vào Màn hình chính trên iPhone / Android -->
+  <!-- Logo Icon trên iPhone / iPad -->
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202003.png">
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202003.png">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
-<body class="bg-slate-100 min-h-screen p-3 md:p-8">
+<body class="bg-slate-100 min-h-screen p-3 md:p-6 font-sans">
 
-  <div class="max-w-4xl mx-auto space-y-6">
-    <!-- Header -->
-    <div class="bg-white p-5 rounded-xl shadow-md text-center border-t-4 border-blue-600">
-      <h1 class="text-2xl font-bold text-slate-800 uppercase tracking-wide">F4 AUTO - QUẢN LÝ THI CÔNG</h1>
-      <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & năng suất nhân viên (Đồng bộ Google Sheets)</p>
-    </div>
+  <!-- Tiêu đề trang -->
+  <div class="max-w-4xl mx-auto mb-6 text-center">
+    <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">F4 AUTO - QUẢN LÝ DÁN FILM</h1>
+    <p class="text-xs md:text-sm text-slate-500 mt-1">Hệ thống ghi nhận và tra cứu thi công</p>
+  </div>
 
-    <!-- Form Nhập Liệu -->
-    <div class="bg-white p-6 rounded-xl shadow-md">
-      <h2 class="text-lg font-bold mb-4 text-slate-700 border-b pb-2 flex items-center gap-2">
-        <span>📋</span> Nhập Xe Dán Mới
-      </h2>
-      <form id="carForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-semibold text-slate-600 mb-1">Tên/Biển Số Xe</label>
-          <input type="text" id="carName" placeholder="VD: Ford Everest - 30H.1234" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
-        </div>
-        <div>
-          <label class="block text-sm font-semibold text-slate-600 mb-1">Loại Film Dán</label>
-          <select id="filmType" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-white font-medium">
-            <option value="" disabled selected>-- Chọn loại film --</option>
-            <option value="3M">3M</option>
-            <option value="Ari">Ari</option>
-            <option value="Stek">Stek</option>
-          </select>
-        </div>
-
-        <!-- Chọn Vị Trí Độc Lập -->
-        <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <label class="block text-sm font-bold text-slate-700 mb-2">Chọn Vị Trí Dán Film & Giá Độc Lập</label>
-          
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="160000" value="Full xe">
-              <span class="font-medium">Full Xe (160k)</span>
-            </label>
-
-            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="200000" value="Full xe + Nóc">
-              <span class="font-medium">Full Xe + Nóc (200k)</span>
-            </label>
-
-            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="50000" value="Kính Lái">
-              <span class="font-medium">Kính Lái (50k)</span>
-            </label>
-
-            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="30000" value="Hậu">
-              <span class="font-medium">Hậu (30k)</span>
-            </label>
-
-            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="30000" value="Nóc">
-              <span class="font-medium">Nóc (30k)</span>
-            </label>
-          </div>
-
-          <!-- Chọn số lượng Sườn -->
-          <div class="mt-3 pt-3 border-t border-slate-200 flex flex-wrap items-center gap-3 text-sm">
-            <span class="font-semibold text-slate-700">Kính Sườn (20k / 1 sườn):</span>
-            <select id="suon_count" class="border rounded-lg p-2 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
-              <option value="0">Không dán sườn</option>
-              <option value="1">1 Sườn (20k)</option>
-              <option value="2">2 Sườn (40k)</option>
-              <option value="3">3 Sườn (60k)</option>
-              <option value="4">4 Sườn (80k)</option>
-            </select>
-          </div>
-
-          <!-- Hiển thị Tổng tiền -->
-          <div class="mt-4 pt-2 flex justify-between items-center text-base font-bold text-blue-700 border-t border-slate-200">
-            <span>TỔNG TIỀN DÁN:</span>
-            <span id="totalPriceDisplay" class="text-xl">0 VNĐ</span>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold text-slate-600 mb-1">Nhân Viên Phụ Trách</label>
-          <input type="text" id="workerName" placeholder="VD: Tuấn, Huy" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
-        </div>
-        <div>
-          <label class="block text-sm font-semibold text-slate-600 mb-1">Thời Gian Thi Công</label>
-          <input type="datetime-local" id="timestamp" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
-        </div>
-
-        <div class="md:col-span-2 mt-2">
-          <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-lg transition duration-200">
-            Lưu Thông Tin Thi Công
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Bảng Hiển Thị Dữ Liệu -->
-    <div class="bg-white p-6 rounded-xl shadow-md overflow-hidden">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-2 border-b gap-3">
-        <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
-          <span>🚗</span> Nhật Ký Thi Công
-        </h2>
-        <button id="exportExcelBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 shadow transition">
-          📊 Xuất Báo Cáo Excel
+  <div class="max-w-4xl mx-auto grid grid-cols-1 gap-6">
+    <!-- Bảng dữ liệu -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+        <h2 class="font-bold text-slate-700 text-sm md:text-base">LỊCH SỬ THI CÔNG</h2>
+        <button onclick="fetchData()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-lg font-semibold transition">
+          🔄 Tải lại
         </button>
       </div>
-
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm border-collapse min-w-[650px]">
-          <thead>
-            <tr class="bg-slate-100 text-slate-700 uppercase text-xs">
-              <th class="p-3 rounded-l-lg">Thời gian</th>
-              <th class="p-3">Thông tin Xe</th>
-              <th class="p-3">Loại Film</th>
-              <th class="p-3">Vị trí dán</th>
-              <th class="p-3">Tổng Tiền</th>
-              <th class="p-3 rounded-r-lg">Nhân viên</th>
+        <table class="w-full text-left text-xs md:text-sm">
+          <thead class="bg-slate-100 text-slate-600 font-semibold uppercase text-[11px] tracking-wider">
+            <tr>
+              <th class="p-3">THỜI GIAN</th>
+              <th class="p-3">TÊN/BIỂN SỐ</th>
+              <th class="p-3">LOẠI FILM</th>
+              <th class="p-3">VỊ TRÍ</th>
+              <th class="p-3">TỔNG TIỀN</th>
+              <th class="p-3">NHÂN VIÊN</th>
             </tr>
           </thead>
-          <tbody id="dataTable" class="divide-y divide-slate-100 text-slate-700">
+          <tbody id="dataTable" class="divide-y divide-slate-100">
             <tr>
-              <td colspan="6" class="p-4 text-center text-slate-400">Đang tải dữ liệu từ Google Sheets...</td>
+              <td colspan="6" class="p-4 text-center text-slate-400">Đang tải dữ liệu...</td>
             </tr>
           </tbody>
         </table>
@@ -142,76 +52,30 @@
   </div>
 
   <script>
-    // ⚠️ DÁN URL CỦA GOOGLE APPS SCRIPT VÀO NƠI NÀY:
-    const GOOGLE_SCRIPT_URL = "DÁN_URL_GOOGLE_APPS_SCRIPT_CỦA_BẠN_VÀO_ĐÂY";
+    // Điền URL Web App từ Google Apps Script của bạn tại đây
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx/exec'; 
 
     let globalDataList = [];
 
-    // Tự động chọn thời gian hiện tại
-    const setPresetTime = () => {
-      const now = new Date();
-      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-      document.getElementById('timestamp').value = now.toISOString().slice(0, 16);
-    };
-    setPresetTime();
-
-    // Tính tổng tiền dán
-    function calculateTotal() {
-      let total = 0;
-      let selectedPositions = [];
-
-      const checkboxes = document.querySelectorAll('.price-checkbox:checked');
-      checkboxes.forEach(cb => {
-        selectedPositions.push(cb.value);
-        total += parseInt(cb.getAttribute('data-price') || 0);
-      });
-
-      const suonCount = parseInt(document.getElementById('suon_count').value);
-      if (suonCount > 0) {
-        const suonPrice = suonCount * 20000;
-        total += suonPrice;
-        selectedPositions.push(`${suonCount} Sườn`);
-      }
-
-      document.getElementById('totalPriceDisplay').innerText = total.toLocaleString('vi-VN') + " VNĐ";
-      return { total, positionsText: selectedPositions.length > 0 ? selectedPositions.join(', ') : 'Chưa chọn' };
-    }
-
-    document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
-    document.getElementById('suon_count').addEventListener('change', calculateTotal);
-
-    // Chuyển đổi định dạng thời gian đẹp (DD/MM/YYYY HH:mm)
+    // HÀM ĐỊNH DẠNG NGÀY GIỜ CHUẨN VIỆT NAM (Cắt bỏ đuôi .000Z)
     function formatDateVN(timeStr) {
       if (!timeStr) return 'N/A';
       
-      const d = new Date(timeStr);
-      if (isNaN(d.getTime())) {
-        return String(timeStr).replace('T', ' ').replace('.000Z', '').replace('Z', '');
+      let str = String(timeStr).replace('T', ' ').replace('.000Z', '');
+      
+      if (str.length >= 16) {
+        let parts = str.substring(0, 16).split(' ');
+        if (parts.length === 2) {
+          let dateParts = parts[0].split('-');
+          if (dateParts.length === 3) {
+            return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]} ${parts[1]}`;
+          }
+        }
       }
-
-      const day = String(d.getDate()).padStart(2, '0');
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const year = d.getFullYear();
-      const hours = String(d.getHours()).padStart(2, '0');
-      const minutes = String(d.getMinutes()).padStart(2, '0');
-
-      return `${day}/${month}/${year} ${hours}:${minutes}`;
+      return str;
     }
 
-    // Tải dữ liệu từ Google Sheets
-    function fetchSheetData() {
-      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("DÁN_URL")) return;
-
-      fetch(GOOGLE_SCRIPT_URL)
-        .then(res => res.json())
-        .then(data => {
-          globalDataList = data.reverse();
-          renderTable();
-        })
-        .catch(err => console.error("Lỗi tải dữ liệu:", err));
-    }
-
-    // Hiển thị danh sách ra bảng
+    // HÀM HIỂN THỊ BẢNG DỮ LIỆU
     function renderTable() {
       const tbody = document.getElementById('dataTable');
       tbody.innerHTML = '';
@@ -227,7 +91,7 @@
 
         const row = `
           <tr class="hover:bg-slate-50 transition">
-            <td class="p-3 font-mono text-xs text-slate-600 font-semibold">${displayTime}</td>
+            <td class="p-3 font-mono text-xs text-slate-700 font-bold">${displayTime}</td>
             <td class="p-3 font-bold text-slate-800">${item.carName}</td>
             <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs font-semibold">${item.filmType}</span></td>
             <td class="p-3 text-slate-600">${item.position}</td>
@@ -239,79 +103,19 @@
       });
     }
 
-    function resetFormFields() {
-      document.getElementById('carForm').reset();
-      document.querySelectorAll('.price-checkbox').forEach(cb => cb.checked = false);
-      document.getElementById('suon_count').value = "0";
-      calculateTotal();
-      setPresetTime();
+    // Tải dữ liệu từ Google Sheets
+    function fetchData() {
+      fetch(SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+          globalDataList = data;
+          renderTable();
+        })
+        .catch(err => console.error(err));
     }
 
-    // Gửi dữ liệu khi bấm submit
-    document.getElementById('carForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const calc = calculateTotal();
-      if (calc.positionsText === 'Chưa chọn') {
-        alert("⚠️ Vui lòng chọn ít nhất 1 vị trí dán!");
-        return;
-      }
-
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = true;
-      submitBtn.innerText = "Đang lưu dữ liệu...";
-
-      const newData = {
-        carName: document.getElementById('carName').value.trim(),
-        filmType: document.getElementById('filmType').value,
-        position: calc.positionsText,
-        totalPrice: calc.total,
-        workerName: document.getElementById('workerName').value.trim(),
-        timestamp: document.getElementById('timestamp').value
-      };
-
-      fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newData)
-      })
-      .then(() => {
-        alert("✅ Đã lưu thành công!");
-        resetFormFields();
-        fetchSheetData();
-      })
-      .catch(err => alert("❌ Lỗi khi lưu: " + err))
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Lưu Thông Tin Thi Công";
-      });
-    });
-
-    // Xuất file Excel
-    document.getElementById('exportExcelBtn').addEventListener('click', () => {
-      if (globalDataList.length === 0) {
-        alert("Chưa có dữ liệu để xuất file Excel!");
-        return;
-      }
-
-      const excelData = globalDataList.map((item, index) => ({
-        "STT": index + 1,
-        "Thời Gian": formatDateVN(item.timestamp),
-        "Tên/Biển Số Xe": item.carName,
-        "Loại Film": item.filmType,
-        "Vị Trí Dán": item.position,
-        "Tổng Tiền (VNĐ)": item.totalPrice || 0,
-        "Nhân Viên Thi Công": item.workerName
-      }));
-
-      const worksheet = XLSX.utils.json_to_sheet(excelData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "NhatKyF4Auto");
-      XLSX.writeFile(workbook, `F4Auto_BaoCao_${new Date().toISOString().slice(0,10)}.xlsx`);
-    });
-
-    // Tải dữ liệu ban đầu
-    fetchSheetData();
+    // Chạy khi mở trang
+    window.onload = fetchData;
   </script>
 </body>
 </html>
