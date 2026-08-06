@@ -187,7 +187,7 @@
 
   <script>
     // ⚠️ DÁN URL CỦA GOOGLE APPS SCRIPT VÀO ĐÂY:
-    const GOOGLE_SCRIPT_URL = "DÁN_URL_GOOGLE_SCRIPT_CỦA_BẠN_VÀO_ĐÂY";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHi_4FzBuYWRkZOtyJn2dU34v0UcqHwI2t01kYv7KuEsdP9kRhRBUbyr50vBY39y4S/exec";
 
     let globalDataList = [];
 
@@ -291,7 +291,7 @@
     }
 
     function fetchSheetData() {
-      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbyHi_4FzBuYWRkZOtyJn2dU34v0UcqHwI2t01kYv7KuEsdP9kRhRBUbyr50vBY39y4S/exec")) return;
+      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("DÁN_URL")) return;
 
       fetch(GOOGLE_SCRIPT_URL)
         .then(res => res.json())
