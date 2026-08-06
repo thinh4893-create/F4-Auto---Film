@@ -79,7 +79,7 @@
             </select>
           </div>
 
-          <!-- Hiển thị Tổng tiền -->
+          <!-- Hiển thị Tổng tiền đơn hàng -->
           <div class="mt-4 pt-2 flex justify-between items-center text-base font-bold text-blue-700 border-t border-slate-200">
             <span>TỔNG TIỀN DÁN:</span>
             <span id="totalPriceDisplay" class="text-xl">0 VNĐ</span>
@@ -93,7 +93,6 @@
             <button type="button" id="manageWorkersBtn" class="text-xs text-blue-600 hover:underline font-semibold">⚙️ Quản lý danh sách</button>
           </div>
           <select id="workerName" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-white font-medium">
-            <!-- Danh sách nhân viên sẽ tự động đổ vào đây -->
           </select>
         </div>
 
@@ -111,8 +110,8 @@
     </div>
 
     <!-- Bảng Hiển Thị Dữ Liệu -->
-    <div class="bg-white p-6 rounded-xl shadow-md overflow-hidden">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-2 border-b gap-3">
+    <div class="bg-white p-6 rounded-xl shadow-md overflow-hidden space-y-4">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 border-b gap-3">
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
           <span>🚗</span> Nhật Ký Thi Công
         </h2>
@@ -121,8 +120,20 @@
         </button>
       </div>
 
+      <!-- Bộ lọc tháng & Khối hiển thị Tổng Tiền Tháng -->
+      <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <label class="text-sm font-bold text-slate-700 whitespace-nowrap">📅 Xem theo tháng:</label>
+          <input type="month" id="monthFilter" class="border rounded-lg p-2 bg-white text-sm font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto">
+        </div>
+        <div class="text-right w-full sm:w-auto border-t sm:border-t-0 pt-2 sm:pt-0 border-blue-200">
+          <span class="text-xs font-bold text-slate-500 uppercase block">TỔNG DOANH THU THÁNG</span>
+          <span id="monthlyTotalDisplay" class="text-2xl font-black text-blue-700">0 VNĐ</span>
+        </div>
+      </div>
+
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm border-collapse min-w-[650px]">
+        <table class="w-full text-left text-sm border-collapse min-w-[700px]">
           <thead>
             <tr class="bg-slate-100 text-slate-700 uppercase text-xs">
               <th class="p-3 rounded-l-lg">Thời gian</th>
@@ -130,12 +141,13 @@
               <th class="p-3">Loại Film</th>
               <th class="p-3">Vị trí dán</th>
               <th class="p-3">Tổng Tiền</th>
-              <th class="p-3 rounded-r-lg">Nhân viên</th>
+              <th class="p-3">Nhân viên</th>
+              <th class="p-3 text-center rounded-r-lg">Thao tác</th>
             </tr>
           </thead>
           <tbody id="dataTable" class="divide-y divide-slate-100 text-slate-700">
             <tr>
-              <td colspan="6" class="p-4 text-center text-slate-400">Đang tải dữ liệu từ Google Sheets...</td>
+              <td colspan="7" class="p-4 text-center text-slate-400">Đang tải dữ liệu từ Google Sheets...</td>
             </tr>
           </tbody>
         </table>
@@ -156,9 +168,7 @@
         <button id="addWorkerBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm transition">Thêm</button>
       </div>
 
-      <div class="border rounded-lg p-3 max-h-60 overflow-y-auto space-y-2" id="workerListContainer">
-        <!-- Danh sách nhân viên kèm nút xóa -->
-      </div>
+      <div class="border rounded-lg p-3 max-h-60 overflow-y-auto space-y-2" id="workerListContainer"></div>
 
       <div class="text-right">
         <button id="doneWorkerBtn" class="bg-slate-700 hover:bg-slate-800 text-white text-sm font-semibold px-4 py-2 rounded-lg">Xong</button>
@@ -167,10 +177,32 @@
   </div>
 
   <script>
-    // URL Google Apps Script mới nhất đã cập nhật
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHi_4FzBuYWRkZOtyJn2dU34v0UcqHwI2t01kYv7KuEsdP9kRhRBUbyr50vBY39y4S/exec";
 
     let globalDataList = [];
+
+    // Tự động đặt bộ lọc tháng về Tháng / Năm hiện tại
+    const initMonthFilter = () => {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      document.getElementById('monthFilter').value = `${year}-${month}`;
+    };
+
+    // Hàm chuyển đổi thời gian sang định dạng DD/MM/YYYY HH:mm
+    function formatDateTimeVN(isoString) {
+      if (!isoString) return 'N/A';
+      const dateObj = new Date(isoString);
+      if (isNaN(dateObj.getTime())) return isoString.replace('T', ' '); // Nếu là chuỗi đã format sẵn thì giữ nguyên
+
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const year = dateObj.getFullYear();
+      const hours = String(dateObj.getHours()).padStart(2, '0');
+      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+
+      return `${day}/${month}/${year} ${hours}:${minutes}`;
+    }
 
     // --- QUẢN LÝ DANH SÁCH NHÂN VIÊN ---
     const defaultWorkers = ["Tuấn", "Huy", "Nam", "Hoàng"];
@@ -179,14 +211,12 @@
     function saveAndRenderWorkers() {
       localStorage.setItem('f4_workers', JSON.stringify(workerList));
 
-      // Render Dropdown Chọn Nhân Viên
       const select = document.getElementById('workerName');
       select.innerHTML = '<option value="" disabled selected>-- Chọn nhân viên --</option>';
       workerList.forEach(w => {
         select.innerHTML += `<option value="${w}">${w}</option>`;
       });
 
-      // Render Danh sách trong Modal Quản lý
       const container = document.getElementById('workerListContainer');
       container.innerHTML = '';
       if (workerList.length === 0) {
@@ -224,7 +254,6 @@
       }
     });
 
-    // Mở / Đóng Modal Quản Lý Nhân Viên
     const modal = document.getElementById('workerModal');
     document.getElementById('manageWorkersBtn').addEventListener('click', () => modal.classList.remove('hidden'));
     document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.add('hidden'));
@@ -236,7 +265,6 @@
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
       document.getElementById('timestamp').value = now.toISOString().slice(0, 16);
     };
-    setPresetTime();
 
     function calculateTotal() {
       let total = 0;
@@ -274,31 +302,75 @@
         .catch(err => console.error("Lỗi tải dữ liệu:", err));
     }
 
+    // Lọc & Tính tổng tiền theo Tháng được chọn
     function renderTable() {
       const tbody = document.getElementById('dataTable');
       tbody.innerHTML = '';
 
-      if (globalDataList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào.</td></tr>';
+      const selectedMonthYear = document.getElementById('monthFilter').value; // Dạng YYYY-MM
+      let monthlyTotal = 0;
+      let filteredList = [];
+
+      if (globalDataList.length > 0) {
+        filteredList = globalDataList.filter(item => {
+          if (!item.timestamp) return false;
+          const itemMonthYear = String(item.timestamp).slice(0, 7);
+          const isMatched = itemMonthYear === selectedMonthYear;
+          
+          if (isMatched) {
+            monthlyTotal += Number(item.totalPrice) || 0;
+          }
+          return isMatched;
+        });
+      }
+
+      document.getElementById('monthlyTotalDisplay').innerText = monthlyTotal.toLocaleString('vi-VN') + " VNĐ";
+
+      if (filteredList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Không có dữ liệu thi công trong tháng ${selectedMonthYear}.</td></tr>`;
         return;
       }
 
-      globalDataList.forEach(item => {
-        const displayTime = item.timestamp ? String(item.timestamp).replace('T', ' ') : 'N/A';
+      filteredList.forEach(item => {
+        // Áp dụng định dạng Ngày/Tháng/Năm Giờ:Phút
+        const displayTime = formatDateTimeVN(item.timestamp);
         const formattedPrice = (Number(item.totalPrice) || 0).toLocaleString('vi-VN') + " đ";
 
         const row = `
           <tr class="hover:bg-slate-50 transition">
-            <td class="p-3 font-mono text-xs text-slate-500">${displayTime}</td>
+            <td class="p-3 font-mono text-xs text-slate-500 font-semibold">${displayTime}</td>
             <td class="p-3 font-bold text-slate-800">${item.carName}</td>
             <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs font-semibold">${item.filmType}</span></td>
             <td class="p-3 text-slate-600">${item.position}</td>
             <td class="p-3 font-bold text-emerald-600">${formattedPrice}</td>
             <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-semibold">${item.workerName}</span></td>
+            <td class="p-3 text-center">
+              <button onclick="deleteRecord('${item.carName}', '${item.timestamp}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2.5 py-1 rounded-lg text-xs font-bold transition">
+                🗑️ Xóa
+              </button>
+            </td>
           </tr>
         `;
         tbody.innerHTML += row;
       });
+    }
+
+    document.getElementById('monthFilter').addEventListener('change', renderTable);
+
+    function deleteRecord(carName, timestamp) {
+      if (confirm(`Bạn có chắc muốn xóa lịch sử dán xe "${carName}"?`)) {
+        globalDataList = globalDataList.filter(item => !(item.carName === carName && item.timestamp === timestamp));
+        renderTable();
+
+        fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "delete", carName: carName, timestamp: timestamp })
+        }).then(() => {
+          fetchSheetData();
+        });
+      }
     }
 
     function resetFormFields() {
@@ -356,7 +428,7 @@
 
       const excelData = globalDataList.map((item, index) => ({
         "STT": index + 1,
-        "Thời Gian": item.timestamp ? String(item.timestamp).replace('T', ' ') : '',
+        "Thời Gian": formatDateTimeVN(item.timestamp),
         "Tên/Biển Số Xe": item.carName,
         "Loại Film": item.filmType,
         "Vị Trí Dán": item.position,
@@ -371,6 +443,8 @@
     });
 
     // Khởi tạo ứng dụng
+    initMonthFilter();
+    setPresetTime();
     saveAndRenderWorkers();
     fetchSheetData();
   </script>
