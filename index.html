@@ -86,10 +86,17 @@
           </div>
         </div>
 
+        <!-- Tùy chỉnh Chọn & Quản Lý Nhân Viên -->
         <div>
-          <label class="block text-sm font-semibold text-slate-600 mb-1">Nhân Viên Phụ Trách</label>
-          <input type="text" id="workerName" placeholder="VD: Tuấn, Huy" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-sm font-semibold text-slate-600">Nhân Viên Phụ Trách</label>
+            <button type="button" id="manageWorkersBtn" class="text-xs text-blue-600 hover:underline font-semibold">⚙️ Quản lý danh sách</button>
+          </div>
+          <select id="workerName" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-white font-medium">
+            <!-- Danh sách nhân viên sẽ tự động đổ vào đây -->
+          </select>
         </div>
+
         <div>
           <label class="block text-sm font-semibold text-slate-600 mb-1">Thời Gian Thi Công</label>
           <input type="datetime-local" id="timestamp" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
@@ -136,12 +143,94 @@
     </div>
   </div>
 
+  <!-- Modal Quản Lý Nhân Viên -->
+  <div id="workerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="text-lg font-bold text-slate-800">👷 Quản Lý Danh Sách Nhân Viên</h3>
+        <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
+      </div>
+
+      <div class="flex gap-2">
+        <input type="text" id="newWorkerInput" placeholder="Nhập tên nhân viên mới..." class="flex-1 border rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+        <button id="addWorkerBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm transition">Thêm</button>
+      </div>
+
+      <div class="border rounded-lg p-3 max-h-60 overflow-y-auto space-y-2" id="workerListContainer">
+        <!-- Danh sách nhân viên kèm nút xóa -->
+      </div>
+
+      <div class="text-right">
+        <button id="doneWorkerBtn" class="bg-slate-700 hover:bg-slate-800 text-white text-sm font-semibold px-4 py-2 rounded-lg">Xong</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // URL Google Apps Script mới nhất đã cập nhật
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHi_4FzBuYWRkZOtyJn2dU34v0UcqHwI2t01kYv7KuEsdP9kRhRBUbyr50vBY39y4S/exec";
 
     let globalDataList = [];
 
+    // --- QUẢN LÝ DANH SÁCH NHÂN VIÊN ---
+    const defaultWorkers = ["Tuấn", "Huy", "Nam", "Hoàng"];
+    let workerList = JSON.parse(localStorage.getItem('f4_workers')) || defaultWorkers;
+
+    function saveAndRenderWorkers() {
+      localStorage.setItem('f4_workers', JSON.stringify(workerList));
+
+      // Render Dropdown Chọn Nhân Viên
+      const select = document.getElementById('workerName');
+      select.innerHTML = '<option value="" disabled selected>-- Chọn nhân viên --</option>';
+      workerList.forEach(w => {
+        select.innerHTML += `<option value="${w}">${w}</option>`;
+      });
+
+      // Render Danh sách trong Modal Quản lý
+      const container = document.getElementById('workerListContainer');
+      container.innerHTML = '';
+      if (workerList.length === 0) {
+        container.innerHTML = '<p class="text-xs text-gray-400 text-center py-2">Chưa có nhân viên nào trong danh sách</p>';
+        return;
+      }
+      workerList.forEach((w, index) => {
+        container.innerHTML += `
+          <div class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-200 text-sm">
+            <span class="font-medium text-slate-700">${w}</span>
+            <button onclick="deleteWorker(${index})" class="text-red-500 hover:text-red-700 font-bold px-2">Xóa</button>
+          </div>
+        `;
+      });
+    }
+
+    function deleteWorker(index) {
+      if (confirm(`Bạn có chắc muốn xóa "${workerList[index]}" khỏi danh sách?`)) {
+        workerList.splice(index, 1);
+        saveAndRenderWorkers();
+      }
+    }
+
+    document.getElementById('addWorkerBtn').addEventListener('click', () => {
+      const input = document.getElementById('newWorkerInput');
+      const name = input.value.trim();
+      if (name) {
+        if (!workerList.includes(name)) {
+          workerList.push(name);
+          saveAndRenderWorkers();
+          input.value = '';
+        } else {
+          alert('Tên nhân viên này đã tồn tại!');
+        }
+      }
+    });
+
+    // Mở / Đóng Modal Quản Lý Nhân Viên
+    const modal = document.getElementById('workerModal');
+    document.getElementById('manageWorkersBtn').addEventListener('click', () => modal.classList.remove('hidden'));
+    document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.add('hidden'));
+    document.getElementById('doneWorkerBtn').addEventListener('click', () => modal.classList.add('hidden'));
+
+    // --- TÍNH NĂNG CHÍNH ---
     const setPresetTime = () => {
       const now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -237,7 +326,7 @@
         filmType: document.getElementById('filmType').value,
         position: calc.positionsText,
         totalPrice: calc.total,
-        workerName: document.getElementById('workerName').value.trim(),
+        workerName: document.getElementById('workerName').value,
         timestamp: document.getElementById('timestamp').value
       };
 
@@ -281,6 +370,8 @@
       XLSX.writeFile(workbook, `F4Auto_BaoCao_${new Date().toISOString().slice(0,10)}.xlsx`);
     });
 
+    // Khởi tạo ứng dụng
+    saveAndRenderWorkers();
     fetchSheetData();
   </script>
 </body>
