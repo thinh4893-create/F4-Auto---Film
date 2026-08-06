@@ -13,7 +13,7 @@
     <!-- Header -->
     <div class="bg-white p-5 rounded-xl shadow-md text-center border-t-4 border-blue-600">
       <h1 class="text-2xl font-bold text-slate-800 uppercase tracking-wide">F4 AUTO - QUẢN LÝ THI CÔNG</h1>
-      <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & năng suất nhân viên hàng ngày</p>
+      <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & năng suất nhân viên (Tự động đồng bộ Google Sheets)</p>
     </div>
 
     <!-- Form Nhập Liệu -->
@@ -28,7 +28,12 @@
         </div>
         <div>
           <label class="block text-sm font-semibold text-slate-600 mb-1">Loại Film Dán</label>
-          <input type="text" id="filmType" placeholder="VD: 3M Crystalline / Ceramic" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+          <select id="filmType" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-white font-medium">
+            <option value="" disabled selected>-- Chọn loại film --</option>
+            <option value="3M">3M</option>
+            <option value="Ari">Ari</option>
+            <option value="Stek">Stek</option>
+          </select>
         </div>
 
         <!-- Chọn Vị Trí Độc Lập -->
@@ -102,7 +107,7 @@
     <div class="bg-white p-6 rounded-xl shadow-md overflow-hidden">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-2 border-b gap-3">
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
-          <span>🚗</span> Nhật Ký Thi Công Hàng Ngày
+          <span>🚗</span> Nhật Ký Thi Công
         </h2>
         <button id="exportExcelBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 shadow transition">
           📊 Xuất Báo Cáo Excel
@@ -118,13 +123,12 @@
               <th class="p-3">Loại Film</th>
               <th class="p-3">Vị trí dán</th>
               <th class="p-3">Tổng Tiền</th>
-              <th class="p-3">Nhân viên</th>
-              <th class="p-3 rounded-r-lg text-center">Thao tác</th>
+              <th class="p-3 rounded-r-lg">Nhân viên</th>
             </tr>
           </thead>
           <tbody id="dataTable" class="divide-y divide-slate-100 text-slate-700">
             <tr>
-              <td colspan="7" class="p-4 text-center text-slate-400">Đang tải dữ liệu...</td>
+              <td colspan="6" class="p-4 text-center text-slate-400">Đang tải dữ liệu từ Google Sheets...</td>
             </tr>
           </tbody>
         </table>
@@ -133,7 +137,10 @@
   </div>
 
   <script>
-    let globalDataList = JSON.parse(localStorage.getItem('f4auto_data') || '[]');
+    // URL Google Apps Script đã được lưu
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7PWYNTcMwUR8TVk6XvSxpzAH4L6XkfBrgIdkgkmU9iSWvHQ0mx9BCBdB54B0JCvgq/exec";
+
+    let globalDataList = [];
 
     const setPresetTime = () => {
       const now = new Date();
@@ -166,42 +173,43 @@
     document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
     document.getElementById('suon_count').addEventListener('change', calculateTotal);
 
-    function renderData() {
+    function fetchSheetData() {
+      if (!GOOGLE_SCRIPT_URL) return;
+
+      fetch(GOOGLE_SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+          globalDataList = data.reverse();
+          renderTable();
+        })
+        .catch(err => console.error("Lỗi tải dữ liệu:", err));
+    }
+
+    function renderTable() {
       const tbody = document.getElementById('dataTable');
       tbody.innerHTML = '';
 
       if (globalDataList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào.</td></tr>';
         return;
       }
 
-      globalDataList.forEach((item, index) => {
-        const displayTime = item.timestamp ? item.timestamp.replace('T', ' ') : 'N/A';
-        const formattedPrice = (item.totalPrice || 0).toLocaleString('vi-VN') + " đ";
+      globalDataList.forEach(item => {
+        const displayTime = item.timestamp ? String(item.timestamp).replace('T', ' ') : 'N/A';
+        const formattedPrice = (Number(item.totalPrice) || 0).toLocaleString('vi-VN') + " đ";
 
         const row = `
           <tr class="hover:bg-slate-50 transition">
             <td class="p-3 font-mono text-xs text-slate-500">${displayTime}</td>
             <td class="p-3 font-bold text-slate-800">${item.carName}</td>
-            <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs font-medium">${item.filmType}</span></td>
+            <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs font-semibold">${item.filmType}</span></td>
             <td class="p-3 text-slate-600">${item.position}</td>
             <td class="p-3 font-bold text-emerald-600">${formattedPrice}</td>
             <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-semibold">${item.workerName}</span></td>
-            <td class="p-3 text-center">
-              <button onclick="deleteRow(${index})" class="text-red-500 hover:text-red-700 font-bold text-xs bg-red-50 hover:bg-red-100 px-2 py-1 rounded transition">Xóa</button>
-            </td>
           </tr>
         `;
         tbody.innerHTML += row;
       });
-    }
-
-    function deleteRow(index) {
-      if (confirm("Bạn có chắc chắn muốn xóa dòng này không?")) {
-        globalDataList.splice(index, 1);
-        localStorage.setItem('f4auto_data', JSON.stringify(globalDataList));
-        renderData();
-      }
     }
 
     function resetFormFields() {
@@ -212,7 +220,7 @@
       setPresetTime();
     }
 
-    // Xử lý lưu ngay tức thì
+    // Gửi dữ liệu về Google Sheets
     document.getElementById('carForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const calc = calculateTotal();
@@ -221,22 +229,35 @@
         return;
       }
 
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Đang lưu vào Google Sheets...";
+
       const newData = {
         carName: document.getElementById('carName').value.trim(),
-        filmType: document.getElementById('filmType').value.trim(),
+        filmType: document.getElementById('filmType').value,
         position: calc.positionsText,
         totalPrice: calc.total,
         workerName: document.getElementById('workerName').value.trim(),
-        timestamp: document.getElementById('timestamp').value,
-        createdAt: Date.now()
+        timestamp: document.getElementById('timestamp').value
       };
 
-      globalDataList.unshift(newData);
-      localStorage.setItem('f4auto_data', JSON.stringify(globalDataList));
-
-      resetFormFields();
-      renderData();
-      alert("✅ Đã lưu dữ liệu thành công!");
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData)
+      })
+      .then(() => {
+        alert("✅ Đã lưu thành công vào Google Sheets!");
+        resetFormFields();
+        fetchSheetData();
+      })
+      .catch(err => alert("❌ Lỗi khi lưu: " + err))
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Lưu Thông Tin Thi Công";
+      });
     });
 
     // Xuất Excel
@@ -248,7 +269,7 @@
 
       const excelData = globalDataList.map((item, index) => ({
         "STT": index + 1,
-        "Thời Gian": item.timestamp ? item.timestamp.replace('T', ' ') : '',
+        "Thời Gian": item.timestamp ? String(item.timestamp).replace('T', ' ') : '',
         "Tên/Biển Số Xe": item.carName,
         "Loại Film": item.filmType,
         "Vị Trí Dán": item.position,
@@ -262,8 +283,8 @@
       XLSX.writeFile(workbook, `F4Auto_BaoCao_${new Date().toISOString().slice(0,10)}.xlsx`);
     });
 
-    // Hiển thị dữ liệu khi mở web
-    renderData();
+    // Tải dữ liệu ban đầu
+    fetchSheetData();
   </script>
 </body>
 </html>
