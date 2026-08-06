@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>F4 Auto - Quản Lý Dán Film</title>
 
-  <!-- ==================== CẤU HÌNH ICON F4 (NỀN TRẮNG, CHỮ F ĐEN, SỐ 4 ĐỎ) ==================== -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23ffffff'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-family='Arial, sans-serif' font-weight='900' font-size='320'%3E%3Ctspan fill='%23000000'%3EF%3C/tspan%3E%3Ctspan fill='%23e11d48'%3E4%3C/tspan%3E%3C/text%3E%3C/svg%3E">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23ffffff'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-family='Arial, sans-serif' font-weight='900' font-size='320'%3E%3Ctspan fill='%23000000'%3EF%3C/tspan%3E%3Ctspan fill='%23e11d48'%3E4%3C/tspan%3E%3C/text%3E%3C/svg%3E">
-  <!-- =========================================================================================== -->
+  <!-- Icon Logo hiển thị khi Thêm vào Màn hình chính trên iPhone / Android -->
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202003.png">
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202003.png">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -19,7 +18,7 @@
     <!-- Header -->
     <div class="bg-white p-5 rounded-xl shadow-md text-center border-t-4 border-blue-600">
       <h1 class="text-2xl font-bold text-slate-800 uppercase tracking-wide">F4 AUTO - QUẢN LÝ THI CÔNG</h1>
-      <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & năng suất nhân viên (Tự động đồng bộ Google Sheets)</p>
+      <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & năng suất nhân viên (Đồng bộ Google Sheets)</p>
     </div>
 
     <!-- Form Nhập Liệu -->
@@ -85,23 +84,17 @@
             </select>
           </div>
 
-          <!-- Hiển thị Tổng tiền đơn hàng -->
+          <!-- Hiển thị Tổng tiền -->
           <div class="mt-4 pt-2 flex justify-between items-center text-base font-bold text-blue-700 border-t border-slate-200">
             <span>TỔNG TIỀN DÁN:</span>
             <span id="totalPriceDisplay" class="text-xl">0 VNĐ</span>
           </div>
         </div>
 
-        <!-- Tùy chỉnh Chọn & Quản Lý Nhân Viên -->
         <div>
-          <div class="flex justify-between items-center mb-1">
-            <label class="block text-sm font-semibold text-slate-600">Nhân Viên Phụ Trách</label>
-            <button type="button" id="manageWorkersBtn" class="text-xs text-blue-600 hover:underline font-semibold">⚙️ Quản lý danh sách</button>
-          </div>
-          <select id="workerName" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-white font-medium">
-          </select>
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Nhân Viên Phụ Trách</label>
+          <input type="text" id="workerName" placeholder="VD: Tuấn, Huy" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
         </div>
-
         <div>
           <label class="block text-sm font-semibold text-slate-600 mb-1">Thời Gian Thi Công</label>
           <input type="datetime-local" id="timestamp" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
@@ -116,8 +109,8 @@
     </div>
 
     <!-- Bảng Hiển Thị Dữ Liệu -->
-    <div class="bg-white p-6 rounded-xl shadow-md overflow-hidden space-y-4">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 border-b gap-3">
+    <div class="bg-white p-6 rounded-xl shadow-md overflow-hidden">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-2 border-b gap-3">
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
           <span>🚗</span> Nhật Ký Thi Công
         </h2>
@@ -126,20 +119,8 @@
         </button>
       </div>
 
-      <!-- Bộ lọc tháng & Khối hiển thị Tổng Tiền Tháng -->
-      <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex flex-col sm:flex-row justify-between items-center gap-3">
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-          <label class="text-sm font-bold text-slate-700 whitespace-nowrap">📅 Xem theo tháng:</label>
-          <input type="month" id="monthFilter" class="border rounded-lg p-2 bg-white text-sm font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto">
-        </div>
-        <div class="text-right w-full sm:w-auto border-t sm:border-t-0 pt-2 sm:pt-0 border-blue-200">
-          <span class="text-xs font-bold text-slate-500 uppercase block">TỔNG DOANH THU THÁNG</span>
-          <span id="monthlyTotalDisplay" class="text-2xl font-black text-blue-700">0 VNĐ</span>
-        </div>
-      </div>
-
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm border-collapse min-w-[700px]">
+        <table class="w-full text-left text-sm border-collapse min-w-[650px]">
           <thead>
             <tr class="bg-slate-100 text-slate-700 uppercase text-xs">
               <th class="p-3 rounded-l-lg">Thời gian</th>
@@ -147,13 +128,12 @@
               <th class="p-3">Loại Film</th>
               <th class="p-3">Vị trí dán</th>
               <th class="p-3">Tổng Tiền</th>
-              <th class="p-3">Nhân viên</th>
-              <th class="p-3 text-center rounded-r-lg">Thao tác</th>
+              <th class="p-3 rounded-r-lg">Nhân viên</th>
             </tr>
           </thead>
           <tbody id="dataTable" class="divide-y divide-slate-100 text-slate-700">
             <tr>
-              <td colspan="7" class="p-4 text-center text-slate-400">Đang tải dữ liệu từ Google Sheets...</td>
+              <td colspan="6" class="p-4 text-center text-slate-400">Đang tải dữ liệu từ Google Sheets...</td>
             </tr>
           </tbody>
         </table>
@@ -161,113 +141,21 @@
     </div>
   </div>
 
-  <!-- Modal Quản Lý Nhân Viên -->
-  <div id="workerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b pb-3">
-        <h3 class="text-lg font-bold text-slate-800">👷 Quản Lý Danh Sách Nhân Viên</h3>
-        <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
-      </div>
-
-      <div class="flex gap-2">
-        <input type="text" id="newWorkerInput" placeholder="Nhập tên nhân viên mới..." class="flex-1 border rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-        <button id="addWorkerBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-sm transition">Thêm</button>
-      </div>
-
-      <div class="border rounded-lg p-3 max-h-60 overflow-y-auto space-y-2" id="workerListContainer"></div>
-
-      <div class="text-right">
-        <button id="doneWorkerBtn" class="bg-slate-700 hover:bg-slate-800 text-white text-sm font-semibold px-4 py-2 rounded-lg">Xong</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHi_4FzBuYWRkZOtyJn2dU34v0UcqHwI2t01kYv7KuEsdP9kRhRBUbyr50vBY39y4S/exec";
+    // ⚠️ DÁN URL CỦA GOOGLE APPS SCRIPT VÀO NƠI NÀY:
+    const GOOGLE_SCRIPT_URL = "DÁN_URL_GOOGLE_APPS_SCRIPT_CỦA_BẠN_VÀO_ĐÂY";
 
     let globalDataList = [];
 
-    const initMonthFilter = () => {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      document.getElementById('monthFilter').value = `${year}-${month}`;
-    };
-
-    function formatDateTimeVN(isoString) {
-      if (!isoString) return 'N/A';
-      const dateObj = new Date(isoString);
-      if (isNaN(dateObj.getTime())) return isoString.replace('T', ' ');
-
-      const day = String(dateObj.getDate()).padStart(2, '0');
-      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const year = dateObj.getFullYear();
-      const hours = String(dateObj.getHours()).padStart(2, '0');
-      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-
-      return `${day}/${month}/${year} ${hours}:${minutes}`;
-    }
-
-    const defaultWorkers = ["Tuấn", "Huy", "Nam", "Hoàng"];
-    let workerList = JSON.parse(localStorage.getItem('f4_workers')) || defaultWorkers;
-
-    function saveAndRenderWorkers() {
-      localStorage.setItem('f4_workers', JSON.stringify(workerList));
-
-      const select = document.getElementById('workerName');
-      select.innerHTML = '<option value="" disabled selected>-- Chọn nhân viên --</option>';
-      workerList.forEach(w => {
-        select.innerHTML += `<option value="${w}">${w}</option>`;
-      });
-
-      const container = document.getElementById('workerListContainer');
-      container.innerHTML = '';
-      if (workerList.length === 0) {
-        container.innerHTML = '<p class="text-xs text-gray-400 text-center py-2">Chưa có nhân viên nào trong danh sách</p>';
-        return;
-      }
-      workerList.forEach((w, index) => {
-        container.innerHTML += `
-          <div class="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-200 text-sm">
-            <span class="font-medium text-slate-700">${w}</span>
-            <button onclick="deleteWorker(${index})" class="text-red-500 hover:text-red-700 font-bold px-2">Xóa</button>
-          </div>
-        `;
-      });
-    }
-
-    function deleteWorker(index) {
-      if (confirm(`Bạn có chắc muốn xóa "${workerList[index]}" khỏi danh sách?`)) {
-        workerList.splice(index, 1);
-        saveAndRenderWorkers();
-      }
-    }
-
-    document.getElementById('addWorkerBtn').addEventListener('click', () => {
-      const input = document.getElementById('newWorkerInput');
-      const name = input.value.trim();
-      if (name) {
-        if (!workerList.includes(name)) {
-          workerList.push(name);
-          saveAndRenderWorkers();
-          input.value = '';
-        } else {
-          alert('Tên nhân viên này đã tồn tại!');
-        }
-      }
-    });
-
-    const modal = document.getElementById('workerModal');
-    document.getElementById('manageWorkersBtn').addEventListener('click', () => modal.classList.remove('hidden'));
-    document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.add('hidden'));
-    document.getElementById('doneWorkerBtn').addEventListener('click', () => modal.classList.add('hidden'));
-
+    // Tự động chọn thời gian hiện tại
     const setPresetTime = () => {
       const now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
       document.getElementById('timestamp').value = now.toISOString().slice(0, 16);
     };
+    setPresetTime();
 
+    // Tính tổng tiền dán
     function calculateTotal() {
       let total = 0;
       let selectedPositions = [];
@@ -292,8 +180,27 @@
     document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
     document.getElementById('suon_count').addEventListener('change', calculateTotal);
 
+    // Chuyển đổi định dạng thời gian đẹp (DD/MM/YYYY HH:mm)
+    function formatDateVN(timeStr) {
+      if (!timeStr) return 'N/A';
+      
+      const d = new Date(timeStr);
+      if (isNaN(d.getTime())) {
+        return String(timeStr).replace('T', ' ').replace('.000Z', '').replace('Z', '');
+      }
+
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+
+      return `${day}/${month}/${year} ${hours}:${minutes}`;
+    }
+
+    // Tải dữ liệu từ Google Sheets
     function fetchSheetData() {
-      if (!GOOGLE_SCRIPT_URL) return;
+      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("DÁN_URL")) return;
 
       fetch(GOOGLE_SCRIPT_URL)
         .then(res => res.json())
@@ -304,73 +211,32 @@
         .catch(err => console.error("Lỗi tải dữ liệu:", err));
     }
 
+    // Hiển thị danh sách ra bảng
     function renderTable() {
       const tbody = document.getElementById('dataTable');
       tbody.innerHTML = '';
 
-      const selectedMonthYear = document.getElementById('monthFilter').value;
-      let monthlyTotal = 0;
-      let filteredList = [];
-
-      if (globalDataList.length > 0) {
-        filteredList = globalDataList.filter(item => {
-          if (!item.timestamp) return false;
-          const itemMonthYear = String(item.timestamp).slice(0, 7);
-          const isMatched = itemMonthYear === selectedMonthYear;
-          
-          if (isMatched) {
-            monthlyTotal += Number(item.totalPrice) || 0;
-          }
-          return isMatched;
-        });
-      }
-
-      document.getElementById('monthlyTotalDisplay').innerText = monthlyTotal.toLocaleString('vi-VN') + " VNĐ";
-
-      if (filteredList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Không có dữ liệu thi công trong tháng ${selectedMonthYear}.</td></tr>`;
+      if (globalDataList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào.</td></tr>';
         return;
       }
 
-      filteredList.forEach(item => {
-        const displayTime = formatDateTimeVN(item.timestamp);
+      globalDataList.forEach(item => {
+        const displayTime = formatDateVN(item.timestamp);
         const formattedPrice = (Number(item.totalPrice) || 0).toLocaleString('vi-VN') + " đ";
 
         const row = `
           <tr class="hover:bg-slate-50 transition">
-            <td class="p-3 font-mono text-xs text-slate-500 font-semibold">${displayTime}</td>
+            <td class="p-3 font-mono text-xs text-slate-600 font-semibold">${displayTime}</td>
             <td class="p-3 font-bold text-slate-800">${item.carName}</td>
             <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs font-semibold">${item.filmType}</span></td>
             <td class="p-3 text-slate-600">${item.position}</td>
             <td class="p-3 font-bold text-emerald-600">${formattedPrice}</td>
             <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-semibold">${item.workerName}</span></td>
-            <td class="p-3 text-center">
-              <button onclick="deleteRecord('${item.carName}', '${item.timestamp}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2.5 py-1 rounded-lg text-xs font-bold transition">
-                🗑️ Xóa
-              </button>
-            </td>
           </tr>
         `;
         tbody.innerHTML += row;
       });
-    }
-
-    document.getElementById('monthFilter').addEventListener('change', renderTable);
-
-    function deleteRecord(carName, timestamp) {
-      if (confirm(`Bạn có chắc muốn xóa lịch sử dán xe "${carName}"?`)) {
-        globalDataList = globalDataList.filter(item => !(item.carName === carName && item.timestamp === timestamp));
-        renderTable();
-
-        fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "delete", carName: carName, timestamp: timestamp })
-        }).then(() => {
-          fetchSheetData();
-        });
-      }
     }
 
     function resetFormFields() {
@@ -381,6 +247,7 @@
       setPresetTime();
     }
 
+    // Gửi dữ liệu khi bấm submit
     document.getElementById('carForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const calc = calculateTotal();
@@ -391,14 +258,14 @@
 
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
-      submitBtn.innerText = "Đang lưu vào Google Sheets...";
+      submitBtn.innerText = "Đang lưu dữ liệu...";
 
       const newData = {
         carName: document.getElementById('carName').value.trim(),
         filmType: document.getElementById('filmType').value,
         position: calc.positionsText,
         totalPrice: calc.total,
-        workerName: document.getElementById('workerName').value,
+        workerName: document.getElementById('workerName').value.trim(),
         timestamp: document.getElementById('timestamp').value
       };
 
@@ -409,7 +276,7 @@
         body: JSON.stringify(newData)
       })
       .then(() => {
-        alert("✅ Đã lưu thành công vào Google Sheets!");
+        alert("✅ Đã lưu thành công!");
         resetFormFields();
         fetchSheetData();
       })
@@ -420,6 +287,7 @@
       });
     });
 
+    // Xuất file Excel
     document.getElementById('exportExcelBtn').addEventListener('click', () => {
       if (globalDataList.length === 0) {
         alert("Chưa có dữ liệu để xuất file Excel!");
@@ -428,7 +296,7 @@
 
       const excelData = globalDataList.map((item, index) => ({
         "STT": index + 1,
-        "Thời Gian": formatDateTimeVN(item.timestamp),
+        "Thời Gian": formatDateVN(item.timestamp),
         "Tên/Biển Số Xe": item.carName,
         "Loại Film": item.filmType,
         "Vị Trí Dán": item.position,
@@ -442,9 +310,7 @@
       XLSX.writeFile(workbook, `F4Auto_BaoCao_${new Date().toISOString().slice(0,10)}.xlsx`);
     });
 
-    initMonthFilter();
-    setPresetTime();
-    saveAndRenderWorkers();
+    // Tải dữ liệu ban đầu
     fetchSheetData();
   </script>
 </body>
