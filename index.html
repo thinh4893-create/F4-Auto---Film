@@ -1,190 +1,471 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nhập Xe Dán Mới</title>
-    <style>
-        * { box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background-color: #f4f6f9; padding: 20px; margin: 0; }
-        .card { background: white; padding: 20px; border-radius: 8px; max-width: 800px; margin: 0 auto 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        h2 { margin-top: 0; color: #333; font-size: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .form-group { flex: 1; }
-        label { font-weight: bold; font-size: 14px; display: block; margin-bottom: 6px; }
-        input[type="text"], input[type="date"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; outline: none; }
-        
-        .box-section { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .grid-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
-        .option-item { background: white; border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
-        .option-item:hover { border-color: #2563eb; }
-        
-        .total-box { font-size: 18px; font-weight: bold; color: #1e40af; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        
-        .btn-primary { width: 100%; background: #2563eb; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; }
-        .btn-primary:hover { background: #1d4ed8; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>F4 Auto - Quản Lý Dán Film</title>
 
-        /* Style Cài Đặt Nhân Viên */
-        .staff-header { display: flex; justify-content: space-between; align-items: center; }
-        .btn-toggle { background: #e2e8f0; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .staff-manage-box { display: none; background: #fff; border: 1px dashed #2563eb; padding: 10px; border-radius: 6px; margin-top: 10px; }
-        .staff-input-group { display: flex; gap: 8px; margin-bottom: 8px; }
-        .btn-add { background: #16a34a; color: white; border: none; padding: 0 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .staff-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-        .tag { background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 13px; display: flex; align-items: center; gap: 6px; }
-        .tag .remove-btn { color: #ef4444; cursor: pointer; font-weight: bold; }
-    </style>
+  <!-- Logo Icon trên iPhone / iPad -->
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202003.png">
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202003.png">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
-<body>
+<body class="bg-slate-100 min-h-screen p-3 md:p-8">
 
-<div class="card">
-    <h2>📋 Nhập Xe Dán Mới</h2>
-    
-    <div class="form-row">
-        <div class="form-group">
-            <label>Tên/Biển Số Xe</label>
-            <input type="text" placeholder="VD: Ford Everest - 30H.1234">
+  <div class="max-w-4xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="bg-white p-5 rounded-xl shadow-md text-center border-t-4 border-blue-600">
+      <h1 class="text-2xl font-bold text-slate-800 uppercase tracking-wide">F4 AUTO - QUẢN LÝ THI CÔNG</h1>
+      <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & năng suất nhân viên (Tự động đồng bộ Google Sheets)</p>
+    </div>
+
+    <!-- KHU VỰC THỐNG KÊ DOANH THU THEO THÁNG -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-5 rounded-xl shadow-lg">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-blue-400/40 pb-3">
+        <h2 class="text-lg font-bold flex items-center gap-2">
+          <span>📊</span> Thống Kê Doanh Thu Theo Tháng
+        </h2>
+        <div class="flex items-center gap-2">
+          <label class="text-xs font-semibold uppercase text-blue-100">Chọn tháng:</label>
+          <input type="month" id="monthPicker" class="bg-white text-slate-800 px-3 py-1.5 rounded-lg text-sm font-bold outline-none border border-slate-300">
         </div>
-        <div class="form-group">
-            <label>Loại Film Dán</label>
-            <select>
-                <option>-- Chọn loại film --</option>
-                <option>3M Crystalline</option>
-                <option>Llumar</option>
-                <option>Ntech</option>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mt-4 text-center">
+        <div class="bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/20">
+          <p class="text-xs text-blue-100 uppercase font-semibold">Tổng Số Xe Dán</p>
+          <p id="monthlyCarCount" class="text-2xl font-extrabold mt-1">0 xe</p>
+        </div>
+        <div class="bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/20">
+          <p class="text-xs text-blue-100 uppercase font-semibold">Tổng Doanh Thu Tháng</p>
+          <p id="monthlyTotalDisplay" class="text-2xl font-extrabold text-yellow-300 mt-1">0 VNĐ</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Nhập Liệu -->
+    <div class="bg-white p-6 rounded-xl shadow-md">
+      <h2 class="text-lg font-bold mb-4 text-slate-700 border-b pb-2 flex items-center gap-2">
+        <span>📋</span> Nhập Xe Dán Mới
+      </h2>
+      <form id="carForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Tên/Biển Số Xe</label>
+          <input type="text" id="carName" placeholder="VD: Ford Everest - 30H.1234" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Loại Film Dán</label>
+          <select id="filmType" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-white font-medium">
+            <option value="" disabled selected>-- Chọn loại film --</option>
+            <option value="3M">3M</option>
+            <option value="Ari">Ari</option>
+            <option value="Stek">Stek</option>
+          </select>
+        </div>
+
+        <!-- Chọn Vị Trí Độc Lập -->
+        <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <label class="block text-sm font-bold text-slate-700 mb-2">Chọn Vị Trí Dán Film & Giá Độc Lập</label>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="160000" value="Full xe">
+              <span class="font-medium">Full Xe (160k)</span>
+            </label>
+
+            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="200000" value="Full xe + Nóc">
+              <span class="font-medium">Full Xe + Nóc (200k)</span>
+            </label>
+
+            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="50000" value="Kính Lái">
+              <span class="font-medium">Kính Lái (50k)</span>
+            </label>
+
+            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="30000" value="Hậu">
+              <span class="font-medium">Hậu (30k)</span>
+            </label>
+
+            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="30000" value="Nóc">
+              <span class="font-medium">Nóc (30k)</span>
+            </label>
+          </div>
+
+          <!-- Chọn số lượng Sườn -->
+          <div class="mt-3 pt-3 border-t border-slate-200 flex flex-wrap items-center gap-3 text-sm">
+            <span class="font-semibold text-slate-700">Kính Sườn (20k / 1 sườn):</span>
+            <select id="suon_count" class="border rounded-lg p-2 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+              <option value="0">Không dán sườn</option>
+              <option value="1">1 Sườn (20k)</option>
+              <option value="2">2 Sườn (40k)</option>
+              <option value="3">3 Sườn (60k)</option>
+              <option value="4">4 Sườn (80k)</option>
             </select>
-        </div>
-    </div>
+          </div>
 
-    <div class="box-section">
-        <label>Chọn Vị Trí Dán Film & Giá Độc Lập</label>
-        <div class="grid-options">
-            <label class="option-item"><input type="checkbox" class="price-check" value="160000"> Full Xe (160k)</label>
-            <label class="option-item"><input type="checkbox" class="price-check" value="200000"> Full Xe + Nóc (200k)</label>
-            <label class="option-item"><input type="checkbox" class="price-check" value="50000"> Kính Lái (50k)</label>
-            <label class="option-item"><input type="checkbox" class="price-check" value="30000"> Hậu (30k)</label>
-            <label class="option-item"><input type="checkbox" class="price-check" value="30000"> Nóc (30k)</label>
-        </div>
-        <div style="margin-top: 15px;">
-            <label style="font-weight: normal; font-size: 14px;">
-                Kính Sườn (20k / 1 sườn): 
-                <select id="suon-select" style="width: auto; display: inline-block; margin-left: 8px;">
-                    <option value="0">Không dán sườn</option>
-                    <option value="20000">1 sườn (20k)</option>
-                    <option value="40000">2 sườn (40k)</option>
-                    <option value="60000">3 sườn (60k)</option>
-                    <option value="80000">4 sườn (80k)</option>
-                </select>
-            </label>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 15px 0;">
-        <div class="total-box">
+          <!-- Hiển thị Tổng tiền -->
+          <div class="mt-4 pt-2 flex justify-between items-center text-base font-bold text-blue-700 border-t border-slate-200">
             <span>TỔNG TIỀN DÁN XE NÀY:</span>
-            <span id="total-price" style="color: #2563eb;">0 VNĐ</span>
-        </div>
-    </div>
-
-    <!-- KHU VỰC NHÂN VIÊN (ĐÃ THÊM CÀI ĐẶT THÊM/XÓA) -->
-    <div class="box-section">
-        <div class="staff-header">
-            <label>Chọn Nhân Viên Thi Công (Có thể chọn nhiều người)</label>
-            <button class="btn-toggle" onclick="toggleStaffManage()">⚙️ Bật/Tắt Quản lý Nhân viên</button>
+            <span id="totalPriceDisplay" class="text-xl">0 VNĐ</span>
+          </div>
         </div>
 
-        <!-- Khung thêm / xóa danh sách -->
-        <div class="staff-manage-box" id="staff-manage-box">
-            <div class="staff-input-group">
-                <input type="text" id="new-staff-name" placeholder="Nhập tên nhân viên mới...">
-                <button class="btn-add" onclick="addStaff()">Thêm</button>
+        <!-- Chọn & Quản Lý Nhân Viên Thi Công -->
+        <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-sm font-bold text-slate-700">Chọn Nhân Viên Thi Công (Có thể chọn nhiều người)</label>
+            <button type="button" id="toggleStaffManageBtn" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-2.5 py-1 rounded transition">
+              ⚙️ Quản Lý Nhân Viên
+            </button>
+          </div>
+
+          <!-- Khung Thêm / Xóa Nhân Viên (Bật/Tắt) -->
+          <div id="staffManageBox" class="hidden mb-3 p-3 bg-white border border-dashed border-blue-400 rounded-lg space-y-2">
+            <div class="flex gap-2">
+              <input type="text" id="newStaffName" placeholder="Nhập tên nhân viên mới..." class="flex-1 border rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-blue-500">
+              <button type="button" onclick="addStaff()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-bold transition">Thêm</button>
             </div>
-            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">Bấm dấu ✖ để xóa nhân viên khỏi danh sách:</div>
-            <div class="staff-tags" id="staff-tags"></div>
+            <p class="text-[11px] text-slate-500">Bấm nút ✖ màu đỏ để xóa nhân viên khỏi danh sách:</p>
+            <div id="staffTagsContainer" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <!-- Danh Sách Checkbox Nhân Viên -->
+          <div id="workerCheckboxContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm"></div>
+
+          <input type="text" id="customWorker" placeholder="Hoặc nhập tên nhân viên khác (phân cách bằng dấu phẩy)..." class="mt-3 w-full border rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-white">
         </div>
 
-        <!-- Danh sách checkbox chọn nhân viên -->
-        <div class="grid-options" id="staff-checkbox-list"></div>
-        
-        <input type="text" placeholder="Hoặc nhập tên nhân viên khác (phân cách bằng dấu phẩy)..." style="margin-top: 10px;">
+        <div>
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Ngày Thi Công</label>
+          <input type="date" id="timestamp" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+        </div>
+
+        <div class="md:col-span-2 mt-2">
+          <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-lg transition duration-200">
+            Lưu Thông Tin Thi Công
+          </button>
+        </div>
+      </form>
     </div>
 
-    <div class="form-group" style="margin-bottom: 15px;">
-        <label>Ngày Thi Công</label>
-        <input type="date" id="work-date">
+    <!-- Bảng Hiển Thị Dữ Liệu -->
+    <div class="bg-white p-6 rounded-xl shadow-md overflow-hidden">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-2 border-b gap-3">
+        <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
+          <span>🚗</span> Nhật Ký Thi Công
+        </h2>
+        <button id="exportExcelBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 shadow transition">
+          📊 Xuất Báo Cáo Excel
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm border-collapse min-w-[650px]">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 uppercase text-xs">
+              <th class="p-3 rounded-l-lg">Ngày thi công</th>
+              <th class="p-3">Thông tin Xe</th>
+              <th class="p-3">Loại Film</th>
+              <th class="p-3">Vị trí dán</th>
+              <th class="p-3">Tổng Tiền</th>
+              <th class="p-3 rounded-r-lg">Nhân viên</th>
+            </tr>
+          </thead>
+          <tbody id="dataTable" class="divide-y divide-slate-100 text-slate-700">
+            <tr>
+              <td colspan="6" class="p-4 text-center text-slate-400">Đang tải dữ liệu từ Google Sheets...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
 
-    <button class="btn-primary">Lưu Thông Tin Thi Công</button>
-</div>
+  <script>
+    // ⚠️ DÁN URL CỦA GOOGLE APPS SCRIPT VÀO ĐÂY:
+    const GOOGLE_SCRIPT_URL = "DÁN_URL_GOOGLE_SCRIPT_CỦA_BẠN_VÀO_ĐÂY";
 
-<script>
-    // 1. Khởi tạo danh sách nhân viên mặc định
-    let defaultStaff = ['Thịnh', 'Vũ',];
-    
+    let globalDataList = [];
+    const defaultStaffList = ['Tuấn', 'Huy', 'Phong', 'Nam'];
+
+    // LẤY VÀ HIỂN THỊ DANH SÁCH NHÂN VIÊN (LOCAL STORAGE)
     function getStaffList() {
-        let saved = localStorage.getItem('staffList');
-        return saved ? JSON.parse(saved) : defaultStaff;
+      const saved = localStorage.getItem('f4_staff_list');
+      return saved ? JSON.parse(saved) : defaultStaffList;
     }
 
-    function renderStaff() {
-        let list = getStaffList();
-        
-        // Render ô Checkbox chọn
-        let checkContainer = document.getElementById('staff-checkbox-list');
-        checkContainer.innerHTML = list.map(name => `
-            <label class="option-item">
-                <input type="checkbox" value="${name}"> ${name}
-            </label>
-        `).join('');
+    function renderStaffUI() {
+      const staffList = getStaffList();
 
-        // Render danh sách Tag để xóa trong mục Cài đặt
-        let tagContainer = document.getElementById('staff-tags');
-        tagContainer.innerHTML = list.map(name => `
-            <span class="tag">${name} <span class="remove-btn" onclick="removeStaff('${name}')">✖</span></span>
-        `).join('');
-    }
+      // Render các ô Checkbox chọn nhân viên
+      const checkboxContainer = document.getElementById('workerCheckboxContainer');
+      checkboxContainer.innerHTML = staffList.map(name => `
+        <label class="flex items-center space-x-2 bg-white p-2 rounded border cursor-pointer hover:bg-blue-50">
+          <input type="checkbox" class="worker-checkbox accent-emerald-600 w-4 h-4" value="${name}">
+          <span>${name}</span>
+        </label>
+      `).join('');
 
-    function toggleStaffManage() {
-        let box = document.getElementById('staff-manage-box');
-        box.style.display = box.style.display === 'block' ? 'none' : 'block';
+      // Render danh sách Tag xóa nhân viên trong khung quản lý
+      const tagsContainer = document.getElementById('staffTagsContainer');
+      tagsContainer.innerHTML = staffList.map(name => `
+        <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded border border-slate-300">
+          ${name}
+          <button type="button" onclick="removeStaff('${name}')" class="text-red-500 font-bold hover:text-red-700 ml-1">✕</button>
+        </span>
+      `).join('');
     }
 
     function addStaff() {
-        let input = document.getElementById('new-staff-name');
-        let name = input.value.trim();
-        if (name) {
-            let list = getStaffList();
-            if (!list.includes(name)) {
-                list.push(name);
-                localStorage.setItem('staffList', JSON.stringify(list));
-                renderStaff();
-            }
-            input.value = '';
-        }
+      const nameInput = document.getElementById('newStaffName');
+      const newName = nameInput.value.trim();
+      if (!newName) return;
+
+      let staffList = getStaffList();
+      if (!staffList.includes(newName)) {
+        staffList.push(newName);
+        localStorage.setItem('f4_staff_list', JSON.stringify(staffList));
+        renderStaffUI();
+      }
+      nameInput.value = '';
     }
 
-    function removeStaff(name) {
-        let list = getStaffList().filter(item => item !== name);
-        localStorage.setItem('staffList', JSON.stringify(list));
-        renderStaff();
+    function removeStaff(nameToRemove) {
+      let staffList = getStaffList().filter(name => name !== nameToRemove);
+      localStorage.setItem('f4_staff_list', JSON.stringify(staffList));
+      renderStaffUI();
     }
 
-    // 2. Tính tổng tiền tự động
-    function calculateTotal() {
-        let total = 0;
-        document.querySelectorAll('.price-check:checked').forEach(cb => total += parseInt(cb.value));
-        total += parseInt(document.getElementById('suon-select').value);
-        document.getElementById('total-price').innerText = total.toLocaleString('vi-VN') + ' VNĐ';
-    }
-
-    document.querySelectorAll('.price-check, #suon-select').forEach(el => {
-        el.addEventListener('change', calculateTotal);
+    // Bật/Tắt khung Cài Đặt Nhân Viên
+    document.getElementById('toggleStaffManageBtn').addEventListener('click', () => {
+      const box = document.getElementById('staffManageBox');
+      box.classList.toggle('hidden');
     });
 
-    // Cài đặt ngày hôm nay làm mặc định
-    document.getElementById('work-date').valueAsDate = new Date();
+    // Tự động thiết lập Ngày hôm nay & Tháng hiện tại
+    const setPresetTime = () => {
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      document.getElementById('timestamp').value = today;
 
-    // Chạy khi tải trang
-    renderStaff();
-</script>
+      const currentMonth = today.slice(0, 7); // YYYY-MM
+      document.getElementById('monthPicker').value = currentMonth;
+    };
+    setPresetTime();
 
+    function calculateTotal() {
+      let total = 0;
+      let selectedPositions = [];
+
+      const checkboxes = document.querySelectorAll('.price-checkbox:checked');
+      checkboxes.forEach(cb => {
+        selectedPositions.push(cb.value);
+        total += parseInt(cb.getAttribute('data-price') || 0);
+      });
+
+      const suonCount = parseInt(document.getElementById('suon_count').value);
+      if (suonCount > 0) {
+        const suonPrice = suonCount * 20000;
+        total += suonPrice;
+        selectedPositions.push(`${suonCount} Sườn`);
+      }
+
+      document.getElementById('totalPriceDisplay').innerText = total.toLocaleString('vi-VN') + " VNĐ";
+      return { total, positionsText: selectedPositions.length > 0 ? selectedPositions.join(', ') : 'Chưa chọn' };
+    }
+
+    function getSelectedWorkers() {
+      let workers = [];
+      document.querySelectorAll('.worker-checkbox:checked').forEach(cb => {
+        workers.push(cb.value);
+      });
+      const customWorker = document.getElementById('customWorker').value.trim();
+      if (customWorker) {
+        workers.push(customWorker);
+      }
+      return workers.join(', ');
+    }
+
+    document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
+    document.getElementById('suon_count').addEventListener('change', calculateTotal);
+    document.getElementById('monthPicker').addEventListener('change', calculateMonthlyTotal);
+
+    // HÀM ĐỊNH DẠNG NGÀY (DD/MM/YYYY)
+    function formatDateOnly(timeStr) {
+      if (!timeStr) return 'N/A';
+      let str = String(timeStr);
+      if (str.includes('-')) {
+        let parts = str.split('T')[0].split(' ')[0].split('-');
+        if (parts.length === 3) {
+          return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+      }
+      if (str.includes('/')) {
+        return str.split(' ')[0];
+      }
+      return str;
+    }
+
+    // HÀM TÍNH TỔNG TIỀN TỪ MÙNG 1 ĐẾN CUỐI THÁNG
+    function calculateMonthlyTotal() {
+      const selectedMonth = document.getElementById('monthPicker').value; // Dạng "YYYY-MM"
+      if (!selectedMonth || globalDataList.length === 0) return;
+
+      let grandTotal = 0;
+      let carCount = 0;
+
+      globalDataList.forEach(item => {
+        if (!item.timestamp) return;
+
+        let itemDateStr = String(item.timestamp);
+        let itemYearMonth = "";
+
+        if (itemDateStr.includes('-')) {
+          itemYearMonth = itemDateStr.slice(0, 7);
+        } else if (itemDateStr.includes('/')) {
+          let parts = itemDateStr.split(' ')[0].split('/');
+          if (parts.length === 3) {
+            itemYearMonth = `${parts[2]}-${parts[1].padStart(2, '0')}`;
+          }
+        }
+
+        if (itemYearMonth === selectedMonth) {
+          grandTotal += Number(item.totalPrice) || 0;
+          carCount++;
+        }
+      });
+
+      document.getElementById('monthlyCarCount').innerText = `${carCount} xe`;
+      document.getElementById('monthlyTotalDisplay').innerText = grandTotal.toLocaleString('vi-VN') + " VNĐ";
+    }
+
+    function fetchSheetData() {
+      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("DÁN_URL")) return;
+
+      fetch(GOOGLE_SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+          globalDataList = data.reverse();
+          renderTable();
+          calculateMonthlyTotal();
+        })
+        .catch(err => console.error("Lỗi tải dữ liệu:", err));
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('dataTable');
+      tbody.innerHTML = '';
+
+      if (globalDataList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào.</td></tr>';
+        return;
+      }
+
+      globalDataList.forEach(item => {
+        const displayDate = formatDateOnly(item.timestamp);
+        const formattedPrice = (Number(item.totalPrice) || 0).toLocaleString('vi-VN') + " đ";
+
+        const row = `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="p-3 font-mono text-xs text-slate-700 font-bold">${displayDate}</td>
+            <td class="p-3 font-bold text-slate-800">${item.carName}</td>
+            <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs font-semibold">${item.filmType}</span></td>
+            <td class="p-3 text-slate-600">${item.position}</td>
+            <td class="p-3 font-bold text-emerald-600">${formattedPrice}</td>
+            <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-semibold">${item.workerName}</span></td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function resetFormFields() {
+      document.getElementById('carForm').reset();
+      document.querySelectorAll('.price-checkbox').forEach(cb => cb.checked = false);
+      document.querySelectorAll('.worker-checkbox').forEach(cb => cb.checked = false);
+      document.getElementById('customWorker').value = '';
+      document.getElementById('suon_count').value = "0";
+      calculateTotal();
+      setPresetTime();
+    }
+
+    // Gửi dữ liệu về Google Sheets
+    document.getElementById('carForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const calc = calculateTotal();
+      if (calc.positionsText === 'Chưa chọn') {
+        alert("⚠️ Vui lòng chọn ít nhất 1 vị trí dán!");
+        return;
+      }
+
+      const workersText = getSelectedWorkers();
+      if (!workersText) {
+        alert("⚠️ Vui lòng chọn hoặc nhập ít nhất 1 nhân viên thi công!");
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Đang lưu vào Google Sheets...";
+
+      const newData = {
+        carName: document.getElementById('carName').value.trim(),
+        filmType: document.getElementById('filmType').value,
+        position: calc.positionsText,
+        totalPrice: calc.total,
+        workerName: workersText,
+        timestamp: document.getElementById('timestamp').value
+      };
+
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData)
+      })
+      .then(() => {
+        alert("✅ Đã lưu thành công vào Google Sheets!");
+        resetFormFields();
+        fetchSheetData();
+      })
+      .catch(err => alert("❌ Lỗi khi lưu: " + err))
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Lưu Thông Tin Thi Công";
+      });
+    });
+
+    // Xuất Excel
+    document.getElementById('exportExcelBtn').addEventListener('click', () => {
+      if (globalDataList.length === 0) {
+        alert("Chưa có dữ liệu để xuất file Excel!");
+        return;
+      }
+
+      const excelData = globalDataList.map((item, index) => ({
+        "STT": index + 1,
+        "Ngày Thi Công": formatDateOnly(item.timestamp),
+        "Tên/Biển Số Xe": item.carName,
+        "Loại Film": item.filmType,
+        "Vị Trí Dán": item.position,
+        "Tổng Tiền (VNĐ)": item.totalPrice || 0,
+        "Nhân Viên Thi Công": item.workerName
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "NhatKyF4Auto");
+      XLSX.writeFile(workbook, `F4Auto_BaoCao_${new Date().toISOString().slice(0,10)}.xlsx`);
+    });
+
+    // Khởi tạo ứng dụng
+    renderStaffUI();
+    fetchSheetData();
+  </script>
 </body>
 </html>
