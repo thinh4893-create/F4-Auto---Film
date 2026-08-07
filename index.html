@@ -14,6 +14,14 @@
 </head>
 <body class="bg-slate-100 min-h-screen p-3 md:p-8">
 
+  <!-- TOAST THÔNG BÁO TỰ ĐỘNG (ĐẸP & GỌN) -->
+  <div id="toastNotification" class="fixed top-5 right-5 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 ease-in-out pointer-events-none">
+    <div class="bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-emerald-400">
+      <span class="text-xl">✅</span>
+      <span class="font-bold text-sm tracking-wide">Đã lưu thông tin thành công!</span>
+    </div>
+  </div>
+
   <div class="max-w-5xl mx-auto space-y-6">
     <!-- Header -->
     <div class="bg-white p-5 rounded-xl shadow-md text-center border-t-4 border-blue-600">
@@ -21,8 +29,8 @@
       <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & chia tiền công thợ tự động</p>
     </div>
 
-    <!-- KHU VỰC THỐNG KÊ THEO THÁNG -->
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-5 rounded-xl shadow-lg">
+    <!-- KHU VỰC THỐNG KÊ THEO THÁNG & BẢNG LƯƠNG THỢ -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-5 rounded-xl shadow-lg space-y-4">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-blue-400/40 pb-3">
         <h2 class="text-lg font-bold flex items-center gap-2">
           <span>📊</span> Thống Kê Theo Tháng
@@ -33,14 +41,24 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-4 mt-4 text-center">
+      <div class="grid grid-cols-2 gap-4 text-center">
         <div class="bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/20">
           <p class="text-xs text-blue-100 uppercase font-semibold">Tổng Số Xe Dán</p>
           <p id="monthlyCarCount" class="text-2xl font-extrabold mt-1">0 xe</p>
         </div>
         <div class="bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/20">
-          <p class="text-xs text-blue-100 uppercase font-semibold">Tổng Tiền Thi Công</p>
+          <p class="text-xs text-blue-100 uppercase font-semibold">Tổng Doanh Thu Dán Xe</p>
           <p id="monthlyTotalDisplay" class="text-2xl font-extrabold text-yellow-300 mt-1">0 VNĐ</p>
+        </div>
+      </div>
+
+      <!-- BẢNG TỔNG CỘNG TIỀN CÔNG TỪNG THỢ TRONG THÁNG -->
+      <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 mt-3">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-blue-100 mb-2 flex items-center gap-1.5">
+          <span>👷‍♂️</span> Tổng Tiền Công Từng Thợ Nhận Được Trong Tháng
+        </h3>
+        <div id="workerSummaryContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-800">
+          <p class="text-xs text-blue-200 col-span-full">Đang tính toán...</p>
         </div>
       </div>
     </div>
@@ -279,7 +297,6 @@
       return workers;
     }
 
-    // Hàm tính toán lại tổng tiền & chia tiền thợ
     function calculateTotal() {
       let total = 0;
       let selectedPositions = [];
@@ -334,12 +351,14 @@
       return str;
     }
 
+    // TÍNH TỔNG CỘNG TIỀN THEO THÁNG & CỘNG TIỀN CÔNG CHO TỪNG THỢ
     function calculateMonthlyTotal() {
       const selectedMonth = document.getElementById('monthPicker').value;
       if (!selectedMonth || globalDataList.length === 0) return;
 
       let grandTotal = 0;
       let carCount = 0;
+      let workerMap = {};
 
       globalDataList.forEach(item => {
         if (!item.timestamp) return;
@@ -354,13 +373,38 @@
         }
 
         if (itemYearMonth === selectedMonth) {
-          grandTotal += Number(item.totalPrice) || 0;
+          const itemTotal = Number(item.totalPrice) || 0;
+          grandTotal += itemTotal;
           carCount++;
+
+          // Tính toán chia tiền công cho từng thợ trong xe này
+          const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
+          if (workersArray.length > 0) {
+            const splitAmount = Math.round(itemTotal / workersArray.length);
+            workersArray.forEach(worker => {
+              workerMap[worker] = (workerMap[worker] || 0) + splitAmount;
+            });
+          }
         }
       });
 
       document.getElementById('monthlyCarCount').innerText = `${carCount} xe`;
       document.getElementById('monthlyTotalDisplay').innerText = grandTotal.toLocaleString('vi-VN') + " VNĐ";
+
+      // Hiển thị danh sách tổng tiền từng thợ nhận được trong tháng
+      const workerSummaryContainer = document.getElementById('workerSummaryContainer');
+      const workerNames = Object.keys(workerMap);
+
+      if (workerNames.length === 0) {
+        workerSummaryContainer.innerHTML = `<p class="text-xs text-blue-200 col-span-full italic">Chưa có dữ liệu thi công cho tháng này.</p>`;
+      } else {
+        workerSummaryContainer.innerHTML = workerNames.map(name => `
+          <div class="bg-white p-2.5 rounded-lg text-center shadow-sm border border-slate-100">
+            <p class="text-[11px] font-bold text-slate-500 uppercase">${name}</p>
+            <p class="text-sm font-extrabold text-blue-700 mt-0.5">${workerMap[name].toLocaleString('vi-VN')} đ</p>
+          </div>
+        `).join('');
+      }
     }
 
     function fetchSheetData() {
@@ -421,6 +465,18 @@
       setPresetTime();
     }
 
+    // THÔNG BÁO DẠNG TOAST ĐẸP VÀ ĐƠN GIẢN
+    function showToast() {
+      const toast = document.getElementById('toastNotification');
+      toast.classList.remove('-translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('-translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+
     document.getElementById('carForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const calc = calculateTotal();
@@ -457,7 +513,7 @@
         body: JSON.stringify(newData)
       })
       .then(() => {
-        alert(`✅ Đã lưu thành công!\n👉 Tổng tiền: ${calc.total.toLocaleString('vi-VN')} VNĐ\n👉 ${workers.length} thợ, mỗi người: ${calc.perWorkerPrice.toLocaleString('vi-VN')} VNĐ`);
+        showToast();
         resetFormFields();
         fetchSheetData();
       })
