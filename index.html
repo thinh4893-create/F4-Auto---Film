@@ -14,7 +14,7 @@
 </head>
 <body class="bg-slate-100 min-h-screen p-3 md:p-8">
 
-  <!-- YÊU CẦU 2: POPUP GỌN GÀNG 1 HÀNG, HIỂN THỊ 3 GIÂY -->
+  <!-- POPUP THÔNG BÁO TỰ ĐỘNG -->
   <div id="toastNotification" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 transition-all duration-500 ease-in-out pointer-events-none z-50 w-auto max-w-sm">
     <div class="bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-xl flex items-center justify-center gap-2 border border-emerald-400 whitespace-nowrap">
       <span class="text-xl">✅</span>
@@ -169,10 +169,10 @@
           <input type="date" id="timestamp" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
         </div>
 
-        <!-- MỤC GHI CHÚ -->
+        <!-- YÊU CẦU 2: THU NHỎ MỤC GHI CHÚ (XUỐNG 2 HÀNG GỌN GÀNG) -->
         <div class="md:col-span-2">
           <label class="block text-sm font-semibold text-slate-600 mb-1">Ghi Chú</label>
-          <textarea id="note" rows="4" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800"></textarea>
+          <textarea id="note" rows="2" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 resize-y" placeholder="Nhập ghi chú (nếu có)..."></textarea>
         </div>
 
         <div class="md:col-span-2 mt-2">
@@ -386,7 +386,7 @@
 
           const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
           if (workersArray.length > 0) {
-            const splitAmount = Math.round(itemTotal / workersArray.length);
+            const splitAmount = item.perWorker ? Number(item.perWorker) : Math.round(itemTotal / workersArray.length);
             workersArray.forEach(worker => {
               workerMap[worker] = (workerMap[worker] || 0) + splitAmount;
             });
@@ -403,7 +403,6 @@
       if (workerNames.length === 0) {
         workerSummaryContainer.innerHTML = `<p class="text-xs text-blue-200 col-span-full italic">Chưa có dữ liệu thi công cho tháng này.</p>`;
       } else {
-        // YÊU CẦU 1: TÊN THỢ ĐỔI SANG CHỮ MÀU XANH LÁ CÂY (text-emerald-600)
         workerSummaryContainer.innerHTML = workerNames.map(name => `
           <div class="bg-white p-2.5 rounded-lg text-center shadow-sm border border-slate-100">
             <p class="text-xs font-bold text-emerald-600 uppercase">${name}</p>
@@ -441,7 +440,8 @@
         
         const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
         const workerCount = workersArray.length || 1;
-        const perWorker = Math.round(totalPrice / workerCount);
+        
+        const perWorker = item.perWorker ? Number(item.perWorker) : Math.round(totalPrice / workerCount);
         const noteText = item.note || '-';
 
         const row = `
@@ -471,7 +471,6 @@
       setPresetTime();
     }
 
-    // YÊU CẦU 2: HIỂN THỊ POPUP TRONG ĐÚNG 3 GIÂY (3000ms)
     function showToast() {
       const toast = document.getElementById('toastNotification');
       toast.classList.remove('-translate-y-24', 'opacity-0');
@@ -511,12 +510,14 @@
         }
       }
 
+      // YÊU CẦU 1: ĐỒNG BỘ MỤC CHIA TIỀN CỦA TỪNG NGƯỜI (perWorker) LÊN TRANG TÍNH GOOGLE SHEETS
       const newData = {
         carName: document.getElementById('carName').value.trim(),
         filmType: document.getElementById('filmType').value,
         position: calc.positionsText,
         totalPrice: calc.total,
         workerName: workers.join(', '),
+        perWorker: calc.perWorkerPrice, // Số tiền chia cho mỗi thợ gửi lên Google Sheets
         note: document.getElementById('note').value.trim(),
         timestamp: formattedDate
       };
@@ -549,7 +550,7 @@
         const totalPrice = Number(item.totalPrice) || 0;
         const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
         const workerCount = workersArray.length || 1;
-        const perWorker = Math.round(totalPrice / workerCount);
+        const perWorker = item.perWorker ? Number(item.perWorker) : Math.round(totalPrice / workerCount);
 
         return {
           "STT": index + 1,
