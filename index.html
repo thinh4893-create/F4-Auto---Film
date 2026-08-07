@@ -412,7 +412,7 @@
     }
 
     function fetchSheetData() {
-      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("DÁN_URL")) return;
+      if (!GOOGLE_SCRIPT_URL) return;
 
       fetch(GOOGLE_SCRIPT_URL)
         .then(res => res.json())
@@ -522,7 +522,7 @@
         totalPrice: calc.total,
         workerName: workers.join(', '),
         perWorker: calc.perWorkerPrice,
-        workerDetails: workerDetails, // Gửi chi tiết tiền công từng thợ
+        workerDetails: workerDetails,
         note: document.getElementById('note').value.trim(),
         timestamp: formattedDate
       };
