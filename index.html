@@ -185,7 +185,7 @@
           <span>🚗</span> Nhật Ký Thi Công
         </h2>
         <button id="exportExcelBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 shadow transition">
-          📊 Xuất Báo Cáo Excel
+          📊 Xuất Báo Cáo Excel (Có hàm SUM)
         </button>
       </div>
 
@@ -551,13 +551,14 @@
       });
     });
 
+    // Xuất file Excel tích hợp hàm =SUM tự động ở dòng cuối
     document.getElementById('exportExcelBtn').addEventListener('click', () => {
       if (globalDataList.length === 0) {
         alert("Chưa có dữ liệu để xuất file Excel!");
         return;
       }
 
-      const excelData = globalDataList.map((item, index) => {
+      let excelData = globalDataList.map((item, index) => {
         const totalPrice = Number(item.totalPrice) || 0;
         const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
         const workerCount = workersArray.length || 1;
@@ -576,6 +577,25 @@
           "Ghi Chú": item.note || ''
         };
       });
+
+      // Tạo dòng tính tổng (Footer row) chứa hàm =SUM
+      const startRow = 2; // Dữ liệu bắt đầu từ dòng 2 (dòng 1 là tiêu đề)
+      const endRow = excelData.length + 1; // Dòng cuối cùng của dữ liệu
+
+      const totalRow = {
+        "STT": "TỔNG CỘNG",
+        "Ngày Thi Công": "",
+        "Tên/Biển Số Xe": "",
+        "Loại Film": "",
+        "Vị Trí Dán": "",
+        "Tổng Tiền (VNĐ)": { f: `SUM(F${startRow}:F${endRow})` },
+        "Số Thợ": "",
+        "Thợ Thi Công": "",
+        "Tiền Chia Mỗi Thợ (VNĐ)": { f: `SUM(I${startRow}:I${endRow})` },
+        "Ghi Chú": ""
+      };
+
+      excelData.push(totalRow);
 
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
