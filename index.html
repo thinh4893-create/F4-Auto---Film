@@ -368,7 +368,7 @@
 
       globalDataList.forEach(item => {
         const displayDate = formatDateOnly(item.timestamp);
-        const formattedPrice = (Number(item.totalPrice) || 0).toLocaleString('vi-VN') + " đ";
+        const formattedPrice = (Number(item.totalPrice) || 0).toLocaleString('vi-VN') ;
 
         const row = `
           <tr class="hover:bg-slate-50 transition">
