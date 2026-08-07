@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>F4 Auto - Quản Lý Dán Film</title>
 
-  <!-- Logo Icon trên iPhone / iPad -->
+  <!-- Logo Icon -->
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202003.png">
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202003.png">
 
@@ -14,11 +14,11 @@
 </head>
 <body class="bg-slate-100 min-h-screen p-3 md:p-8">
 
-  <div class="max-w-4xl mx-auto space-y-6">
+  <div class="max-w-5xl mx-auto space-y-6">
     <!-- Header -->
     <div class="bg-white p-5 rounded-xl shadow-md text-center border-t-4 border-blue-600">
       <h1 class="text-2xl font-bold text-slate-800 uppercase tracking-wide">F4 AUTO - QUẢN LÝ THI CÔNG</h1>
-      <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & năng suất nhân viên (Tự động đồng bộ Google Sheets)</p>
+      <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & chia tiền công thợ tự động</p>
     </div>
 
     <!-- KHU VỰC THỐNG KÊ THEO THÁNG -->
@@ -39,7 +39,7 @@
           <p id="monthlyCarCount" class="text-2xl font-extrabold mt-1">0 xe</p>
         </div>
         <div class="bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/20">
-          <p class="text-xs text-blue-100 uppercase font-semibold">Tổng Tiền</p>
+          <p class="text-xs text-blue-100 uppercase font-semibold">Tổng Tiền Thi Công</p>
           <p id="monthlyTotalDisplay" class="text-2xl font-extrabold text-yellow-300 mt-1">0 VNĐ</p>
         </div>
       </div>
@@ -124,7 +124,7 @@
             </button>
           </div>
 
-          <!-- Khung Thêm / Xóa Nhân Viên (Bật/Tắt) -->
+          <!-- Khung Thêm / Xóa Nhân Viên -->
           <div id="staffManageBox" class="hidden mb-3 p-3 bg-white border border-dashed border-blue-400 rounded-lg space-y-2">
             <div class="flex gap-2">
               <input type="text" id="newStaffName" placeholder="Nhập tên nhân viên mới..." class="flex-1 border rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-blue-500">
@@ -138,11 +138,23 @@
           <div id="workerCheckboxContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm"></div>
 
           <input type="text" id="customWorker" placeholder="Hoặc nhập tên nhân viên khác (phân cách bằng dấu phẩy)..." class="mt-3 w-full border rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-white">
+
+          <!-- Hiển thị Chia Tiền Công Tự Động -->
+          <div id="splitInfoBox" class="mt-3 p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-xs font-semibold flex justify-between items-center">
+            <span>Chia tiền thợ:</span>
+            <span id="splitCalcDisplay" class="text-amber-700 font-bold">Chưa chọn thợ</span>
+          </div>
         </div>
 
         <div>
           <label class="block text-sm font-semibold text-slate-600 mb-1">Ngày Thi Công</label>
           <input type="date" id="timestamp" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+        </div>
+
+        <!-- MỤC GHI CHÚ BỔ SUNG -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Ghi Chú</label>
+          <input type="text" id="note" placeholder="VD: Khách quen giảm 50k, lột film cũ..." class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
         </div>
 
         <div class="md:col-span-2 mt-2">
@@ -165,20 +177,22 @@
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm border-collapse min-w-[650px]">
+        <table class="w-full text-left text-sm border-collapse min-w-[800px]">
           <thead>
             <tr class="bg-slate-100 text-slate-700 uppercase text-xs">
-              <th class="p-3 rounded-l-lg">Ngày thi công</th>
+              <th class="p-3 rounded-l-lg">Ngày</th>
               <th class="p-3">Thông tin Xe</th>
-              <th class="p-3">Loại Film</th>
+              <th class="p-3">Film</th>
               <th class="p-3">Vị trí dán</th>
               <th class="p-3">Tổng Tiền</th>
-              <th class="p-3 rounded-r-lg">Nhân viên</th>
+              <th class="p-3">Thợ Thi Công</th>
+              <th class="p-3">Mỗi Thợ Nhận</th>
+              <th class="p-3 rounded-r-lg">Ghi Chú</th>
             </tr>
           </thead>
           <tbody id="dataTable" class="divide-y divide-slate-100 text-slate-700">
             <tr>
-              <td colspan="6" class="p-4 text-center text-slate-400">Đang tải dữ liệu từ Google Sheets...</td>
+              <td colspan="8" class="p-4 text-center text-slate-400">Đang tải dữ liệu từ Google Sheets...</td>
             </tr>
           </tbody>
         </table>
@@ -187,13 +201,11 @@
   </div>
 
   <script>
-    // ⚠️ VUI LÒNG DÁN ĐƯỜNG LINK WEB APP GOOGLE APPS SCRIPT VÀO NHÓM NGOẶC KÉP NÀY:
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHi_4FzBuYWRkZOtyJn2dU34v0UcqHwI2t01kYv7KuEsdP9kRhRBUbyr50vBY39y4S/exec";
 
     let globalDataList = [];
     const defaultStaffList = ['Tuấn', 'Huy', 'Phong', 'Nam'];
 
-    // LẤY VÀ HIỂN THỊ DANH SÁCH NHÂN VIÊN (LOCAL STORAGE)
     function getStaffList() {
       const saved = localStorage.getItem('f4_staff_list');
       return saved ? JSON.parse(saved) : defaultStaffList;
@@ -202,7 +214,6 @@
     function renderStaffUI() {
       const staffList = getStaffList();
 
-      // Render các ô Checkbox chọn nhân viên
       const checkboxContainer = document.getElementById('workerCheckboxContainer');
       checkboxContainer.innerHTML = staffList.map(name => `
         <label class="flex items-center space-x-2 bg-white p-2 rounded border cursor-pointer hover:bg-blue-50">
@@ -211,7 +222,10 @@
         </label>
       `).join('');
 
-      // Render danh sách Tag xóa nhân viên trong khung quản lý
+      document.querySelectorAll('.worker-checkbox').forEach(cb => {
+        cb.addEventListener('change', calculateTotal);
+      });
+
       const tagsContainer = document.getElementById('staffTagsContainer');
       tagsContainer.innerHTML = staffList.map(name => `
         <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded border border-slate-300">
@@ -241,79 +255,87 @@
       renderStaffUI();
     }
 
-    // Bật/Tắt khung Cài Đặt Nhân Viên
     document.getElementById('toggleStaffManageBtn').addEventListener('click', () => {
-      const box = document.getElementById('staffManageBox');
-      box.classList.toggle('hidden');
+      document.getElementById('staffManageBox').classList.toggle('hidden');
     });
 
-    // Tự động thiết lập Ngày hôm nay & Tháng hiện tại
     const setPresetTime = () => {
       const now = new Date();
       const today = now.toISOString().split('T')[0];
       document.getElementById('timestamp').value = today;
-
-      const currentMonth = today.slice(0, 7); // YYYY-MM
-      document.getElementById('monthPicker').value = currentMonth;
+      document.getElementById('monthPicker').value = today.slice(0, 7);
     };
     setPresetTime();
 
+    function getSelectedWorkers() {
+      let workers = [];
+      document.querySelectorAll('.worker-checkbox:checked').forEach(cb => workers.push(cb.value));
+      const customWorker = document.getElementById('customWorker').value.trim();
+      if (customWorker) {
+        customWorker.split(',').forEach(w => {
+          if (w.trim()) workers.push(w.trim());
+        });
+      }
+      return workers;
+    }
+
+    // Hàm tính toán lại tổng tiền & chia tiền thợ
     function calculateTotal() {
       let total = 0;
       let selectedPositions = [];
 
-      const checkboxes = document.querySelectorAll('.price-checkbox:checked');
-      checkboxes.forEach(cb => {
+      document.querySelectorAll('.price-checkbox:checked').forEach(cb => {
         selectedPositions.push(cb.value);
         total += parseInt(cb.getAttribute('data-price') || 0);
       });
 
       const suonCount = parseInt(document.getElementById('suon_count').value);
       if (suonCount > 0) {
-        const suonPrice = suonCount * 20000;
-        total += suonPrice;
+        total += suonCount * 20000;
         selectedPositions.push(`${suonCount} Sườn`);
       }
 
       document.getElementById('totalPriceDisplay').innerText = total.toLocaleString('vi-VN') + " VNĐ";
-      return { total, positionsText: selectedPositions.length > 0 ? selectedPositions.join(', ') : 'Chưa chọn' };
-    }
 
-    function getSelectedWorkers() {
-      let workers = [];
-      document.querySelectorAll('.worker-checkbox:checked').forEach(cb => {
-        workers.push(cb.value);
-      });
-      const customWorker = document.getElementById('customWorker').value.trim();
-      if (customWorker) {
-        workers.push(customWorker);
+      const workers = getSelectedWorkers();
+      const workerCount = workers.length;
+      let perWorkerPrice = 0;
+
+      if (workerCount > 0 && total > 0) {
+        perWorkerPrice = Math.round(total / workerCount);
+        document.getElementById('splitCalcDisplay').innerText = `${workerCount} thợ (${total.toLocaleString('vi-VN')} ÷ ${workerCount}) = ${perWorkerPrice.toLocaleString('vi-VN')} VNĐ/người`;
+      } else if (workerCount > 0) {
+        document.getElementById('splitCalcDisplay').innerText = `${workerCount} thợ thi công`;
+      } else {
+        document.getElementById('splitCalcDisplay').innerText = "Chưa chọn thợ";
       }
-      return workers.join(', ');
+
+      return { 
+        total, 
+        positionsText: selectedPositions.length > 0 ? selectedPositions.join(', ') : 'Chưa chọn',
+        workerCount,
+        perWorkerPrice
+      };
     }
 
     document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
     document.getElementById('suon_count').addEventListener('change', calculateTotal);
+    document.getElementById('customWorker').addEventListener('input', calculateTotal);
     document.getElementById('monthPicker').addEventListener('change', calculateMonthlyTotal);
 
-    // HÀM ĐỊNH DẠNG NGÀY (DD/MM/YYYY)
     function formatDateOnly(timeStr) {
       if (!timeStr) return 'N/A';
       let str = String(timeStr);
       if (str.includes('-')) {
         let parts = str.split('T')[0].split(' ')[0].split('-');
-        if (parts.length === 3) {
-          return `${parts[2]}/${parts[1]}/${parts[0]}`;
-        }
+        if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
       }
-      if (str.includes('/')) {
-        return str.split(' ')[0];
-      }
+      if (str.includes('/')) return str.split(' ')[0];
       return str;
     }
 
-    // HÀM TÍNH TỔNG TIỀN TỪ MÙNG 1 ĐẾN CUỐI THÁNG
     function calculateMonthlyTotal() {
-      const selectedMonth = document.getElementById('monthPicker').value; // Dạng "YYYY-MM"
+      const selectedMonth = document.getElementById('monthPicker').value;
       if (!selectedMonth || globalDataList.length === 0) return;
 
       let grandTotal = 0;
@@ -321,7 +343,6 @@
 
       globalDataList.forEach(item => {
         if (!item.timestamp) return;
-
         let itemDateStr = String(item.timestamp);
         let itemYearMonth = "";
 
@@ -329,9 +350,7 @@
           itemYearMonth = itemDateStr.slice(0, 7);
         } else if (itemDateStr.includes('/')) {
           let parts = itemDateStr.split(' ')[0].split('/');
-          if (parts.length === 3) {
-            itemYearMonth = `${parts[2]}-${parts[1].padStart(2, '0')}`;
-          }
+          if (parts.length === 3) itemYearMonth = `${parts[2]}-${parts[1].padStart(2, '0')}`;
         }
 
         if (itemYearMonth === selectedMonth) {
@@ -362,13 +381,18 @@
       tbody.innerHTML = '';
 
       if (globalDataList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào.</td></tr>';
         return;
       }
 
       globalDataList.forEach(item => {
         const displayDate = formatDateOnly(item.timestamp);
-        const formattedPrice = (Number(item.totalPrice) || 0).toLocaleString('vi-VN') ;
+        const totalPrice = Number(item.totalPrice) || 0;
+        
+        const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
+        const workerCount = workersArray.length || 1;
+        const perWorker = Math.round(totalPrice / workerCount);
+        const noteText = item.note || '-';
 
         const row = `
           <tr class="hover:bg-slate-50 transition">
@@ -376,8 +400,10 @@
             <td class="p-3 font-bold text-slate-800">${item.carName}</td>
             <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs font-semibold">${item.filmType}</span></td>
             <td class="p-3 text-slate-600">${item.position}</td>
-            <td class="p-3 font-bold text-emerald-600">${formattedPrice}</td>
-            <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-semibold">${item.workerName}</span></td>
+            <td class="p-3 font-bold text-slate-800">${totalPrice.toLocaleString('vi-VN')} VNĐ</td>
+            <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-semibold">${item.workerName} (${workerCount} thợ)</span></td>
+            <td class="p-3 font-bold text-amber-600">${perWorker.toLocaleString('vi-VN')} VNĐ/người</td>
+            <td class="p-3 text-xs text-slate-500 italic">${noteText}</td>
           </tr>
         `;
         tbody.innerHTML += row;
@@ -389,36 +415,38 @@
       document.querySelectorAll('.price-checkbox').forEach(cb => cb.checked = false);
       document.querySelectorAll('.worker-checkbox').forEach(cb => cb.checked = false);
       document.getElementById('customWorker').value = '';
+      document.getElementById('note').value = '';
       document.getElementById('suon_count').value = "0";
       calculateTotal();
       setPresetTime();
     }
 
-    // Gửi dữ liệu về Google Sheets
     document.getElementById('carForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const calc = calculateTotal();
+
       if (calc.positionsText === 'Chưa chọn') {
         alert("⚠️ Vui lòng chọn ít nhất 1 vị trí dán!");
         return;
       }
 
-      const workersText = getSelectedWorkers();
-      if (!workersText) {
+      const workers = getSelectedWorkers();
+      if (workers.length === 0) {
         alert("⚠️ Vui lòng chọn hoặc nhập ít nhất 1 nhân viên thi công!");
         return;
       }
 
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
-      submitBtn.innerText = "Đang lưu vào Google Sheets...";
+      submitBtn.innerText = "Đang lưu...";
 
       const newData = {
         carName: document.getElementById('carName').value.trim(),
         filmType: document.getElementById('filmType').value,
         position: calc.positionsText,
         totalPrice: calc.total,
-        workerName: workersText,
+        workerName: workers.join(', '),
+        note: document.getElementById('note').value.trim(),
         timestamp: document.getElementById('timestamp').value
       };
 
@@ -429,7 +457,7 @@
         body: JSON.stringify(newData)
       })
       .then(() => {
-        alert("✅ Đã lưu thành công vào Google Sheets!");
+        alert(`✅ Đã lưu thành công!\n👉 Tổng tiền: ${calc.total.toLocaleString('vi-VN')} VNĐ\n👉 ${workers.length} thợ, mỗi người: ${calc.perWorkerPrice.toLocaleString('vi-VN')} VNĐ`);
         resetFormFields();
         fetchSheetData();
       })
@@ -440,22 +468,31 @@
       });
     });
 
-    // Xuất Excel
     document.getElementById('exportExcelBtn').addEventListener('click', () => {
       if (globalDataList.length === 0) {
         alert("Chưa có dữ liệu để xuất file Excel!");
         return;
       }
 
-      const excelData = globalDataList.map((item, index) => ({
-        "STT": index + 1,
-        "Ngày Thi Công": formatDateOnly(item.timestamp),
-        "Tên/Biển Số Xe": item.carName,
-        "Loại Film": item.filmType,
-        "Vị Trí Dán": item.position,
-        "Tổng Tiền (VNĐ)": item.totalPrice || 0,
-        "Nhân Viên Thi Công": item.workerName
-      }));
+      const excelData = globalDataList.map((item, index) => {
+        const totalPrice = Number(item.totalPrice) || 0;
+        const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
+        const workerCount = workersArray.length || 1;
+        const perWorker = Math.round(totalPrice / workerCount);
+
+        return {
+          "STT": index + 1,
+          "Ngày Thi Công": formatDateOnly(item.timestamp),
+          "Tên/Biển Số Xe": item.carName,
+          "Loại Film": item.filmType,
+          "Vị Trí Dán": item.position,
+          "Tổng Tiền (VNĐ)": totalPrice,
+          "Số Thợ": workerCount,
+          "Thợ Thi Công": item.workerName,
+          "Tiền Chia Mỗi Thợ (VNĐ)": perWorker,
+          "Ghi Chú": item.note || ''
+        };
+      });
 
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
@@ -463,7 +500,6 @@
       XLSX.writeFile(workbook, `F4Auto_BaoCao_${new Date().toISOString().slice(0,10)}.xlsx`);
     });
 
-    // Khởi tạo ứng dụng
     renderStaffUI();
     fetchSheetData();
   </script>
