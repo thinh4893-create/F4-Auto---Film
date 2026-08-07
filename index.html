@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>F4 Auto - Quản Lý Dán Film</title>
 
-  <!-- Logo Icon -->
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202003.png">
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202003.png">
 
@@ -94,8 +93,13 @@
             </label>
 
             <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="200000" value="Full xe + Nóc">
-              <span class="font-medium">Full Xe + Nóc</span>
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="180000" value="Full Xe + 1 Nóc">
+              <span class="font-medium">Full Xe + 1 Nóc</span>
+            </label>
+
+            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="200000" value="Full + 2 Nóc">
+              <span class="font-medium">Full Xe + 2 Nóc</span>
             </label>
 
             <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
@@ -109,12 +113,11 @@
             </label>
 
             <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="30000" value="Nóc">
+              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="20000" value="Nóc">
               <span class="font-medium">Nóc</span>
             </label>
           </div>
 
-          <!-- Chọn số lượng Sườn -->
           <div class="mt-3 pt-3 border-t border-slate-200 flex flex-wrap items-center gap-3 text-sm">
             <span class="font-semibold text-slate-700">Kính Sườn:</span>
             <select id="suon_count" class="border rounded-lg p-2 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
@@ -126,7 +129,6 @@
             </select>
           </div>
 
-          <!-- Hiển thị Tổng tiền -->
           <div class="mt-4 pt-2 flex justify-between items-center text-base font-bold text-blue-700 border-t border-slate-200">
             <span>TỔNG TIỀN DÁN XE NÀY:</span>
             <span id="totalPriceDisplay" class="text-xl">0 VNĐ</span>
@@ -142,7 +144,6 @@
             </button>
           </div>
 
-          <!-- Khung Thêm / Xóa Nhân Viên -->
           <div id="staffManageBox" class="hidden mb-3 p-3 bg-white border border-dashed border-blue-400 rounded-lg space-y-2">
             <div class="flex gap-2">
               <input type="text" id="newStaffName" placeholder="Tên nhân viên mới..." class="flex-1 border rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-blue-500">
@@ -152,12 +153,10 @@
             <div id="staffTagsContainer" class="flex flex-wrap gap-1.5"></div>
           </div>
 
-          <!-- Danh Sách Checkbox Nhân Viên -->
           <div id="workerCheckboxContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm"></div>
 
           <input type="text" id="customWorker" placeholder="Nhập tên thợ khác (ví dụ: Nam, Bình...)" class="mt-3 w-full border rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-white">
 
-          <!-- Hiển thị Chia Tiền Công Tự Động -->
           <div id="splitInfoBox" class="mt-3 p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-xs font-semibold flex justify-between items-center">
             <span>Chia tiền thợ:</span>
             <span id="splitCalcDisplay" class="text-amber-700 font-bold">Chưa chọn thợ</span>
@@ -218,7 +217,7 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_FLTz9hh7dCdD7bi2d26HrZi8Cx2GUQeVfEYEHqmq1csuT0wC2ThiCtnaBNqchIvkhw/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzN0BsIE8mBI3MHLcsxTCDxfSWq5sCScEQon5ijQQt6ur8fH-AkBF2t-WbAoLas2XZz/exec";
 
     let globalDataList = [];
     const defaultStaffList = ['Tuấn', 'Huy', 'Phong', 'Nam'];
@@ -509,7 +508,6 @@
         }
       }
 
-      // Tạo object chi tiết tiền cho từng thợ thi công
       let workerDetails = {};
       workers.forEach(w => {
         workerDetails[w] = calc.perWorkerPrice;
@@ -530,13 +528,13 @@
       fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(newData)
       })
       .then(() => {
         showToast();
         resetFormFields();
-        fetchSheetData();
+        setTimeout(fetchSheetData, 1500);
       })
       .catch(err => alert("❌ Lỗi khi lưu: " + err))
       .finally(() => {
