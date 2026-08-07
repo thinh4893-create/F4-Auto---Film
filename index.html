@@ -14,7 +14,7 @@
 </head>
 <body class="bg-slate-100 min-h-screen p-3 md:p-8">
 
-  <!-- TOAST THÔNG BÁO TỰ ĐỘNG (ĐẸP & GỌN) -->
+  <!-- TOAST THÔNG BÁO TỰ ĐỘNG -->
   <div id="toastNotification" class="fixed top-5 right-5 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 ease-in-out pointer-events-none">
     <div class="bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-emerald-400">
       <span class="text-xl">✅</span>
@@ -377,10 +377,10 @@
           grandTotal += itemTotal;
           carCount++;
 
-          // Tính toán chia tiền công cho từng thợ trong xe này
+          // Ưu tiên dùng số tiền chia sẵn nếu có, ngược lại tự tính chia đều
           const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
           if (workersArray.length > 0) {
-            const splitAmount = Math.round(itemTotal / workersArray.length);
+            const splitAmount = Number(item.perWorkerPrice) || Math.round(itemTotal / workersArray.length);
             workersArray.forEach(worker => {
               workerMap[worker] = (workerMap[worker] || 0) + splitAmount;
             });
@@ -434,8 +434,8 @@
         const totalPrice = Number(item.totalPrice) || 0;
         
         const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
-        const workerCount = workersArray.length || 1;
-        const perWorker = Math.round(totalPrice / workerCount);
+        const workerCount = Number(item.workerCount) || workersArray.length || 1;
+        const perWorker = Number(item.perWorkerPrice) || Math.round(totalPrice / workerCount);
         const noteText = item.note || '-';
 
         const row = `
@@ -465,7 +465,7 @@
       setPresetTime();
     }
 
-    // THÔNG BÁO DẠNG TOAST ĐẸP VÀ ĐƠN GIẢN
+    // THÔNG BÁO DẠNG TOAST
     function showToast() {
       const toast = document.getElementById('toastNotification');
       toast.classList.remove('-translate-y-20', 'opacity-0');
@@ -496,12 +496,15 @@
       submitBtn.disabled = true;
       submitBtn.innerText = "Đang lưu...";
 
+      // Thêm thông tin chia tiền thợ để đồng bộ lên Google Sheet
       const newData = {
         carName: document.getElementById('carName').value.trim(),
         filmType: document.getElementById('filmType').value,
         position: calc.positionsText,
         totalPrice: calc.total,
         workerName: workers.join(', '),
+        workerCount: calc.workerCount,
+        perWorkerPrice: calc.perWorkerPrice,
         note: document.getElementById('note').value.trim(),
         timestamp: document.getElementById('timestamp').value
       };
@@ -533,8 +536,8 @@
       const excelData = globalDataList.map((item, index) => {
         const totalPrice = Number(item.totalPrice) || 0;
         const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
-        const workerCount = workersArray.length || 1;
-        const perWorker = Math.round(totalPrice / workerCount);
+        const workerCount = Number(item.workerCount) || workersArray.length || 1;
+        const perWorker = Number(item.perWorkerPrice) || Math.round(totalPrice / workerCount);
 
         return {
           "STT": index + 1,
