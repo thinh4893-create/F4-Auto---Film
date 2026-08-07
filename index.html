@@ -148,7 +148,7 @@
               <input type="text" id="newStaffName" placeholder="Tên nhân viên mới..." class="flex-1 border rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-blue-500">
               <button type="button" onclick="addStaff()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-bold transition">Thêm</button>
             </div>
-            <p class="text-[11px] text-slate-500">Bấm nút ✖ màu đỏ để xóa nhân viên khỏi danh sách:</p>
+            <p class="text-[11px] text-slate-500">Bấm nút ✕ màu đỏ để xóa nhân viên khỏi danh sách:</p>
             <div id="staffTagsContainer" class="flex flex-wrap gap-1.5"></div>
           </div>
 
@@ -169,7 +169,6 @@
           <input type="date" id="timestamp" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
         </div>
 
-        <!-- YÊU CẦU 2: THU NHỎ MỤC GHI CHÚ (XUỐNG 2 HÀNG GỌN GÀNG) -->
         <div class="md:col-span-2">
           <label class="block text-sm font-semibold text-slate-600 mb-1">Ghi Chú</label>
           <textarea id="note" rows="2" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 resize-y" placeholder="Nhập ghi chú (nếu có)..."></textarea>
@@ -219,7 +218,7 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHi_4FzBuYWRkZOtyJn2dU34v0UcqHwI2t01kYv7KuEsdP9kRhRBUbyr50vBY39y4S/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzN0BsIE8mBI3MHLcsxTCDxfSWq5sCScEQon5ijQQt6ur8fH-AkBF2t-WbAoLas2XZz/exec";
 
     let globalDataList = [];
     const defaultStaffList = ['Tuấn', 'Huy', 'Phong', 'Nam'];
@@ -501,23 +500,29 @@
       submitBtn.disabled = true;
       submitBtn.innerText = "Đang lưu...";
 
-      const rawDate = document.getElementById('timestamp').value; // YYYY-MM-DD
+      const rawDate = document.getElementById('timestamp').value;
       let formattedDate = rawDate;
       if (rawDate && rawDate.includes('-')) {
         const parts = rawDate.split('-');
         if (parts.length === 3) {
-          formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`; // Chuyển thành DD-MM-YYYY
+          formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
         }
       }
 
-      // YÊU CẦU 1: ĐỒNG BỘ MỤC CHIA TIỀN CỦA TỪNG NGƯỜI (perWorker) LÊN TRANG TÍNH GOOGLE SHEETS
+      // Tạo object chi tiết tiền cho từng thợ thi công
+      let workerDetails = {};
+      workers.forEach(w => {
+        workerDetails[w] = calc.perWorkerPrice;
+      });
+
       const newData = {
         carName: document.getElementById('carName').value.trim(),
         filmType: document.getElementById('filmType').value,
         position: calc.positionsText,
         totalPrice: calc.total,
         workerName: workers.join(', '),
-        perWorker: calc.perWorkerPrice, // Số tiền chia cho mỗi thợ gửi lên Google Sheets
+        perWorker: calc.perWorkerPrice,
+        workerDetails: workerDetails, // Gửi chi tiết tiền công từng thợ
         note: document.getElementById('note').value.trim(),
         timestamp: formattedDate
       };
