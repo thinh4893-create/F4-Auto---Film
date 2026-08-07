@@ -21,11 +21,11 @@
       <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & năng suất nhân viên (Tự động đồng bộ Google Sheets)</p>
     </div>
 
-    <!-- KHU VỰC THỐNG KÊ DOANH THU THEO THÁNG -->
+    <!-- KHU VỰC THỐNG KÊ THEO THÁNG -->
     <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-5 rounded-xl shadow-lg">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-blue-400/40 pb-3">
         <h2 class="text-lg font-bold flex items-center gap-2">
-          <span>📊</span> Thống Kê Doanh Thu Theo Tháng
+          <span>📊</span> Thống Kê Theo Tháng
         </h2>
         <div class="flex items-center gap-2">
           <label class="text-xs font-semibold uppercase text-blue-100">Chọn tháng:</label>
@@ -39,7 +39,7 @@
           <p id="monthlyCarCount" class="text-2xl font-extrabold mt-1">0 xe</p>
         </div>
         <div class="bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/20">
-          <p class="text-xs text-blue-100 uppercase font-semibold">Tổng Doanh Thu Tháng</p>
+          <p class="text-xs text-blue-100 uppercase font-semibold">Tổng Tiền</p>
           <p id="monthlyTotalDisplay" class="text-2xl font-extrabold text-yellow-300 mt-1">0 VNĐ</p>
         </div>
       </div>
@@ -65,9 +65,9 @@
           </select>
         </div>
 
-        <!-- Chọn Vị Trí Độc Lập -->
+        <!-- Chọn Vị Trí Dán Film -->
         <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <label class="block text-sm font-bold text-slate-700 mb-2">Chọn Vị Trí Dán Film & Giá Độc Lập</label>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Chọn Vị Trí Dán Film</label>
           
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
             <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
@@ -118,7 +118,7 @@
         <!-- Chọn & Quản Lý Nhân Viên Thi Công -->
         <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
           <div class="flex justify-between items-center mb-2">
-            <label class="block text-sm font-bold text-slate-700">Chọn Nhân Viên Thi Công (Có thể chọn nhiều người)</label>
+            <label class="block text-sm font-bold text-slate-700">Chọn Nhân Viên Thi Công</label>
             <button type="button" id="toggleStaffManageBtn" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-2.5 py-1 rounded transition">
               ⚙️ Quản Lý Nhân Viên
             </button>
@@ -187,8 +187,8 @@
   </div>
 
   <script>
-    // ⚠️ DÁN URL CỦA GOOGLE APPS SCRIPT VÀO ĐÂY:
-    const GOOGLE_SCRIPT_URL = "DÁN_URL_GOOGLE_SCRIPT_CỦA_BẠN_VÀO_ĐÂY";
+    // ⚠️ VUI LÒNG DÁN ĐƯỜNG LINK WEB APP GOOGLE APPS SCRIPT VÀO NHÓM NGOẶC KÉP NÀY:
+    const GOOGLE_SCRIPT_URL = "DÁN_URL_GOOGLE_APPS_SCRIPT_CỦA_BẠN_VÀO_ĐÂY";
 
     let globalDataList = [];
     const defaultStaffList = ['Tuấn', 'Huy', 'Phong', 'Nam'];
