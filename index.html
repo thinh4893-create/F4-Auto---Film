@@ -13,7 +13,7 @@
 </head>
 <body class="bg-slate-100 min-h-screen p-3 md:p-8">
 
-  <!-- POPUP THÔNG BÁO TỰ ĐỘNG -->
+  <!-- POPUP THÔNG BÁO -->
   <div id="toastNotification" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 transition-all duration-500 ease-in-out pointer-events-none z-50 w-auto max-w-sm">
     <div class="bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-xl flex items-center justify-center gap-2 border border-emerald-400 whitespace-nowrap">
       <span class="text-xl">✅</span>
@@ -51,7 +51,7 @@
         </div>
       </div>
 
-      <!-- BẢNG TỔNG CỘNG TIỀN CÔNG TỪNG THỢ TRONG THÁNG -->
+      <!-- BẢNG TỔNG CỘNG TIỀN CÔNG TỪNG THỢ -->
       <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 mt-3">
         <h3 class="text-xs font-bold uppercase tracking-wider text-blue-100 mb-2 flex items-center gap-1.5">
           <span>👷‍♂️</span> Tổng Tiền Công Từng Thợ Nhận Được Trong Tháng
@@ -70,7 +70,7 @@
       <form id="carForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-semibold text-slate-600 mb-1">Tên/Biển Số Xe</label>
-          <input type="text" id="carName" placeholder="Ví dụ: Toyota Cross - 30K-123.45" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+          <input type="text" id="carName" placeholder="Ví dụ: Cos - 30K-123.45" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
         </div>
         <div>
           <label class="block text-sm font-semibold text-slate-600 mb-1">Loại Film Dán</label>
@@ -89,7 +89,7 @@
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
             <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
               <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="160000" value="Full xe">
-              <span class="font-medium">Full Xe</span>
+              <span class="font-medium">Full xe</span>
             </label>
 
             <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
@@ -103,7 +103,7 @@
             </label>
           </div>
 
-          <!-- MENU THẢ XUỐNG CHO KÍNH SƯỜN VÀ CỬA SỔ TRỜI (NÓC) -->
+          <!-- MENU THẢ XUỐNG DÁN SƯỜN & NÓC -->
           <div class="mt-3 pt-3 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div class="flex items-center justify-between bg-white p-2.5 rounded-lg border">
               <label for="suon_count" class="font-semibold text-slate-700">Kính Sườn:</label>
@@ -214,10 +214,11 @@
   </div>
 
   <script>
+    // DÁN URL GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY:
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_FLTz9hh7dCdD7bi2d26HrZi8Cx2GUQeVfEYEHqmq1csuT0wC2ThiCtnaBNqchIvkhw/exec";
 
     let globalDataList = [];
-    const defaultStaffList = ['Tuấn', 'Huy', 'Phong', 'Nam', 'Vũ', 'Thịnh'];
+    const defaultStaffList = ['Vũ', 'Thịnh', 'Tuấn', 'Huy', 'Phong', 'Nam'];
 
     function getStaffList() {
       const saved = localStorage.getItem('f4_staff_list');
@@ -226,7 +227,6 @@
 
     function renderStaffUI() {
       const staffList = getStaffList();
-
       const checkboxContainer = document.getElementById('workerCheckboxContainer');
       checkboxContainer.innerHTML = staffList.map(name => `
         <label class="flex items-center space-x-2 bg-white p-2 rounded border cursor-pointer hover:bg-blue-50">
@@ -235,9 +235,7 @@
         </label>
       `).join('');
 
-      document.querySelectorAll('.worker-checkbox').forEach(cb => {
-        cb.addEventListener('change', calculateTotal);
-      });
+      document.querySelectorAll('.worker-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
 
       const tagsContainer = document.getElementById('staffTagsContainer');
       tagsContainer.innerHTML = staffList.map(name => `
@@ -252,7 +250,6 @@
       const nameInput = document.getElementById('newStaffName');
       const newName = nameInput.value.trim();
       if (!newName) return;
-
       let staffList = getStaffList();
       if (!staffList.includes(newName)) {
         staffList.push(newName);
@@ -277,9 +274,7 @@
       const year = now.getFullYear();
       const month = String(now.getMonth() + 1).padStart(2, '0');
       const day = String(now.getDate()).padStart(2, '0');
-      const today = `${year}-${month}-${day}`;
-      
-      document.getElementById('timestamp').value = today;
+      document.getElementById('timestamp').value = `${year}-${month}-${day}`;
       document.getElementById('monthPicker').value = `${year}-${month}`;
     };
     setPresetTime();
@@ -289,9 +284,7 @@
       document.querySelectorAll('.worker-checkbox:checked').forEach(cb => workers.push(cb.value));
       const customWorker = document.getElementById('customWorker').value.trim();
       if (customWorker) {
-        customWorker.split(',').forEach(w => {
-          if (w.trim()) workers.push(w.trim());
-        });
+        customWorker.split(',').forEach(w => { if (w.trim()) workers.push(w.trim()); });
       }
       return workers;
     }
@@ -308,15 +301,13 @@
       const suonSelect = document.getElementById('suon_count');
       const suonVal = parseInt(suonSelect.value);
       if (suonVal > 0) {
-        const suonPrice = parseInt(suonSelect.options[suonSelect.selectedIndex].getAttribute('data-price') || 0);
-        total += suonPrice;
+        total += parseInt(suonSelect.options[suonSelect.selectedIndex].getAttribute('data-price') || 0);
         selectedPositions.push(`${suonVal} Sườn`);
       }
 
       const nocSelect = document.getElementById('noc_xe');
       if (nocSelect.value) {
-        const nocPrice = parseInt(nocSelect.options[nocSelect.selectedIndex].getAttribute('data-price') || 0);
-        total += nocPrice;
+        total += parseInt(nocSelect.options[nocSelect.selectedIndex].getAttribute('data-price') || 0);
         selectedPositions.push(nocSelect.value);
       }
 
@@ -335,12 +326,7 @@
         document.getElementById('splitCalcDisplay').innerText = "Chưa chọn thợ";
       }
 
-      return { 
-        total, 
-        positionsText: selectedPositions.length > 0 ? selectedPositions.join(', ') : 'Chưa chọn',
-        workerCount,
-        perWorkerPrice
-      };
+      return { total, positionsText: selectedPositions.length > 0 ? selectedPositions.join(', ') : 'Chưa chọn', workerCount, perWorkerPrice };
     }
 
     document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
@@ -352,14 +338,11 @@
     function formatDateOnly(timeStr) {
       if (!timeStr) return 'N/A';
       let str = String(timeStr).trim();
+      if (str.includes('T')) str = str.split('T')[0];
       if (str.includes('-')) {
-        let parts = str.split('T')[0].split(' ')[0].split('-');
-        if (parts.length === 3) {
-          if (parts[0].length === 4) return `${parts[2]}/${parts[1]}/${parts[0]}`;
-          return `${parts[0]}/${parts[1]}/${parts[2]}`;
-        }
+        let parts = str.split('-');
+        if (parts.length === 3) return parts[0].length === 4 ? `${parts[2]}/${parts[1]}/${parts[0]}` : `${parts[0]}/${parts[1]}/${parts[2]}`;
       }
-      if (str.includes('/')) return str.split(' ')[0];
       return str;
     }
 
@@ -377,18 +360,11 @@
         let itemYearMonth = "";
 
         if (itemDateStr.includes('-')) {
-          let parts = itemDateStr.split('T')[0].split(' ')[0].split('-');
-          if (parts[0].length === 4) {
-            itemYearMonth = `${parts[0]}-${parts[1]}`;
-          } else if (parts[2].length === 4) {
-            itemYearMonth = `${parts[2]}-${parts[1]}`;
-          }
+          let parts = itemDateStr.split('T')[0].split('-');
+          itemYearMonth = parts[0].length === 4 ? `${parts[0]}-${parts[1]}` : `${parts[2]}-${parts[1]}`;
         } else if (itemDateStr.includes('/')) {
           let parts = itemDateStr.split(' ')[0].split('/');
-          if (parts.length === 3) {
-            if (parts[2].length === 4) itemYearMonth = `${parts[2]}-${parts[1].padStart(2, '0')}`;
-            else if (parts[0].length === 4) itemYearMonth = `${parts[0]}-${parts[1].padStart(2, '0')}`;
-          }
+          if (parts.length === 3) itemYearMonth = `${parts[2]}-${parts[1].padStart(2, '0')}`;
         }
 
         if (itemYearMonth === selectedMonth) {
@@ -426,7 +402,6 @@
 
     function fetchSheetData() {
       if (!GOOGLE_SCRIPT_URL) return;
-
       fetch(GOOGLE_SCRIPT_URL)
         .then(res => res.json())
         .then(data => {
@@ -449,26 +424,22 @@
       globalDataList.forEach(item => {
         const displayDate = formatDateOnly(item.timestamp);
         const totalPrice = Number(item.totalPrice) || 0;
-        
         const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
         const workerCount = workersArray.length || 1;
-        
         const perWorker = item.perWorker ? Number(item.perWorker) : Math.round(totalPrice / workerCount);
-        const noteText = item.note || '-';
 
-        const row = `
+        tbody.innerHTML += `
           <tr class="hover:bg-slate-50 transition">
             <td class="p-3 font-mono text-xs text-slate-700 font-bold">${displayDate}</td>
             <td class="p-3 font-bold text-slate-800">${item.carName}</td>
             <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs font-semibold">${item.filmType}</span></td>
             <td class="p-3 text-slate-600">${item.position}</td>
             <td class="p-3 font-bold text-slate-800">${totalPrice.toLocaleString('vi-VN')} VNĐ</td>
-            <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-semibold">${item.workerName} (${workerCount} thợ)</span></td>
+            <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-semibold">${item.workerName}</span></td>
             <td class="p-3 font-bold text-amber-600">${perWorker.toLocaleString('vi-VN')} VNĐ/người</td>
-            <td class="p-3 text-xs text-slate-500 italic whitespace-pre-wrap">${noteText}</td>
+            <td class="p-3 text-xs text-slate-500 italic whitespace-pre-wrap">${item.note || '-'}</td>
           </tr>
         `;
-        tbody.innerHTML += row;
       });
     }
 
@@ -488,7 +459,6 @@
       const toast = document.getElementById('toastNotification');
       toast.classList.remove('-translate-y-24', 'opacity-0');
       toast.classList.add('translate-y-0', 'opacity-100');
-
       setTimeout(() => {
         toast.classList.remove('translate-y-0', 'opacity-100');
         toast.classList.add('-translate-y-24', 'opacity-0');
@@ -506,16 +476,13 @@
 
       const workers = getSelectedWorkers();
       if (workers.length === 0) {
-        alert("⚠️ Vui lòng chọn hoặc nhập ít nhất 1 nhân viên thi công!");
+        alert("⚠️ Vui lòng chọn ít nhất 1 thợ thi công!");
         return;
       }
 
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
       submitBtn.innerText = "Đang lưu...";
-
-      // Lấy chính xác ngày chọn dạng YYYY-MM-DD
-      const rawDate = document.getElementById('timestamp').value;
 
       const newData = {
         carName: document.getElementById('carName').value.trim(),
@@ -525,7 +492,7 @@
         workerName: workers.join(', '),
         perWorker: calc.perWorkerPrice,
         note: document.getElementById('note').value.trim(),
-        timestamp: rawDate
+        timestamp: document.getElementById('timestamp').value
       };
 
       fetch(GOOGLE_SCRIPT_URL, {
@@ -541,7 +508,7 @@
       })
       .catch(err => {
         console.error("Lỗi:", err);
-        alert("❌ Lỗi kết nối khi gửi dữ liệu!");
+        alert("❌ Lỗi khi gửi dữ liệu!");
       })
       .finally(() => {
         submitBtn.disabled = false;
@@ -551,29 +518,20 @@
 
     document.getElementById('exportExcelBtn').addEventListener('click', () => {
       if (globalDataList.length === 0) {
-        alert("Chưa có dữ liệu để xuất file Excel!");
+        alert("Chưa có dữ liệu!");
         return;
       }
-
-      const excelData = globalDataList.map((item, index) => {
-        const totalPrice = Number(item.totalPrice) || 0;
-        const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
-        const workerCount = workersArray.length || 1;
-        const perWorker = item.perWorker ? Number(item.perWorker) : Math.round(totalPrice / workerCount);
-
-        return {
-          "STT": index + 1,
-          "Ngày Thi Công": formatDateOnly(item.timestamp),
-          "Tên/Biển Số Xe": item.carName,
-          "Loại Film": item.filmType,
-          "Vị Trí Dán": item.position,
-          "Tổng Tiền (VNĐ)": totalPrice,
-          "Số Thợ": workerCount,
-          "Thợ Thi Công": item.workerName,
-          "Tiền Chia Mỗi Thợ (VNĐ)": perWorker,
-          "Ghi Chú": item.note || ''
-        };
-      });
+      const excelData = globalDataList.map((item, index) => ({
+        "STT": index + 1,
+        "Ngày Thi Công": formatDateOnly(item.timestamp),
+        "Tên/Biển Số Xe": item.carName,
+        "Loại Film": item.filmType,
+        "Vị Trí Dán": item.position,
+        "Tổng Tiền (VNĐ)": item.totalPrice,
+        "Thợ Thi Công": item.workerName,
+        "Chia Mỗi Thợ (VNĐ)": item.perWorker,
+        "Ghi Chú": item.note || ''
+      }));
 
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
