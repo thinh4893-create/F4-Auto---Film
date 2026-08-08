@@ -337,15 +337,23 @@
     });
 
     function formatDateOnly(timeStr) {
-      if (!timeStr) return 'N/A';
-      let str = String(timeStr).trim();
-      if (str.includes('T')) str = str.split('T')[0];
-      if (str.includes('-')) {
-        let parts = str.split('-');
-        if (parts.length === 3) return parts[0].length === 4 ? `${parts[2]}/${parts[1]}/${parts[0]}` : `${parts[0]}/${parts[1]}/${parts[2]}`;
-      }
-      return str;
+  if (!timeStr) return 'N/A';
+  let str = String(timeStr).replace("'", "").trim();
+  
+  // Nếu đã đúng dạng DD/MM/YYYY thì giữ nguyên
+  if (str.includes('/')) {
+    return str.split(' ')[0];
+  }
+  
+  // Nếu là dạng YYYY-MM-DD
+  if (str.includes('-')) {
+    let parts = str.split('T')[0].split('-');
+    if (parts.length === 3) {
+      return parts[0].length === 4 ? `${parts[2]}/${parts[1]}/${parts[0]}` : `${parts[0]}/${parts[1]}/${parts[2]}`;
     }
+  }
+  return str;
+}
 
     function calculateMonthlyTotal() {
       if (globalDataList.length === 0) {
