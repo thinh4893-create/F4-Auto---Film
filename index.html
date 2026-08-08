@@ -214,7 +214,6 @@
   </div>
 
   <script>
-    // DÁN URL GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY:
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_FLTz9hh7dCdD7bi2d26HrZi8Cx2GUQeVfEYEHqmq1csuT0wC2ThiCtnaBNqchIvkhw/exec";
 
     let globalDataList = [];
@@ -333,7 +332,9 @@
     document.getElementById('suon_count').addEventListener('change', calculateTotal);
     document.getElementById('noc_xe').addEventListener('change', calculateTotal);
     document.getElementById('customWorker').addEventListener('input', calculateTotal);
-    document.getElementById('monthPicker').addEventListener('change', calculateMonthlyTotal);
+    document.getElementById('monthPicker').addEventListener('change', () => {
+      fetchSheetData();
+    });
 
     function formatDateOnly(timeStr) {
       if (!timeStr) return 'N/A';
@@ -347,38 +348,28 @@
     }
 
     function calculateMonthlyTotal() {
-      const selectedMonth = document.getElementById('monthPicker').value;
-      if (!selectedMonth || globalDataList.length === 0) return;
+      if (globalDataList.length === 0) {
+        document.getElementById('monthlyCarCount').innerText = `0 xe`;
+        document.getElementById('monthlyTotalDisplay').innerText = `0 VNĐ`;
+        document.getElementById('workerSummaryContainer').innerHTML = `<p class="text-xs text-blue-200 col-span-full italic">Chưa có dữ liệu thi công cho tháng này.</p>`;
+        return;
+      }
 
       let grandTotal = 0;
       let carCount = 0;
       let workerMap = {};
 
       globalDataList.forEach(item => {
-        if (!item.timestamp) return;
-        let itemDateStr = String(item.timestamp).trim();
-        let itemYearMonth = "";
+        const itemTotal = Number(item.totalPrice) || 0;
+        grandTotal += itemTotal;
+        carCount++;
 
-        if (itemDateStr.includes('-')) {
-          let parts = itemDateStr.split('T')[0].split('-');
-          itemYearMonth = parts[0].length === 4 ? `${parts[0]}-${parts[1]}` : `${parts[2]}-${parts[1]}`;
-        } else if (itemDateStr.includes('/')) {
-          let parts = itemDateStr.split(' ')[0].split('/');
-          if (parts.length === 3) itemYearMonth = `${parts[2]}-${parts[1].padStart(2, '0')}`;
-        }
-
-        if (itemYearMonth === selectedMonth) {
-          const itemTotal = Number(item.totalPrice) || 0;
-          grandTotal += itemTotal;
-          carCount++;
-
-          const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
-          if (workersArray.length > 0) {
-            const splitAmount = item.perWorker ? Number(item.perWorker) : Math.round(itemTotal / workersArray.length);
-            workersArray.forEach(worker => {
-              workerMap[worker] = (workerMap[worker] || 0) + splitAmount;
-            });
-          }
+        const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
+        if (workersArray.length > 0) {
+          const splitAmount = item.perWorker ? Number(item.perWorker) : Math.round(itemTotal / workersArray.length);
+          workersArray.forEach(worker => {
+            workerMap[worker] = (workerMap[worker] || 0) + splitAmount;
+          });
         }
       });
 
@@ -402,7 +393,14 @@
 
     function fetchSheetData() {
       if (!GOOGLE_SCRIPT_URL) return;
-      fetch(GOOGLE_SCRIPT_URL)
+      const selectedMonth = document.getElementById('monthPicker').value; // Dạng YYYY-MM
+      let sheetParam = "";
+      if (selectedMonth) {
+        let parts = selectedMonth.split('-');
+        sheetParam = `?sheet=${parts[1]}/${parts[0]}`; // MM/YYYY
+      }
+
+      fetch(GOOGLE_SCRIPT_URL + sheetParam)
         .then(res => res.json())
         .then(data => {
           globalDataList = data.reverse();
@@ -417,7 +415,7 @@
       tbody.innerHTML = '';
 
       if (globalDataList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào cho tháng này.</td></tr>';
         return;
       }
 
