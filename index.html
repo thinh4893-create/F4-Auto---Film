@@ -13,7 +13,7 @@
   <!-- Icon ứng dụng khi đưa ra Màn hình chính -->
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202926.png">
 
-  <!-- Thư viện Tailwind CSS & Xuất Excel (Bắt buộc để khôi phục giao diện) -->
+  <!-- Thư viện Tailwind CSS & Xuất Excel -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -192,9 +192,17 @@
         <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
           <span>🚗</span> Nhật Ký Thi Công
         </h2>
-        <button id="exportExcelBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 shadow transition">
-          📊 Xuất Báo Cáo Excel
-        </button>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <!-- NÚT LÀM MỚI DỮ LIỆU -->
+          <button id="refreshBtn" onclick="fetchSheetData()" class="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-1.5 shadow-sm transition">
+            <span id="refreshIcon" class="inline-block transition-transform duration-500">🔄</span>
+            <span id="refreshText">Làm mới</span>
+          </button>
+
+          <button id="exportExcelBtn" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-1 shadow transition">
+            📊 Xuất Excel
+          </button>
+        </div>
       </div>
 
       <div class="overflow-x-auto">
@@ -407,6 +415,16 @@
 
     function fetchSheetData() {
       if (!GOOGLE_SCRIPT_URL) return;
+
+      // Hiệu ứng bấm nút làm mới
+      const refreshBtn = document.getElementById('refreshBtn');
+      const refreshIcon = document.getElementById('refreshIcon');
+      const refreshText = document.getElementById('refreshText');
+      
+      refreshBtn.disabled = true;
+      refreshIcon.classList.add('animate-spin');
+      refreshText.innerText = "Đang tải...";
+
       const selectedMonth = document.getElementById('monthPicker').value;
       let sheetParam = "";
       if (selectedMonth) {
@@ -421,7 +439,12 @@
           renderTable();
           calculateMonthlyTotal();
         })
-        .catch(err => console.error("Lỗi tải dữ liệu:", err));
+        .catch(err => console.error("Lỗi tải dữ liệu:", err))
+        .finally(() => {
+          refreshBtn.disabled = false;
+          refreshIcon.classList.remove('animate-spin');
+          refreshText.innerText = "Làm mới";
+        });
     }
 
     function renderTable() {
