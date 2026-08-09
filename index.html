@@ -6,14 +6,18 @@
   
   <!-- Cấu hình chạy Full Màn Hình độc lập không hiện Safari -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Báo Cáo Thi Công">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="F4 Auto">
   <meta name="mobile-web-app-capable" content="yes">
 
-  <!-- Icon ứng dụng khi đưa ra Màn hình chính (Thay link icon nếu có) -->
+  <!-- Icon ứng dụng khi đưa ra Màn hình chính -->
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202926.png">
 
-  <title>Báo Cáo Thi Công</title>
+  <!-- Thư viện Tailwind CSS & Xuất Excel (Bắt buộc để khôi phục giao diện) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <title>F4 AUTO - QUẢN LÝ THI CÔNG</title>
 </head>
 <body class="bg-slate-100 min-h-screen p-3 md:p-8">
 
@@ -341,23 +345,21 @@
     });
 
     function formatDateOnly(timeStr) {
-  if (!timeStr) return 'N/A';
-  let str = String(timeStr).replace("'", "").trim();
-  
-  // Nếu đã đúng dạng DD/MM/YYYY thì giữ nguyên
-  if (str.includes('/')) {
-    return str.split(' ')[0];
-  }
-  
-  // Nếu là dạng YYYY-MM-DD
-  if (str.includes('-')) {
-    let parts = str.split('T')[0].split('-');
-    if (parts.length === 3) {
-      return parts[0].length === 4 ? `${parts[2]}/${parts[1]}/${parts[0]}` : `${parts[0]}/${parts[1]}/${parts[2]}`;
+      if (!timeStr) return 'N/A';
+      let str = String(timeStr).replace("'", "").trim();
+      
+      if (str.includes('/')) {
+        return str.split(' ')[0];
+      }
+      
+      if (str.includes('-')) {
+        let parts = str.split('T')[0].split('-');
+        if (parts.length === 3) {
+          return parts[0].length === 4 ? `${parts[2]}/${parts[1]}/${parts[0]}` : `${parts[0]}/${parts[1]}/${parts[2]}`;
+        }
+      }
+      return str;
     }
-  }
-  return str;
-}
 
     function calculateMonthlyTotal() {
       if (globalDataList.length === 0) {
@@ -405,11 +407,11 @@
 
     function fetchSheetData() {
       if (!GOOGLE_SCRIPT_URL) return;
-      const selectedMonth = document.getElementById('monthPicker').value; // Dạng YYYY-MM
+      const selectedMonth = document.getElementById('monthPicker').value;
       let sheetParam = "";
       if (selectedMonth) {
         let parts = selectedMonth.split('-');
-        sheetParam = `?sheet=${parts[1]}/${parts[0]}`; // MM/YYYY
+        sheetParam = `?sheet=${parts[1]}/${parts[0]}`;
       }
 
       fetch(GOOGLE_SCRIPT_URL + sheetParam)
