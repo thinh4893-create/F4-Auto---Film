@@ -3,217 +3,193 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="F4 Auto">
-  <meta name="mobile-web-app-capable" content="yes">
-
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202926.png">
-
-  <!-- Tailwind CSS & XLSX Library -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-  <title>F4 AUTO - QUẢN LÝ THI CÔNG</title>
+  <title>F4 AUTO - TỔNG HỢP THI CÔNG</title>
 </head>
 <body class="bg-[#0b0f19] text-slate-100 min-h-screen p-3 md:p-8 font-sans">
 
-  <!-- POPUP THÔNG BÁO -->
-  <div id="toastNotification" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 transition-all duration-500 ease-in-out pointer-events-none z-50 w-auto max-w-sm">
-    <div class="bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-xl flex items-center justify-center gap-2 border border-emerald-400 whitespace-nowrap">
-      <span class="text-xl">✅</span>
-      <span class="font-bold text-base tracking-wide">Đã lưu thông tin thành công!</span>
+  <!-- NOTIFICATION -->
+  <div id="toastNotification" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 transition-all duration-500 ease-in-out pointer-events-none z-50">
+    <div class="bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-xl flex items-center justify-center gap-2 border border-emerald-400">
+      <span>✅</span> <span class="font-bold text-sm">Đã lưu thông tin thành công!</span>
     </div>
   </div>
 
   <div class="max-w-5xl mx-auto space-y-6">
-    <!-- Header Dark Theme -->
+    <!-- Header -->
     <div class="bg-[#151c2c] p-5 rounded-2xl shadow-xl border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
       <div>
-        <h1 class="text-2xl font-black text-white uppercase tracking-wider flex items-center gap-2">
-          <span>🚗</span> F4 AUTO
-        </h1>
-        <p class="text-cyan-400 text-xs mt-1 font-medium">Hệ thống Quản lý Thi công & Chia tiền công thợ tự động</p>
+        <h1 class="text-2xl font-black text-white uppercase tracking-wider flex items-center gap-2"><span>🚗</span> F4 AUTO</h1>
+        <p class="text-cyan-400 text-xs mt-1 font-medium">Quản lý Thi công Film Cách Nhiệt & PPF</p>
       </div>
-      <div class="bg-cyan-950/80 border border-cyan-800/50 text-cyan-400 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase">
-        📍 CƠ SỞ TAM TRINH
+      <!-- NÚT CHUYỂN ĐỔI TAB DỊCH VỤ -->
+      <div class="flex bg-[#0b0f19] p-1.5 rounded-xl border border-slate-800 gap-1">
+        <button id="btnTabFilm" onclick="switchServiceTab('FILM')" class="px-4 py-2 rounded-lg text-xs font-black transition uppercase tracking-wider bg-cyan-600 text-white shadow">
+          🎬 PHIM CÁCH NHIỆT
+        </button>
+        <button id="btnTabPPF" onclick="switchServiceTab('PPF')" class="px-4 py-2 rounded-lg text-xs font-black transition uppercase tracking-wider text-slate-400 hover:text-white">
+          🛡️ DÁN PPF
+        </button>
       </div>
     </div>
 
-    <!-- KHU VỰC THỐNG KÊ THEO THÁNG & BẢNG LƯƠNG THỢ -->
+    <!-- THỐNG KÊ THÁNG & BẢNG LƯƠNG THỢ -->
     <div class="bg-[#151c2c] text-white p-5 rounded-2xl shadow-xl border border-slate-800 space-y-4">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-3">
-        <h2 class="text-base font-bold flex items-center gap-2 text-cyan-400 uppercase tracking-wider">
-          <span>📊</span> Thống Kê Theo Tháng
+        <h2 id="summaryTitle" class="text-base font-bold flex items-center gap-2 text-cyan-400 uppercase tracking-wider">
+          <span>📊</span> THỐNG KÊ FILM CÁCH NHIỆT
         </h2>
         <div class="flex items-center gap-2">
           <label class="text-xs font-semibold uppercase text-slate-400">Chọn tháng:</label>
-          <input type="month" id="monthPicker" class="bg-[#0b0f19] text-cyan-300 px-3 py-1.5 rounded-lg text-sm font-bold outline-none border border-slate-700 focus:border-cyan-500">
+          <input type="month" id="monthPicker" class="bg-[#0b0f19] text-cyan-300 px-3 py-1.5 rounded-lg text-sm font-bold outline-none border border-slate-700">
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-4 text-center">
         <div class="bg-[#1c263b] p-3 rounded-xl border border-slate-700/50">
-          <p class="text-xs text-slate-400 uppercase font-semibold">Tổng Số Xe Dán</p>
+          <p class="text-xs text-slate-400 uppercase font-semibold">Tổng Xe Thi Công</p>
           <p id="monthlyCarCount" class="text-2xl font-black text-white mt-1">0 xe</p>
         </div>
         <div class="bg-[#1c263b] p-3 rounded-xl border border-slate-700/50">
-          <p class="text-xs text-slate-400 uppercase font-semibold">Tổng Doanh Thu Dán Xe</p>
+          <p class="text-xs text-slate-400 uppercase font-semibold">Tổng Doanh Thu</p>
           <p id="monthlyTotalDisplay" class="text-2xl font-black text-amber-400 mt-1">0 VNĐ</p>
         </div>
       </div>
 
-      <!-- BẢNG TỔNG CỘNG TIỀN CÔNG TỪNG THỢ -->
       <div class="bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 mt-3">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-3 flex items-center gap-1.5">
-          <span>👷‍♂️</span> Tổng Tiền Công Từng Thợ Nhận Được Trong Tháng
-        </h3>
-        <div id="workerSummaryContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <p class="text-xs text-slate-400 col-span-full">Đang tính toán...</p>
-        </div>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-3">👷‍♂️ Lương Thợ Nhận Trong Tháng</h3>
+        <div id="workerSummaryContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
       </div>
     </div>
 
-    <!-- Form Nhập Liệu -->
+    <!-- FORM NHẬP -->
     <div class="bg-[#151c2c] p-6 rounded-2xl shadow-xl border border-slate-800">
-      <h2 class="text-base font-bold mb-4 text-cyan-400 border-b border-slate-800 pb-2 flex items-center gap-2 uppercase tracking-wider">
-        <span>📋</span> Nhập Xe Dán Mới
+      <h2 id="formTitle" class="text-base font-bold mb-4 text-cyan-400 border-b border-slate-800 pb-2 uppercase tracking-wider">
+        📋 Nhập Xe Dán Film Mới
       </h2>
       <form id="carForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Tên/Biển Số Xe</label>
-          <input type="text" id="carName" placeholder="Ví dụ: VF8 - 30K-123.45" required class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none text-white text-sm">
+          <label class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Tên/Biển Số Xe</label>
+          <input type="text" id="carName" placeholder="Ví dụ: VF8 - 30K-123.45" required class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm">
         </div>
+
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Loại Film Dán</label>
-          <select id="filmType" required class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none text-white text-sm font-medium">
-            <option value="" disabled selected>-- Chọn loại film --</option>
-            <option value="3M">3M</option>
-            <option value="Ari">Ari</option>
-            <option value="Stek">Stek</option>
-          </select>
+          <label id="lblType" class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Loại Film Dán</label>
+          <input type="text" id="filmType" placeholder="Ví dụ: 3M, Ari, Stek..." required class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm">
         </div>
 
-        <!-- CHỌN VỊ TRÍ DÁN FILM -->
-        <div class="md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
-          <label class="block text-xs font-bold uppercase tracking-wider text-cyan-400">Chọn Vị Trí Dán Film</label>
-          
+        <!-- KHU VỰC VỊ TRÍ DÁN FILM (HIỂN THỊ KHI DÙNG TAB FILM) -->
+        <div id="filmPositionContainer" class="md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
+          <label class="block text-xs font-bold uppercase text-cyan-400">Chọn Vị Trí Dán Film</label>
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-            <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer hover:border-cyan-500 transition">
+            <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer">
               <input type="checkbox" class="price-checkbox accent-cyan-500 w-4 h-4" data-price="160000" value="Full xe">
-              <span class="font-medium text-slate-200">Full xe</span>
+              <span class="font-medium">Full xe</span>
             </label>
-
-            <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer hover:border-cyan-500 transition">
+            <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer">
               <input type="checkbox" class="price-checkbox accent-cyan-500 w-4 h-4" data-price="50000" value="Kính Lái">
-              <span class="font-medium text-slate-200">Kính Lái</span>
+              <span class="font-medium">Kính Lái</span>
             </label>
-
-            <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer hover:border-cyan-500 transition">
+            <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer">
               <input type="checkbox" class="price-checkbox accent-cyan-500 w-4 h-4" data-price="30000" value="Hậu">
-              <span class="font-medium text-slate-200">Hậu</span>
+              <span class="font-medium">Hậu</span>
             </label>
           </div>
-
-          <!-- MENU SƯỜN & NÓC -->
           <div class="pt-3 border-t border-slate-700/50 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div class="flex items-center justify-between bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700">
-              <label for="suon_count" class="font-medium text-slate-300">Kính Sườn:</label>
-              <select id="suon_count" class="bg-[#151c2c] border border-slate-700 rounded-lg p-1.5 text-white outline-none focus:border-cyan-500 font-medium text-xs">
-                <option value="0" data-price="0">Không dán sườn</option>
+              <span class="text-slate-300">Kính Sườn:</span>
+              <select id="suon_count" class="bg-[#151c2c] border border-slate-700 rounded-lg p-1 text-white text-xs">
+                <option value="0" data-price="0">Không dán</option>
                 <option value="1" data-price="20000">1 Sườn</option>
                 <option value="2" data-price="40000">2 Sườn</option>
                 <option value="3" data-price="60000">3 Sườn</option>
                 <option value="4" data-price="80000">4 Sườn</option>
               </select>
             </div>
-
             <div class="flex items-center justify-between bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700">
-              <label for="noc_xe" class="font-medium text-slate-300">Cửa sổ trời (Nóc):</label>
-              <select id="noc_xe" class="bg-[#151c2c] border border-slate-700 rounded-lg p-1.5 text-white outline-none focus:border-cyan-500 font-medium text-xs">
-                <option value="" data-price="0">Không dán nóc</option>
+              <span class="text-slate-300">Nóc xe:</span>
+              <select id="noc_xe" class="bg-[#151c2c] border border-slate-700 rounded-lg p-1 text-white text-xs">
+                <option value="" data-price="0">Không dán</option>
                 <option value="1 Nóc" data-price="20000">1 Nóc</option>
                 <option value="2 Nóc" data-price="40000">2 Nóc</option>
               </select>
             </div>
           </div>
+        </div>
 
-          <div class="pt-2 flex justify-between items-center font-bold text-slate-300 border-t border-slate-700/50">
-            <span class="text-xs uppercase tracking-wider text-slate-400">TỔNG TIỀN DÁN XE:</span>
-            <span id="totalPriceDisplay" class="text-xl font-black text-cyan-400">0 VNĐ</span>
+        <!-- KHU VỰC NHẬP PPF (HIỂN THỊ KHI DÙNG TAB PPF) -->
+        <div id="ppfPositionContainer" class="hidden md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Vị Trí Dán PPF</label>
+              <input type="text" id="ppfPositionInput" placeholder="Ví dụ: Full xe, Chóa đèn, Nội thất..." class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 text-white text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-amber-400 mb-1.5">Tổng Tiền Thi Công PPF (VNĐ)</label>
+              <input type="number" id="ppfPriceInput" placeholder="Nhập số tiền..." class="w-full bg-[#0b0f19] border border-amber-500/50 rounded-xl p-3 text-amber-400 font-bold text-sm">
+            </div>
           </div>
         </div>
 
-        <!-- CHỌN KTV THI CÔNG (CỐ ĐỊNH 4 KTV) -->
-        <div class="md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
-          <label class="block text-xs font-bold uppercase tracking-wider text-cyan-400">🛠️ Đội Ngũ Kỹ Thuật Viên Thi Công</label>
+        <!-- TỔNG TIỀN HIỂN THỊ -->
+        <div class="md:col-span-2 bg-[#0b0f19] p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+          <span class="text-xs uppercase font-bold text-slate-400">TỔNG TIỀN XE:</span>
+          <span id="totalPriceDisplay" class="text-xl font-black text-cyan-400">0 VNĐ</span>
+        </div>
 
+        <!-- CHỌN KTV -->
+        <div class="md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
+          <label class="block text-xs font-bold uppercase text-cyan-400">🛠️ Đội Ngũ Kỹ Thuật Viên Thi Công</label>
           <div id="workerCheckboxContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm"></div>
 
-          <div id="splitInfoBox" class="p-3 bg-[#0b0f19] border border-cyan-800/40 rounded-xl text-xs space-y-1">
-            <div class="flex justify-between items-center text-slate-300">
-              <span class="font-semibold text-slate-400">Tỷ lệ chia tiền thợ:</span>
-              <span id="splitCalcDisplay" class="text-cyan-400 font-bold">Chưa chọn thợ</span>
-            </div>
-            <div id="splitDetailList" class="text-[11px] text-slate-400 space-y-0.5 pt-1 border-t border-slate-800"></div>
+          <div class="p-3 bg-[#0b0f19] border border-cyan-800/40 rounded-xl text-xs space-y-1">
+            <div id="splitDetailList" class="text-[11px] text-slate-400 space-y-0.5"></div>
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Ngày Thi Công</label>
-          <input type="date" id="timestamp" required class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm">
+          <label class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Ngày Thi Công</label>
+          <input type="date" id="timestamp" required class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 text-white text-sm">
         </div>
 
         <div class="md:col-span-2">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Ghi Chú</label>
-          <textarea id="note" rows="2" class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm resize-y" placeholder="Nhập ghi chú thi công (nếu có)..."></textarea>
+          <label class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Ghi Chú</label>
+          <textarea id="note" rows="2" class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 text-white text-sm" placeholder="Ghi chú thi công..."></textarea>
         </div>
 
         <div class="md:col-span-2 mt-2">
-          <button type="submit" id="submitBtn" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-black py-3.5 rounded-xl shadow-lg transition duration-200 uppercase tracking-wider text-sm">
+          <button type="submit" id="submitBtn" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-black py-3.5 rounded-xl uppercase tracking-wider text-sm shadow-lg">
             Lưu Thông Tin Thi Công
           </button>
         </div>
       </form>
     </div>
 
-    <!-- Bảng Hiển Thị Dữ Liệu -->
-    <div class="bg-[#151c2c] p-6 rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-3 border-b border-slate-800 gap-3">
-        <h2 class="text-base font-bold text-cyan-400 flex items-center gap-2 uppercase tracking-wider">
-          <span>🚗</span> Nhật Ký Thi Công
-        </h2>
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-          <button id="refreshBtn" onclick="fetchSheetData()" class="flex-1 sm:flex-none bg-[#1c263b] hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
-            <span id="refreshIcon" class="inline-block transition-transform duration-500">🔄</span>
-            <span id="refreshText">Làm mới</span>
-          </button>
-
-          <button id="exportExcelBtn" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 shadow transition">
-            📊 Xuất Excel
-          </button>
+    <!-- BẢNG NHẬT KÝ -->
+    <div class="bg-[#151c2c] p-6 rounded-2xl shadow-xl border border-slate-800">
+      <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+        <h2 id="logTitle" class="text-base font-bold text-cyan-400 uppercase tracking-wider">🚗 Nhật Ký Thi Công Film</h2>
+        <div class="flex gap-2">
+          <button onclick="fetchSheetData()" class="bg-[#1c263b] text-slate-200 px-3 py-2 rounded-xl text-xs font-bold border border-slate-700">🔄 Làm mới</button>
+          <button id="exportExcelBtn" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">📊 Xuất Excel</button>
         </div>
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm border-collapse min-w-[700px]">
+        <table class="w-full text-left text-sm border-collapse min-w-[650px]">
           <thead>
-            <tr class="bg-[#0b0f19] text-slate-400 uppercase text-[11px] tracking-wider">
-              <th class="p-3 rounded-l-lg">Ngày</th>
-              <th class="p-3">Thông tin Xe</th>
-              <th class="p-3">Film</th>
-              <th class="p-3">Vị trí dán</th>
+            <tr class="bg-[#0b0f19] text-slate-400 uppercase text-[11px]">
+              <th class="p-3">Ngày</th>
+              <th class="p-3">Xe</th>
+              <th class="p-3">Loại</th>
+              <th class="p-3">Vị trí</th>
               <th class="p-3">Tổng Tiền</th>
-              <th class="p-3">Thợ Thi Công</th>
-              <th class="p-3 rounded-r-lg">Ghi Chú</th>
+              <th class="p-3">Thợ</th>
+              <th class="p-3">Ghi Chú</th>
             </tr>
           </thead>
-          <tbody id="dataTable" class="divide-y divide-slate-800 text-slate-300">
-            <tr>
-              <td colspan="7" class="p-4 text-center text-slate-500">Đang tải dữ liệu từ Google Sheets...</td>
-            </tr>
-          </tbody>
+          <tbody id="dataTable" class="divide-y divide-slate-800 text-slate-300"></tbody>
         </table>
       </div>
     </div>
@@ -222,20 +198,150 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_FLTz9hh7dCdD7bi2d26HrZi8Cx2GUQeVfEYEHqmq1csuT0wC2ThiCtnaBNqchIvkhw/exec";
 
-    const fixedStaffList = ['Vũ', 'Tú', 'Tùng', 'Thịnh'];
+    let currentService = 'FILM'; 
+    const filmStaff = ['Vũ', 'Tú', 'Tùng', 'Thịnh'];
+    const ppfStaff = ['Hậu', 'Hoàng', 'Khánh'];
+
     let globalDataList = [];
 
+    function switchServiceTab(type) {
+      currentService = type;
+      const isPPF = type === 'PPF';
+
+      document.getElementById('btnTabFilm').className = !isPPF ? "px-4 py-2 rounded-lg text-xs font-black bg-cyan-600 text-white shadow uppercase" : "px-4 py-2 rounded-lg text-xs font-black text-slate-400 hover:text-white uppercase";
+      document.getElementById('btnTabPPF').className = isPPF ? "px-4 py-2 rounded-lg text-xs font-black bg-indigo-600 text-white shadow uppercase" : "px-4 py-2 rounded-lg text-xs font-black text-slate-400 hover:text-white uppercase";
+
+      document.getElementById('summaryTitle').innerText = isPPF ? "📊 THỐNG KÊ PPF" : "📊 THỐNG KÊ FILM CÁCH NHIỆT";
+      document.getElementById('formTitle').innerText = isPPF ? "📋 Nhập Xe Dán PPF Mới" : "📋 Nhập Xe Dán Film Mới";
+      document.getElementById('logTitle').innerText = isPPF ? "🛡️ Nhật Ký Thi Công PPF" : "🚗 Nhật Ký Thi Công Film";
+      document.getElementById('lblType').innerText = isPPF ? "Loại PPF" : "Loại Film Dán";
+
+      if (isPPF) {
+        document.getElementById('filmPositionContainer').classList.add('hidden');
+        document.getElementById('ppfPositionContainer').classList.remove('hidden');
+      } else {
+        document.getElementById('filmPositionContainer').classList.remove('hidden');
+        document.getElementById('ppfPositionContainer').classList.add('hidden');
+      }
+
+      renderStaffUI();
+      calculateTotal();
+      fetchSheetData();
+    }
+
     function renderStaffUI() {
+      const activeStaff = currentService === 'PPF' ? ppfStaff : filmStaff;
       const checkboxContainer = document.getElementById('workerCheckboxContainer');
-      checkboxContainer.innerHTML = fixedStaffList.map(name => `
-        <label class="flex items-center space-x-2.5 bg-[#0b0f19] p-3 rounded-xl border border-slate-700 cursor-pointer hover:border-cyan-500 transition">
+      checkboxContainer.innerHTML = activeStaff.map(name => `
+        <label class="flex items-center space-x-2.5 bg-[#0b0f19] p-3 rounded-xl border border-slate-700 cursor-pointer">
           <input type="checkbox" value="${name}" class="worker-checkbox accent-cyan-500 w-4 h-4">
-          <span class="font-bold text-slate-200 text-sm">${name}</span>
+          <span class="font-bold text-slate-200 text-sm">${name} ${name === 'Khánh' ? '<span class="text-[10px] text-amber-400">(Hỗ trợ 50k)</span>' : ''}</span>
         </label>
       `).join('');
 
       document.querySelectorAll('.worker-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
     }
+
+    function getSelectedWorkers() {
+      let workers = [];
+      document.querySelectorAll('.worker-checkbox:checked').forEach(cb => workers.push(cb.value));
+      return workers;
+    }
+
+    function calculateWorkerSplits(total, workers) {
+      if (workers.length === 0 || total === 0) return {};
+      const setWorkers = new Set(workers);
+      let breakdown = {};
+
+      if (currentService === 'PPF') {
+        const hasKhanh = setWorkers.has('Khánh');
+        const khanhFee = hasKhanh ? 50000 : 0;
+        if (hasKhanh) breakdown['Khánh'] = khanhFee;
+
+        const remain = Math.max(0, total - khanhFee);
+        let mainList = [];
+        if (setWorkers.has('Hậu')) mainList.push('Hậu');
+        if (setWorkers.has('Hoàng')) mainList.push('Hoàng');
+
+        if (mainList.length > 0) {
+          const splitAmt = Math.round(remain / mainList.length);
+          mainList.forEach(w => breakdown[w] = splitAmt);
+        }
+      } else {
+        let shares = {};
+        if (workers.length === 4 && setWorkers.has('Vũ') && setWorkers.has('Thịnh') && setWorkers.has('Tú') && setWorkers.has('Tùng')) {
+          shares = { 'Vũ': 0.35, 'Thịnh': 0.35, 'Tú': 0.15, 'Tùng': 0.15 };
+        } else if (workers.length === 2 && setWorkers.has('Vũ') && setWorkers.has('Thịnh')) {
+          shares = { 'Vũ': 0.50, 'Thịnh': 0.50 };
+        } else if (workers.length === 3 && (setWorkers.has('Vũ') || setWorkers.has('Thịnh')) && setWorkers.has('Tú') && setWorkers.has('Tùng')) {
+          const mainWorker = setWorkers.has('Vũ') ? 'Vũ' : 'Thịnh';
+          shares = { [mainWorker]: 0.60, 'Tú': 0.20, 'Tùng': 0.20 };
+        } else if (workers.length === 2 && (setWorkers.has('Vũ') || setWorkers.has('Thịnh')) && (setWorkers.has('Tú') || setWorkers.has('Tùng'))) {
+          const mainWorker = setWorkers.has('Vũ') ? 'Vũ' : 'Thịnh';
+          const subWorker = setWorkers.has('Tú') ? 'Tú' : 'Tùng';
+          shares = { [mainWorker]: 0.70, [subWorker]: 0.30 };
+        } else {
+          const equal = 1 / workers.length;
+          workers.forEach(w => shares[w] = equal);
+        }
+        workers.forEach(w => breakdown[w] = Math.round(total * (shares[w] || 0)));
+      }
+      return breakdown;
+    }
+
+    function calculateTotal() {
+      let total = 0;
+      let posText = "";
+
+      if (currentService === 'PPF') {
+        posText = document.getElementById('ppfPositionInput').value.trim() || 'Dán PPF';
+        total = parseInt(document.getElementById('ppfPriceInput').value) || 0;
+      } else {
+        let selectedPositions = [];
+        document.querySelectorAll('.price-checkbox:checked').forEach(cb => {
+          selectedPositions.push(cb.value);
+          total += parseInt(cb.getAttribute('data-price') || 0);
+        });
+
+        const suonSelect = document.getElementById('suon_count');
+        if (parseInt(suonSelect.value) > 0) {
+          total += parseInt(suonSelect.options[suonSelect.selectedIndex].getAttribute('data-price') || 0);
+          selectedPositions.push(`${suonSelect.value} Sườn`);
+        }
+
+        const nocSelect = document.getElementById('noc_xe');
+        if (nocSelect.value) {
+          total += parseInt(nocSelect.options[nocSelect.selectedIndex].getAttribute('data-price') || 0);
+          selectedPositions.push(nocSelect.value);
+        }
+        posText = selectedPositions.join(', ');
+      }
+
+      document.getElementById('totalPriceDisplay').innerText = total.toLocaleString('vi-VN') + " VNĐ";
+
+      const workers = getSelectedWorkers();
+      const breakdown = calculateWorkerSplits(total, workers);
+
+      const splitDetailList = document.getElementById('splitDetailList');
+      if (workers.length > 0) {
+        splitDetailList.innerHTML = Object.keys(breakdown).map(w => `
+          <div class="flex justify-between">
+            <span>${w}:</span>
+            <span class="font-bold text-amber-400">${breakdown[w].toLocaleString('vi-VN')} VNĐ</span>
+          </div>
+        `).join('');
+      } else {
+        splitDetailList.innerHTML = '<span class="text-slate-500">Chưa chọn thợ</span>';
+      }
+
+      return { total, posText, workers, breakdown };
+    }
+
+    document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
+    document.getElementById('suon_count').addEventListener('change', calculateTotal);
+    document.getElementById('noc_xe').addEventListener('change', calculateTotal);
+    document.getElementById('ppfPriceInput').addEventListener('input', calculateTotal);
+    document.getElementById('ppfPositionInput').addEventListener('input', calculateTotal);
 
     const setPresetTime = () => {
       const now = new Date();
@@ -247,140 +353,31 @@
     };
     setPresetTime();
 
-    function getSelectedWorkers() {
-      let workers = [];
-      document.querySelectorAll('.worker-checkbox:checked').forEach(cb => workers.push(cb.value));
-      return workers;
-    }
+    function fetchSheetData() {
+      if (!GOOGLE_SCRIPT_URL) return;
+      const selectedMonth = document.getElementById('monthPicker').value;
+      if (!selectedMonth) return;
 
-    // TÍNH TỶ LỆ PHẦN TRĂM MỚI (VŨ & THỊNH BÌNH ĐẲNG)
-    function calculateWorkerSplits(total, workers) {
-      if (workers.length === 0 || total === 0) return { breakdown: {}, summaryText: "Chưa chọn thợ" };
+      let parts = selectedMonth.split('-');
+      let prefix = currentService === 'PPF' ? 'PPF ' : 'Film ';
+      let sheetParam = `?sheet=${encodeURIComponent(prefix + parts[1] + '/' + parts[0])}`;
 
-      const setWorkers = new Set(workers);
-      let shares = {};
-
-      // 1. CẢ 4 NGƯỜI: Vũ (35%), Thịnh (35%), Tú (15%), Tùng (15%)
-      if (workers.length === 4 && setWorkers.has('Vũ') && setWorkers.has('Thịnh') && setWorkers.has('Tú') && setWorkers.has('Tùng')) {
-        shares = { 'Vũ': 0.35, 'Thịnh': 0.35, 'Tú': 0.15, 'Tùng': 0.15 };
-      }
-      // 2. 2 THỢ CHÍNH: Vũ - Thịnh (50% - 50%)
-      else if (workers.length === 2 && setWorkers.has('Vũ') && setWorkers.has('Thịnh')) {
-        shares = { 'Vũ': 0.50, 'Thịnh': 0.50 };
-      }
-      // 3. 1 THỢ CHÍNH (Vũ hoặc Thịnh) + 2 THỢ PHỤ (Tú + Tùng): Chính 60%, Phụ 20%-20%
-      else if (workers.length === 3 && (setWorkers.has('Vũ') || setWorkers.has('Thịnh')) && setWorkers.has('Tú') && setWorkers.has('Tùng')) {
-        const mainWorker = setWorkers.has('Vũ') ? 'Vũ' : 'Thịnh';
-        shares = { [mainWorker]: 0.60, 'Tú': 0.20, 'Tùng': 0.20 };
-      }
-      // 4. 1 THỢ CHÍNH (Vũ hoặc Thịnh) + 1 THỢ PHỤ (Tú hoặc Tùng): Chính 70%, Phụ 30%
-      else if (workers.length === 2 && (setWorkers.has('Vũ') || setWorkers.has('Thịnh')) && (setWorkers.has('Tú') || setWorkers.has('Tùng'))) {
-        const mainWorker = setWorkers.has('Vũ') ? 'Vũ' : 'Thịnh';
-        const subWorker = setWorkers.has('Tú') ? 'Tú' : 'Tùng';
-        shares = { [mainWorker]: 0.70, [subWorker]: 0.30 };
-      }
-      // 5. TRƯỜNG HỢP KhÁC: Chia đều
-      else {
-        const equalShare = 1 / workers.length;
-        workers.forEach(w => shares[w] = equalShare);
-      }
-
-      let breakdown = {};
-      let summaryTextList = [];
-
-      workers.forEach(w => {
-        const percent = shares[w] || 0;
-        const amount = Math.round(total * percent);
-        breakdown[w] = amount;
-        summaryTextList.push(`${w}: ${Math.round(percent * 100)}% (${amount.toLocaleString('vi-VN')}đ)`);
-      });
-
-      return {
-        breakdown,
-        summaryText: summaryTextList.join(' | ')
-      };
-    }
-
-    function calculateTotal() {
-      let total = 0;
-      let selectedPositions = [];
-
-      document.querySelectorAll('.price-checkbox:checked').forEach(cb => {
-        selectedPositions.push(cb.value);
-        total += parseInt(cb.getAttribute('data-price') || 0);
-      });
-
-      const suonSelect = document.getElementById('suon_count');
-      const suonVal = parseInt(suonSelect.value);
-      if (suonVal > 0) {
-        total += parseInt(suonSelect.options[suonSelect.selectedIndex].getAttribute('data-price') || 0);
-        selectedPositions.push(`${suonVal} Sườn`);
-      }
-
-      const nocSelect = document.getElementById('noc_xe');
-      if (nocSelect.value) {
-        total += parseInt(nocSelect.options[nocSelect.selectedIndex].getAttribute('data-price') || 0);
-        selectedPositions.push(nocSelect.value);
-      }
-
-      document.getElementById('totalPriceDisplay').innerText = total.toLocaleString('vi-VN') + " VNĐ";
-
-      const workers = getSelectedWorkers();
-      const splitResult = calculateWorkerSplits(total, workers);
-
-      const splitCalcDisplay = document.getElementById('splitCalcDisplay');
-      const splitDetailList = document.getElementById('splitDetailList');
-
-      if (workers.length > 0) {
-        splitCalcDisplay.innerText = `${workers.length} thợ thi công (${workers.join(', ')})`;
-        splitDetailList.innerHTML = Object.keys(splitResult.breakdown).map(w => `
-          <div class="flex justify-between">
-            <span>${w}</span>
-            <span class="font-bold text-amber-400">${splitResult.breakdown[w].toLocaleString('vi-VN')} VNĐ</span>
-          </div>
-        `).join('');
-      } else {
-        splitCalcDisplay.innerText = "Chưa chọn thợ";
-        splitDetailList.innerHTML = "";
-      }
-
-      return { 
-        total, 
-        positionsText: selectedPositions.length > 0 ? selectedPositions.join(', ') : 'Chưa chọn', 
-        workers, 
-        splitResult 
-      };
-    }
-
-    document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
-    document.getElementById('suon_count').addEventListener('change', calculateTotal);
-    document.getElementById('noc_xe').addEventListener('change', calculateTotal);
-    document.getElementById('monthPicker').addEventListener('change', fetchSheetData);
-
-    function formatDateOnly(timeStr) {
-      if (!timeStr) return 'N/A';
-      let str = String(timeStr).replace("'", "").trim();
-      if (str.includes('/')) return str.split(' ')[0];
-      if (str.includes('-')) {
-        let parts = str.split('T')[0].split('-');
-        if (parts.length === 3) {
-          return parts[0].length === 4 ? `${parts[2]}/${parts[1]}/${parts[0]}` : `${parts[0]}/${parts[1]}/${parts[2]}`;
-        }
-      }
-      return str;
+      fetch(GOOGLE_SCRIPT_URL + sheetParam)
+        .then(res => res.json())
+        .then(data => {
+          globalDataList = data.reverse();
+          renderTable();
+          calculateMonthlyTotal();
+        })
+        .catch(err => console.error(err));
     }
 
     function calculateMonthlyTotal() {
-      if (globalDataList.length === 0) {
-        document.getElementById('monthlyCarCount').innerText = `0 xe`;
-        document.getElementById('monthlyTotalDisplay').innerText = `0 VNĐ`;
-        document.getElementById('workerSummaryContainer').innerHTML = `<p class="text-xs text-slate-500 col-span-full italic">Chưa có dữ liệu thi công cho tháng này.</p>`;
-        return;
-      }
-
+      const activeStaff = currentService === 'PPF' ? ppfStaff : filmStaff;
       let grandTotal = 0;
       let carCount = 0;
-      let workerMap = { 'Vũ': 0, 'Tú': 0, 'Tùng': 0, 'Thịnh': 0 };
+      let workerMap = {};
+      activeStaff.forEach(w => workerMap[w] = 0);
 
       globalDataList.forEach(item => {
         const itemTotal = Number(item.totalPrice) || 0;
@@ -390,8 +387,8 @@
         const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
         if (workersArray.length > 0) {
           const splits = calculateWorkerSplits(itemTotal, workersArray);
-          Object.keys(splits.breakdown).forEach(w => {
-            workerMap[w] = (workerMap[w] || 0) + splits.breakdown[w];
+          Object.keys(splits).forEach(w => {
+            if (workerMap[w] !== undefined) workerMap[w] += splits[w];
           });
         }
       });
@@ -399,46 +396,12 @@
       document.getElementById('monthlyCarCount').innerText = `${carCount} xe`;
       document.getElementById('monthlyTotalDisplay').innerText = grandTotal.toLocaleString('vi-VN') + " VNĐ";
 
-      const workerSummaryContainer = document.getElementById('workerSummaryContainer');
-      workerSummaryContainer.innerHTML = fixedStaffList.map(name => `
-        <div class="bg-[#0b0f19] p-3 rounded-xl text-center border border-slate-700/60 shadow-inner">
-          <p class="text-xs font-extrabold text-cyan-400 uppercase tracking-wider">${name}</p>
+      document.getElementById('workerSummaryContainer').innerHTML = activeStaff.map(name => `
+        <div class="bg-[#0b0f19] p-3 rounded-xl text-center border border-slate-700/60">
+          <p class="text-xs font-extrabold text-cyan-400 uppercase">${name}</p>
           <p class="text-sm font-black text-amber-400 mt-1">${(workerMap[name] || 0).toLocaleString('vi-VN')} đ</p>
         </div>
       `).join('');
-    }
-
-    function fetchSheetData() {
-      if (!GOOGLE_SCRIPT_URL) return;
-
-      const refreshBtn = document.getElementById('refreshBtn');
-      const refreshIcon = document.getElementById('refreshIcon');
-      const refreshText = document.getElementById('refreshText');
-      
-      refreshBtn.disabled = true;
-      refreshIcon.classList.add('animate-spin');
-      refreshText.innerText = "Đang tải...";
-
-      const selectedMonth = document.getElementById('monthPicker').value;
-      let sheetParam = "";
-      if (selectedMonth) {
-        let parts = selectedMonth.split('-');
-        sheetParam = `?sheet=${parts[1]}/${parts[0]}`;
-      }
-
-      fetch(GOOGLE_SCRIPT_URL + sheetParam)
-        .then(res => res.json())
-        .then(data => {
-          globalDataList = data.reverse();
-          renderTable();
-          calculateMonthlyTotal();
-        })
-        .catch(err => console.error("Lỗi tải dữ liệu:", err))
-        .finally(() => {
-          refreshBtn.disabled = false;
-          refreshIcon.classList.remove('animate-spin');
-          refreshText.innerText = "Làm mới";
-        });
     }
 
     function renderTable() {
@@ -446,55 +409,31 @@
       tbody.innerHTML = '';
 
       if (globalDataList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">Chưa có dữ liệu thi công nào cho tháng này.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">Chưa có dữ liệu nào cho tháng này.</td></tr>';
         return;
       }
 
       globalDataList.forEach(item => {
-        const displayDate = formatDateOnly(item.timestamp);
-        const totalPrice = Number(item.totalPrice) || 0;
-
         tbody.innerHTML += `
-          <tr class="hover:bg-[#1c263b]/50 transition border-b border-slate-800">
-            <td class="p-3 font-mono text-xs text-slate-400 font-semibold">${displayDate}</td>
+          <tr class="hover:bg-[#1c263b]/50 border-b border-slate-800">
+            <td class="p-3 text-xs text-slate-400 font-semibold">${item.timestamp}</td>
             <td class="p-3 font-bold text-white">${item.carName}</td>
             <td class="p-3"><span class="bg-cyan-950 text-cyan-300 border border-cyan-800 px-2 py-0.5 rounded text-xs font-semibold">${item.filmType}</span></td>
             <td class="p-3 text-slate-300">${item.position}</td>
-            <td class="p-3 font-black text-amber-400">${totalPrice.toLocaleString('vi-VN')} VNĐ</td>
+            <td class="p-3 font-black text-amber-400">${(Number(item.totalPrice)||0).toLocaleString('vi-VN')} VNĐ</td>
             <td class="p-3"><span class="bg-slate-800 text-slate-200 border border-slate-700 px-2 py-1 rounded-lg text-xs font-bold">${item.workerName}</span></td>
-            <td class="p-3 text-xs text-slate-400 italic whitespace-pre-wrap">${item.note || '-'}</td>
+            <td class="p-3 text-xs text-slate-400 italic">${item.note || '-'}</td>
           </tr>
         `;
       });
-    }
-
-    function resetFormFields() {
-      document.getElementById('carForm').reset();
-      document.querySelectorAll('.price-checkbox').forEach(cb => cb.checked = false);
-      document.querySelectorAll('.worker-checkbox').forEach(cb => cb.checked = false);
-      document.getElementById('note').value = '';
-      document.getElementById('suon_count').value = "0";
-      document.getElementById('noc_xe').value = "";
-      calculateTotal();
-      setPresetTime();
-    }
-
-    function showToast() {
-      const toast = document.getElementById('toastNotification');
-      toast.classList.remove('-translate-y-24', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('-translate-y-24', 'opacity-0');
-      }, 3000);
     }
 
     document.getElementById('carForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const calc = calculateTotal();
 
-      if (calc.positionsText === 'Chưa chọn') {
-        alert("⚠️ Vui lòng chọn ít nhất 1 vị trí dán!");
+      if (!calc.posText || calc.posText === 'Chưa chọn') {
+        alert("⚠️ Vui lòng nhập/chọn vị trí dán!");
         return;
       }
 
@@ -508,9 +447,10 @@
       submitBtn.innerText = "Đang lưu...";
 
       const newData = {
+        serviceType: currentService,
         carName: document.getElementById('carName').value.trim(),
-        filmType: document.getElementById('filmType').value,
-        position: calc.positionsText,
+        filmType: document.getElementById('filmType').value.trim(),
+        position: calc.posText,
         totalPrice: calc.total,
         workerName: calc.workers.join(', '),
         note: document.getElementById('note').value.trim(),
@@ -524,43 +464,22 @@
         body: JSON.stringify(newData)
       })
       .then(() => {
-        showToast();
-        resetFormFields();
+        document.getElementById('carForm').reset();
+        document.getElementById('ppfPriceInput').value = '';
+        document.getElementById('ppfPositionInput').value = '';
+        setPresetTime();
+        renderStaffUI();
+        calculateTotal();
         setTimeout(fetchSheetData, 2000);
       })
-      .catch(err => {
-        console.error("Lỗi:", err);
-        alert("❌ Lỗi khi gửi dữ liệu!");
-      })
+      .catch(err => console.error(err))
       .finally(() => {
         submitBtn.disabled = false;
         submitBtn.innerText = "Lưu Thông Tin Thi Công";
       });
     });
 
-    document.getElementById('exportExcelBtn').addEventListener('click', () => {
-      if (globalDataList.length === 0) {
-        alert("Chưa có dữ liệu!");
-        return;
-      }
-      const excelData = globalDataList.map((item, index) => {
-        return {
-          "STT": index + 1,
-          "Ngày Thi Công": formatDateOnly(item.timestamp),
-          "Tên/Biển Số Xe": item.carName,
-          "Loại Film": item.filmType,
-          "Vị Trí Dán": item.position,
-          "Tổng Tiền (VNĐ)": item.totalPrice,
-          "Thợ Thi Công": item.workerName,
-          "Ghi Chú": item.note || ''
-        };
-      });
-
-      const worksheet = XLSX.utils.json_to_sheet(excelData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "NhatKyF4Auto");
-      XLSX.writeFile(workbook, `F4Auto_BaoCao_${new Date().toISOString().slice(0,10)}.xlsx`);
-    });
+    document.getElementById('monthPicker').addEventListener('change', fetchSheetData);
 
     renderStaffUI();
     fetchSheetData();
