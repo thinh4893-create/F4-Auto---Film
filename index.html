@@ -75,7 +75,7 @@
       </div>
     </div>
 
-    <!-- Form Nhập Liệu Dark Theme -->
+    <!-- Form Nhập Liệu -->
     <div class="bg-[#151c2c] p-6 rounded-2xl shadow-xl border border-slate-800">
       <h2 class="text-base font-bold mb-4 text-cyan-400 border-b border-slate-800 pb-2 flex items-center gap-2 uppercase tracking-wider">
         <span>📋</span> Nhập Xe Dán Mới
@@ -149,9 +149,7 @@
         <div class="md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
           <label class="block text-xs font-bold uppercase tracking-wider text-cyan-400">🛠️ Đội Ngũ Kỹ Thuật Viên Thi Công</label>
 
-          <div id="workerCheckboxContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-            <!-- Render cố định: Vũ, Tú, Tùng, Thịnh -->
-          </div>
+          <div id="workerCheckboxContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm"></div>
 
           <div id="splitInfoBox" class="p-3 bg-[#0b0f19] border border-cyan-800/40 rounded-xl text-xs space-y-1">
             <div class="flex justify-between items-center text-slate-300">
@@ -199,7 +197,7 @@
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm border-collapse min-w-[800px]">
+        <table class="w-full text-left text-sm border-collapse min-w-[700px]">
           <thead>
             <tr class="bg-[#0b0f19] text-slate-400 uppercase text-[11px] tracking-wider">
               <th class="p-3 rounded-l-lg">Ngày</th>
@@ -208,13 +206,12 @@
               <th class="p-3">Vị trí dán</th>
               <th class="p-3">Tổng Tiền</th>
               <th class="p-3">Thợ Thi Công</th>
-              <th class="p-3">Chi Tiết Nhận</th>
               <th class="p-3 rounded-r-lg">Ghi Chú</th>
             </tr>
           </thead>
           <tbody id="dataTable" class="divide-y divide-slate-800 text-slate-300">
             <tr>
-              <td colspan="8" class="p-4 text-center text-slate-500">Đang tải dữ liệu từ Google Sheets...</td>
+              <td colspan="7" class="p-4 text-center text-slate-500">Đang tải dữ liệu từ Google Sheets...</td>
             </tr>
           </tbody>
         </table>
@@ -225,7 +222,6 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_FLTz9hh7dCdD7bi2d26HrZi8Cx2GUQeVfEYEHqmq1csuT0wC2ThiCtnaBNqchIvkhw/exec";
 
-    // 2. KTV cố định
     const fixedStaffList = ['Vũ', 'Tú', 'Tùng', 'Thịnh'];
     let globalDataList = [];
 
@@ -257,27 +253,33 @@
       return workers;
     }
 
-    // 3. TÍNH TOÁN VÀ CHIA TỶ LỆ TIỀN CÔNG THỢ TỰ ĐỘNG
+    // TÍNH TỶ LỆ PHẦN TRĂM MỚI (VŨ & THỊNH BÌNH ĐẲNG)
     function calculateWorkerSplits(total, workers) {
       if (workers.length === 0 || total === 0) return { breakdown: {}, summaryText: "Chưa chọn thợ" };
 
       const setWorkers = new Set(workers);
       let shares = {};
 
-      // TH1: Vũ - Thịnh (50% - 50%)
-      if (workers.length === 2 && setWorkers.has('Vũ') && setWorkers.has('Thịnh')) {
+      // 1. CẢ 4 NGƯỜI: Vũ (35%), Thịnh (35%), Tú (15%), Tùng (15%)
+      if (workers.length === 4 && setWorkers.has('Vũ') && setWorkers.has('Thịnh') && setWorkers.has('Tú') && setWorkers.has('Tùng')) {
+        shares = { 'Vũ': 0.35, 'Thịnh': 0.35, 'Tú': 0.15, 'Tùng': 0.15 };
+      }
+      // 2. 2 THỢ CHÍNH: Vũ - Thịnh (50% - 50%)
+      else if (workers.length === 2 && setWorkers.has('Vũ') && setWorkers.has('Thịnh')) {
         shares = { 'Vũ': 0.50, 'Thịnh': 0.50 };
       }
-      // TH2: Vũ - Tú - Tùng (Vũ 60%, Tú 20%, Tùng 20%)
-      else if (workers.length === 3 && setWorkers.has('Vũ') && setWorkers.has('Tú') && setWorkers.has('Tùng')) {
-        shares = { 'Vũ': 0.60, 'Tú': 0.20, 'Tùng': 0.20 };
+      // 3. 1 THỢ CHÍNH (Vũ hoặc Thịnh) + 2 THỢ PHỤ (Tú + Tùng): Chính 60%, Phụ 20%-20%
+      else if (workers.length === 3 && (setWorkers.has('Vũ') || setWorkers.has('Thịnh')) && setWorkers.has('Tú') && setWorkers.has('Tùng')) {
+        const mainWorker = setWorkers.has('Vũ') ? 'Vũ' : 'Thịnh';
+        shares = { [mainWorker]: 0.60, 'Tú': 0.20, 'Tùng': 0.20 };
       }
-      // TH3: Vũ - Tú HOẶC Vũ - Tùng (Vũ 70%, Tú/Tùng 30%)
-      else if (workers.length === 2 && setWorkers.has('Vũ') && (setWorkers.has('Tú') || setWorkers.has('Tùng'))) {
-        const otherWorker = setWorkers.has('Tú') ? 'Tú' : 'Tùng';
-        shares = { 'Vũ': 0.70, [otherWorker]: 0.30 };
+      // 4. 1 THỢ CHÍNH (Vũ hoặc Thịnh) + 1 THỢ PHỤ (Tú hoặc Tùng): Chính 70%, Phụ 30%
+      else if (workers.length === 2 && (setWorkers.has('Vũ') || setWorkers.has('Thịnh')) && (setWorkers.has('Tú') || setWorkers.has('Tùng'))) {
+        const mainWorker = setWorkers.has('Vũ') ? 'Vũ' : 'Thịnh';
+        const subWorker = setWorkers.has('Tú') ? 'Tú' : 'Tùng';
+        shares = { [mainWorker]: 0.70, [subWorker]: 0.30 };
       }
-      // Mặc định: Chia đều nếu chọn các trường hợp khác
+      // 5. TRƯỜNG HỢP KhÁC: Chia đều
       else {
         const equalShare = 1 / workers.length;
         workers.forEach(w => shares[w] = equalShare);
@@ -444,15 +446,13 @@
       tbody.innerHTML = '';
 
       if (globalDataList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Chưa có dữ liệu thi công nào cho tháng này.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">Chưa có dữ liệu thi công nào cho tháng này.</td></tr>';
         return;
       }
 
       globalDataList.forEach(item => {
         const displayDate = formatDateOnly(item.timestamp);
         const totalPrice = Number(item.totalPrice) || 0;
-        const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
-        const splits = calculateWorkerSplits(totalPrice, workersArray);
 
         tbody.innerHTML += `
           <tr class="hover:bg-[#1c263b]/50 transition border-b border-slate-800">
@@ -462,7 +462,6 @@
             <td class="p-3 text-slate-300">${item.position}</td>
             <td class="p-3 font-black text-amber-400">${totalPrice.toLocaleString('vi-VN')} VNĐ</td>
             <td class="p-3"><span class="bg-slate-800 text-slate-200 border border-slate-700 px-2 py-1 rounded-lg text-xs font-bold">${item.workerName}</span></td>
-            <td class="p-3 text-xs text-slate-300 font-medium">${splits.summaryText}</td>
             <td class="p-3 text-xs text-slate-400 italic whitespace-pre-wrap">${item.note || '-'}</td>
           </tr>
         `;
@@ -514,7 +513,6 @@
         position: calc.positionsText,
         totalPrice: calc.total,
         workerName: calc.workers.join(', '),
-        perWorker: calc.splitResult.summaryText,
         note: document.getElementById('note').value.trim(),
         timestamp: document.getElementById('timestamp').value
       };
@@ -546,8 +544,6 @@
         return;
       }
       const excelData = globalDataList.map((item, index) => {
-        const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
-        const splits = calculateWorkerSplits(item.totalPrice, workersArray);
         return {
           "STT": index + 1,
           "Ngày Thi Công": formatDateOnly(item.timestamp),
@@ -556,7 +552,6 @@
           "Vị Trí Dán": item.position,
           "Tổng Tiền (VNĐ)": item.totalPrice,
           "Thợ Thi Công": item.workerName,
-          "Chi Tiết Chia Tiền": splits.summaryText,
           "Ghi Chú": item.note || ''
         };
       });
