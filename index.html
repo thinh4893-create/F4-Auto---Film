@@ -4,26 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <title>F4 AUTO - TỔNG HỢP THI CÔNG</title>
 </head>
 <body class="bg-[#0b0f19] text-slate-100 min-h-screen p-3 md:p-8 font-sans">
-
-  <!-- NOTIFICATION -->
-  <div id="toastNotification" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 transition-all duration-500 ease-in-out pointer-events-none z-50">
-    <div class="bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-xl flex items-center justify-center gap-2 border border-emerald-400">
-      <span>✅</span> <span class="font-bold text-sm">Đã lưu thông tin thành công!</span>
-    </div>
-  </div>
 
   <div class="max-w-5xl mx-auto space-y-6">
     <!-- Header -->
     <div class="bg-[#151c2c] p-5 rounded-2xl shadow-xl border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
       <div>
         <h1 class="text-2xl font-black text-white uppercase tracking-wider flex items-center gap-2"><span>🚗</span> F4 AUTO</h1>
-        <p class="text-cyan-400 text-xs mt-1 font-medium">Quản lý Thi công Film Cách Nhiệt & PPF</p>
+        <p class="text-cyan-400 text-xs mt-1 font-medium">Quản lý Thi công Phim Cách Nhiệt & PPF</p>
       </div>
-      <!-- NÚT CHUYỂN ĐỔI TAB DỊCH VỤ -->
+      <!-- TAB CHUYỂN DỊCH VỤ -->
       <div class="flex bg-[#0b0f19] p-1.5 rounded-xl border border-slate-800 gap-1">
         <button id="btnTabFilm" onclick="switchServiceTab('FILM')" class="px-4 py-2 rounded-lg text-xs font-black transition uppercase tracking-wider bg-cyan-600 text-white shadow">
           🎬 PHIM CÁCH NHIỆT
@@ -34,11 +26,11 @@
       </div>
     </div>
 
-    <!-- THỐNG KÊ THÁNG & BẢNG LƯƠNG THỢ -->
+    <!-- THỐNG KÊ THÁNG -->
     <div class="bg-[#151c2c] text-white p-5 rounded-2xl shadow-xl border border-slate-800 space-y-4">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-3">
         <h2 id="summaryTitle" class="text-base font-bold flex items-center gap-2 text-cyan-400 uppercase tracking-wider">
-          <span>📊</span> THỐNG KÊ FILM CÁCH NHIỆT
+          <span>📊</span> THỐNG KÊ PHIM CÁCH NHIỆT
         </h2>
         <div class="flex items-center gap-2">
           <label class="text-xs font-semibold uppercase text-slate-400">Chọn tháng:</label>
@@ -66,7 +58,7 @@
     <!-- FORM NHẬP -->
     <div class="bg-[#151c2c] p-6 rounded-2xl shadow-xl border border-slate-800">
       <h2 id="formTitle" class="text-base font-bold mb-4 text-cyan-400 border-b border-slate-800 pb-2 uppercase tracking-wider">
-        📋 Nhập Xe Dán Film Mới
+        📋 Nhập Xe Dán Phim Mới
       </h2>
       <form id="carForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -75,13 +67,20 @@
         </div>
 
         <div>
-          <label id="lblType" class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Loại Film Dán</label>
-          <input type="text" id="filmType" placeholder="Ví dụ: 3M, Ari, Stek..." required class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm">
+          <label id="lblType" class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Loại Phim Dán</label>
+          <!-- Cả Input gõ tay (Cho Film) và Dropdown (Cho PPF) -->
+          <input type="text" id="filmTypeInput" placeholder="Ví dụ: 3M, Ntech..." class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm">
+          <select id="ppfTypeSelect" class="hidden w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm font-bold">
+            <option value="Ari">Ari</option>
+            <option value="Avery">Avery</option>
+            <option value="Stek">Stek</option>
+            <option value="3M">3M</option>
+          </select>
         </div>
 
-        <!-- KHU VỰC VỊ TRÍ DÁN FILM (HIỂN THỊ KHI DÙNG TAB FILM) -->
+        <!-- KHU VỰC CHỌN VỊ TRÍ FILM -->
         <div id="filmPositionContainer" class="md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
-          <label class="block text-xs font-bold uppercase text-cyan-400">Chọn Vị Trí Dán Film</label>
+          <label class="block text-xs font-bold uppercase text-cyan-400">Chọn Vị Trí Dán Phim</label>
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
             <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer">
               <input type="checkbox" class="price-checkbox accent-cyan-500 w-4 h-4" data-price="160000" value="Full xe">
@@ -118,22 +117,8 @@
           </div>
         </div>
 
-        <!-- KHU VỰC NHẬP PPF (HIỂN THỊ KHI DÙNG TAB PPF) -->
-        <div id="ppfPositionContainer" class="hidden md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Vị Trí Dán PPF</label>
-              <input type="text" id="ppfPositionInput" placeholder="Ví dụ: Full xe, Chóa đèn, Nội thất..." class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 text-white text-sm">
-            </div>
-            <div>
-              <label class="block text-xs font-bold uppercase text-amber-400 mb-1.5">Tổng Tiền Thi Công PPF (VNĐ)</label>
-              <input type="number" id="ppfPriceInput" placeholder="Nhập số tiền..." class="w-full bg-[#0b0f19] border border-amber-500/50 rounded-xl p-3 text-amber-400 font-bold text-sm">
-            </div>
-          </div>
-        </div>
-
         <!-- TỔNG TIỀN HIỂN THỊ -->
-        <div class="md:col-span-2 bg-[#0b0f19] p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+        <div class="md:col-span-2 bg-[#0b0f19] p-3.5 rounded-xl border border-slate-800 flex justify-between items-center">
           <span class="text-xs uppercase font-bold text-slate-400">TỔNG TIỀN XE:</span>
           <span id="totalPriceDisplay" class="text-xl font-black text-cyan-400">0 VNĐ</span>
         </div>
@@ -169,11 +154,8 @@
     <!-- BẢNG NHẬT KÝ -->
     <div class="bg-[#151c2c] p-6 rounded-2xl shadow-xl border border-slate-800">
       <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-        <h2 id="logTitle" class="text-base font-bold text-cyan-400 uppercase tracking-wider">🚗 Nhật Ký Thi Công Film</h2>
-        <div class="flex gap-2">
-          <button onclick="fetchSheetData()" class="bg-[#1c263b] text-slate-200 px-3 py-2 rounded-xl text-xs font-bold border border-slate-700">🔄 Làm mới</button>
-          <button id="exportExcelBtn" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">📊 Xuất Excel</button>
-        </div>
+        <h2 id="logTitle" class="text-base font-bold text-cyan-400 uppercase tracking-wider">🚗 Nhật Ký Thi Công Phim</h2>
+        <button onclick="fetchSheetData()" class="bg-[#1c263b] text-slate-200 px-3 py-2 rounded-xl text-xs font-bold border border-slate-700">🔄 Làm mới</button>
       </div>
 
       <div class="overflow-x-auto">
@@ -211,17 +193,19 @@
       document.getElementById('btnTabFilm').className = !isPPF ? "px-4 py-2 rounded-lg text-xs font-black bg-cyan-600 text-white shadow uppercase" : "px-4 py-2 rounded-lg text-xs font-black text-slate-400 hover:text-white uppercase";
       document.getElementById('btnTabPPF').className = isPPF ? "px-4 py-2 rounded-lg text-xs font-black bg-indigo-600 text-white shadow uppercase" : "px-4 py-2 rounded-lg text-xs font-black text-slate-400 hover:text-white uppercase";
 
-      document.getElementById('summaryTitle').innerText = isPPF ? "📊 THỐNG KÊ PPF" : "📊 THỐNG KÊ FILM CÁCH NHIỆT";
-      document.getElementById('formTitle').innerText = isPPF ? "📋 Nhập Xe Dán PPF Mới" : "📋 Nhập Xe Dán Film Mới";
-      document.getElementById('logTitle').innerText = isPPF ? "🛡️ Nhật Ký Thi Công PPF" : "🚗 Nhật Ký Thi Công Film";
-      document.getElementById('lblType').innerText = isPPF ? "Loại PPF" : "Loại Film Dán";
+      document.getElementById('summaryTitle').innerText = isPPF ? "📊 THỐNG KÊ PPF" : "📊 THỐNG KÊ PHIM CÁCH NHIỆT";
+      document.getElementById('formTitle').innerText = isPPF ? "📋 Nhập Xe Dán PPF Mới" : "📋 Nhập Xe Dán Phim Mới";
+      document.getElementById('logTitle').innerText = isPPF ? "🛡️ Nhật Ký Thi Công PPF" : "🚗 Nhật Ký Thi Công Phim";
+      document.getElementById('lblType').innerText = isPPF ? "Loại PPF" : "Loại Phim Dán";
 
       if (isPPF) {
         document.getElementById('filmPositionContainer').classList.add('hidden');
-        document.getElementById('ppfPositionContainer').classList.remove('hidden');
+        document.getElementById('filmTypeInput').classList.add('hidden');
+        document.getElementById('ppfTypeSelect').classList.remove('hidden');
       } else {
         document.getElementById('filmPositionContainer').classList.remove('hidden');
-        document.getElementById('ppfPositionContainer').classList.add('hidden');
+        document.getElementById('filmTypeInput').classList.remove('hidden');
+        document.getElementById('ppfTypeSelect').classList.add('hidden');
       }
 
       renderStaffUI();
@@ -294,8 +278,8 @@
       let posText = "";
 
       if (currentService === 'PPF') {
-        posText = document.getElementById('ppfPositionInput').value.trim() || 'Dán PPF';
-        total = parseInt(document.getElementById('ppfPriceInput').value) || 0;
+        posText = 'Dán PPF';
+        total = 500000; // CỐ ĐỊNH 500.000 VNĐ NẾU LÀ PPF
       } else {
         let selectedPositions = [];
         document.querySelectorAll('.price-checkbox:checked').forEach(cb => {
@@ -340,8 +324,6 @@
     document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
     document.getElementById('suon_count').addEventListener('change', calculateTotal);
     document.getElementById('noc_xe').addEventListener('change', calculateTotal);
-    document.getElementById('ppfPriceInput').addEventListener('input', calculateTotal);
-    document.getElementById('ppfPositionInput').addEventListener('input', calculateTotal);
 
     const setPresetTime = () => {
       const now = new Date();
@@ -432,13 +414,17 @@
       e.preventDefault();
       const calc = calculateTotal();
 
-      if (!calc.posText || calc.posText === 'Chưa chọn') {
-        alert("⚠️ Vui lòng nhập/chọn vị trí dán!");
+      if (calc.workers.length === 0) {
+        alert("⚠️ Vui lòng chọn ít nhất 1 thợ thi công!");
         return;
       }
 
-      if (calc.workers.length === 0) {
-        alert("⚠️ Vui lòng chọn ít nhất 1 thợ thi công!");
+      const selectedFilmType = currentService === 'PPF' 
+        ? document.getElementById('ppfTypeSelect').value 
+        : document.getElementById('filmTypeInput').value.trim();
+
+      if (!selectedFilmType && currentService !== 'PPF') {
+        alert("⚠️ Vui lòng nhập loại phim!");
         return;
       }
 
@@ -449,7 +435,7 @@
       const newData = {
         serviceType: currentService,
         carName: document.getElementById('carName').value.trim(),
-        filmType: document.getElementById('filmType').value.trim(),
+        filmType: selectedFilmType,
         position: calc.posText,
         totalPrice: calc.total,
         workerName: calc.workers.join(', '),
@@ -465,8 +451,6 @@
       })
       .then(() => {
         document.getElementById('carForm').reset();
-        document.getElementById('ppfPriceInput').value = '';
-        document.getElementById('ppfPositionInput').value = '';
         setPresetTime();
         renderStaffUI();
         calculateTotal();
