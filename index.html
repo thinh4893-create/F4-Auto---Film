@@ -4,22 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
-  <!-- Cấu hình chạy Full Màn Hình độc lập không hiện Safari -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="F4 Auto">
   <meta name="mobile-web-app-capable" content="yes">
 
-  <!-- Icon ứng dụng khi đưa ra Màn hình chính -->
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3202/3202926.png">
 
-  <!-- Thư viện Tailwind CSS & Xuất Excel -->
+  <!-- Tailwind CSS & XLSX Library -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <title>F4 AUTO - QUẢN LÝ THI CÔNG</title>
 </head>
-<body class="bg-slate-100 min-h-screen p-3 md:p-8">
+<body class="bg-[#0b0f19] text-slate-100 min-h-screen p-3 md:p-8 font-sans">
 
   <!-- POPUP THÔNG BÁO -->
   <div id="toastNotification" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 transition-all duration-500 ease-in-out pointer-events-none z-50 w-auto max-w-sm">
@@ -30,59 +28,66 @@
   </div>
 
   <div class="max-w-5xl mx-auto space-y-6">
-    <!-- Header -->
-    <div class="bg-white p-5 rounded-xl shadow-md text-center border-t-4 border-blue-600">
-      <h1 class="text-2xl font-bold text-slate-800 uppercase tracking-wide">F4 AUTO - QUẢN LÝ THI CÔNG</h1>
-      <p class="text-gray-500 text-sm mt-1">Hệ thống ghi nhận xe thi công & chia tiền công thợ tự động</p>
+    <!-- Header Dark Theme -->
+    <div class="bg-[#151c2c] p-5 rounded-2xl shadow-xl border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div>
+        <h1 class="text-2xl font-black text-white uppercase tracking-wider flex items-center gap-2">
+          <span>🚗</span> F4 AUTO
+        </h1>
+        <p class="text-cyan-400 text-xs mt-1 font-medium">Hệ thống Quản lý Thi công & Chia tiền công thợ tự động</p>
+      </div>
+      <div class="bg-cyan-950/80 border border-cyan-800/50 text-cyan-400 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase">
+        📍 CƠ SỞ TAM TRINH
+      </div>
     </div>
 
     <!-- KHU VỰC THỐNG KÊ THEO THÁNG & BẢNG LƯƠNG THỢ -->
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-5 rounded-xl shadow-lg space-y-4">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-blue-400/40 pb-3">
-        <h2 class="text-lg font-bold flex items-center gap-2">
+    <div class="bg-[#151c2c] text-white p-5 rounded-2xl shadow-xl border border-slate-800 space-y-4">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-3">
+        <h2 class="text-base font-bold flex items-center gap-2 text-cyan-400 uppercase tracking-wider">
           <span>📊</span> Thống Kê Theo Tháng
         </h2>
         <div class="flex items-center gap-2">
-          <label class="text-xs font-semibold uppercase text-blue-100">Chọn tháng:</label>
-          <input type="month" id="monthPicker" class="bg-white text-slate-800 px-3 py-1.5 rounded-lg text-sm font-bold outline-none border border-slate-300">
+          <label class="text-xs font-semibold uppercase text-slate-400">Chọn tháng:</label>
+          <input type="month" id="monthPicker" class="bg-[#0b0f19] text-cyan-300 px-3 py-1.5 rounded-lg text-sm font-bold outline-none border border-slate-700 focus:border-cyan-500">
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-4 text-center">
-        <div class="bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/20">
-          <p class="text-xs text-blue-100 uppercase font-semibold">Tổng Số Xe Dán</p>
-          <p id="monthlyCarCount" class="text-2xl font-extrabold mt-1">0 xe</p>
+        <div class="bg-[#1c263b] p-3 rounded-xl border border-slate-700/50">
+          <p class="text-xs text-slate-400 uppercase font-semibold">Tổng Số Xe Dán</p>
+          <p id="monthlyCarCount" class="text-2xl font-black text-white mt-1">0 xe</p>
         </div>
-        <div class="bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/20">
-          <p class="text-xs text-blue-100 uppercase font-semibold">Tổng Doanh Thu Dán Xe</p>
-          <p id="monthlyTotalDisplay" class="text-2xl font-extrabold text-yellow-300 mt-1">0 VNĐ</p>
+        <div class="bg-[#1c263b] p-3 rounded-xl border border-slate-700/50">
+          <p class="text-xs text-slate-400 uppercase font-semibold">Tổng Doanh Thu Dán Xe</p>
+          <p id="monthlyTotalDisplay" class="text-2xl font-black text-amber-400 mt-1">0 VNĐ</p>
         </div>
       </div>
 
       <!-- BẢNG TỔNG CỘNG TIỀN CÔNG TỪNG THỢ -->
-      <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 mt-3">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-blue-100 mb-2 flex items-center gap-1.5">
+      <div class="bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 mt-3">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-3 flex items-center gap-1.5">
           <span>👷‍♂️</span> Tổng Tiền Công Từng Thợ Nhận Được Trong Tháng
         </h3>
-        <div id="workerSummaryContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-800">
-          <p class="text-xs text-blue-200 col-span-full">Đang tính toán...</p>
+        <div id="workerSummaryContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <p class="text-xs text-slate-400 col-span-full">Đang tính toán...</p>
         </div>
       </div>
     </div>
 
-    <!-- Form Nhập Liệu -->
-    <div class="bg-white p-6 rounded-xl shadow-md">
-      <h2 class="text-lg font-bold mb-4 text-slate-700 border-b pb-2 flex items-center gap-2">
+    <!-- Form Nhập Liệu Dark Theme -->
+    <div class="bg-[#151c2c] p-6 rounded-2xl shadow-xl border border-slate-800">
+      <h2 class="text-base font-bold mb-4 text-cyan-400 border-b border-slate-800 pb-2 flex items-center gap-2 uppercase tracking-wider">
         <span>📋</span> Nhập Xe Dán Mới
       </h2>
       <form id="carForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-semibold text-slate-600 mb-1">Tên/Biển Số Xe</label>
-          <input type="text" id="carName" placeholder="Ví dụ: Cos - 30K-123.45" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Tên/Biển Số Xe</label>
+          <input type="text" id="carName" placeholder="Ví dụ: VF8 - 30K-123.45" required class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none text-white text-sm">
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-600 mb-1">Loại Film Dán</label>
-          <select id="filmType" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-white font-medium">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Loại Film Dán</label>
+          <select id="filmType" required class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none text-white text-sm font-medium">
             <option value="" disabled selected>-- Chọn loại film --</option>
             <option value="3M">3M</option>
             <option value="Ari">Ari</option>
@@ -91,31 +96,31 @@
         </div>
 
         <!-- CHỌN VỊ TRÍ DÁN FILM -->
-        <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <label class="block text-sm font-bold text-slate-700 mb-2">Chọn Vị Trí Dán Film</label>
+        <div class="md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
+          <label class="block text-xs font-bold uppercase tracking-wider text-cyan-400">Chọn Vị Trí Dán Film</label>
           
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="160000" value="Full xe">
-              <span class="font-medium">Full xe</span>
+            <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer hover:border-cyan-500 transition">
+              <input type="checkbox" class="price-checkbox accent-cyan-500 w-4 h-4" data-price="160000" value="Full xe">
+              <span class="font-medium text-slate-200">Full xe</span>
             </label>
 
-            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="50000" value="Kính Lái">
-              <span class="font-medium">Kính Lái</span>
+            <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer hover:border-cyan-500 transition">
+              <input type="checkbox" class="price-checkbox accent-cyan-500 w-4 h-4" data-price="50000" value="Kính Lái">
+              <span class="font-medium text-slate-200">Kính Lái</span>
             </label>
 
-            <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border cursor-pointer hover:bg-blue-50 transition">
-              <input type="checkbox" class="price-checkbox accent-blue-600 w-4 h-4" data-price="30000" value="Hậu">
-              <span class="font-medium">Hậu</span>
+            <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer hover:border-cyan-500 transition">
+              <input type="checkbox" class="price-checkbox accent-cyan-500 w-4 h-4" data-price="30000" value="Hậu">
+              <span class="font-medium text-slate-200">Hậu</span>
             </label>
           </div>
 
-          <!-- MENU THẢ XUỐNG DÁN SƯỜN & NÓC -->
-          <div class="mt-3 pt-3 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-            <div class="flex items-center justify-between bg-white p-2.5 rounded-lg border">
-              <label for="suon_count" class="font-semibold text-slate-700">Kính Sườn:</label>
-              <select id="suon_count" class="border rounded-lg p-1.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-medium">
+          <!-- MENU SƯỜN & NÓC -->
+          <div class="pt-3 border-t border-slate-700/50 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+            <div class="flex items-center justify-between bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700">
+              <label for="suon_count" class="font-medium text-slate-300">Kính Sườn:</label>
+              <select id="suon_count" class="bg-[#151c2c] border border-slate-700 rounded-lg p-1.5 text-white outline-none focus:border-cyan-500 font-medium text-xs">
                 <option value="0" data-price="0">Không dán sườn</option>
                 <option value="1" data-price="20000">1 Sườn</option>
                 <option value="2" data-price="40000">2 Sườn</option>
@@ -124,9 +129,9 @@
               </select>
             </div>
 
-            <div class="flex items-center justify-between bg-white p-2.5 rounded-lg border">
-              <label for="noc_xe" class="font-semibold text-slate-700">Cửa sổ trời (Nóc):</label>
-              <select id="noc_xe" class="border rounded-lg p-1.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-medium">
+            <div class="flex items-center justify-between bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700">
+              <label for="noc_xe" class="font-medium text-slate-300">Cửa sổ trời (Nóc):</label>
+              <select id="noc_xe" class="bg-[#151c2c] border border-slate-700 rounded-lg p-1.5 text-white outline-none focus:border-cyan-500 font-medium text-xs">
                 <option value="" data-price="0">Không dán nóc</option>
                 <option value="1 Nóc" data-price="20000">1 Nóc</option>
                 <option value="2 Nóc" data-price="40000">2 Nóc</option>
@@ -134,52 +139,41 @@
             </div>
           </div>
 
-          <div class="mt-4 pt-2 flex justify-between items-center text-base font-bold text-blue-700 border-t border-slate-200">
-            <span>TỔNG TIỀN DÁN XE NÀY:</span>
-            <span id="totalPriceDisplay" class="text-xl">0 VNĐ</span>
+          <div class="pt-2 flex justify-between items-center font-bold text-slate-300 border-t border-slate-700/50">
+            <span class="text-xs uppercase tracking-wider text-slate-400">TỔNG TIỀN DÁN XE:</span>
+            <span id="totalPriceDisplay" class="text-xl font-black text-cyan-400">0 VNĐ</span>
           </div>
         </div>
 
-        <!-- Chọn & Quản Lý Nhân Viên Thi Công -->
-        <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <div class="flex justify-between items-center mb-2">
-            <label class="block text-sm font-bold text-slate-700">Chọn Nhân Viên Thi Công</label>
-            <button type="button" id="toggleStaffManageBtn" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-2.5 py-1 rounded transition">
-              ⚙️ Thêm Nhân Viên
-            </button>
+        <!-- CHỌN KTV THI CÔNG (CỐ ĐỊNH 4 KTV) -->
+        <div class="md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
+          <label class="block text-xs font-bold uppercase tracking-wider text-cyan-400">🛠️ Đội Ngũ Kỹ Thuật Viên Thi Công</label>
+
+          <div id="workerCheckboxContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+            <!-- Render cố định: Vũ, Tú, Tùng, Thịnh -->
           </div>
 
-          <div id="staffManageBox" class="hidden mb-3 p-3 bg-white border border-dashed border-blue-400 rounded-lg space-y-2">
-            <div class="flex gap-2">
-              <input type="text" id="newStaffName" placeholder="Tên nhân viên mới..." class="flex-1 border rounded p-1.5 text-xs outline-none focus:ring-1 focus:ring-blue-500">
-              <button type="button" onclick="addStaff()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-bold transition">Thêm</button>
+          <div id="splitInfoBox" class="p-3 bg-[#0b0f19] border border-cyan-800/40 rounded-xl text-xs space-y-1">
+            <div class="flex justify-between items-center text-slate-300">
+              <span class="font-semibold text-slate-400">Tỷ lệ chia tiền thợ:</span>
+              <span id="splitCalcDisplay" class="text-cyan-400 font-bold">Chưa chọn thợ</span>
             </div>
-            <p class="text-[11px] text-slate-500">Bấm nút ✕ màu đỏ để xóa nhân viên khỏi danh sách:</p>
-            <div id="staffTagsContainer" class="flex flex-wrap gap-1.5"></div>
-          </div>
-
-          <div id="workerCheckboxContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm"></div>
-
-          <input type="text" id="customWorker" placeholder="Nhập tên thợ khác (ví dụ: Nam, Bình...)" class="mt-3 w-full border rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-white">
-
-          <div id="splitInfoBox" class="mt-3 p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-xs font-semibold flex justify-between items-center">
-            <span>Chia tiền thợ:</span>
-            <span id="splitCalcDisplay" class="text-amber-700 font-bold">Chưa chọn thợ</span>
+            <div id="splitDetailList" class="text-[11px] text-slate-400 space-y-0.5 pt-1 border-t border-slate-800"></div>
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-slate-600 mb-1">Ngày Thi Công</label>
-          <input type="date" id="timestamp" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Ngày Thi Công</label>
+          <input type="date" id="timestamp" required class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm">
         </div>
 
         <div class="md:col-span-2">
-          <label class="block text-sm font-semibold text-slate-600 mb-1">Ghi Chú</label>
-          <textarea id="note" rows="2" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 resize-y" placeholder="Nhập ghi chú (nếu có)..."></textarea>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Ghi Chú</label>
+          <textarea id="note" rows="2" class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm resize-y" placeholder="Nhập ghi chú thi công (nếu có)..."></textarea>
         </div>
 
         <div class="md:col-span-2 mt-2">
-          <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-lg transition duration-200">
+          <button type="submit" id="submitBtn" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-black py-3.5 rounded-xl shadow-lg transition duration-200 uppercase tracking-wider text-sm">
             Lưu Thông Tin Thi Công
           </button>
         </div>
@@ -187,19 +181,18 @@
     </div>
 
     <!-- Bảng Hiển Thị Dữ Liệu -->
-    <div class="bg-white p-6 rounded-xl shadow-md overflow-hidden">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-2 border-b gap-3">
-        <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
+    <div class="bg-[#151c2c] p-6 rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-3 border-b border-slate-800 gap-3">
+        <h2 class="text-base font-bold text-cyan-400 flex items-center gap-2 uppercase tracking-wider">
           <span>🚗</span> Nhật Ký Thi Công
         </h2>
         <div class="flex items-center gap-2 w-full sm:w-auto">
-          <!-- NÚT LÀM MỚI DỮ LIỆU -->
-          <button id="refreshBtn" onclick="fetchSheetData()" class="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-1.5 shadow-sm transition">
+          <button id="refreshBtn" onclick="fetchSheetData()" class="flex-1 sm:flex-none bg-[#1c263b] hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
             <span id="refreshIcon" class="inline-block transition-transform duration-500">🔄</span>
             <span id="refreshText">Làm mới</span>
           </button>
 
-          <button id="exportExcelBtn" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-1 shadow transition">
+          <button id="exportExcelBtn" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 shadow transition">
             📊 Xuất Excel
           </button>
         </div>
@@ -208,20 +201,20 @@
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm border-collapse min-w-[800px]">
           <thead>
-            <tr class="bg-slate-100 text-slate-700 uppercase text-xs">
+            <tr class="bg-[#0b0f19] text-slate-400 uppercase text-[11px] tracking-wider">
               <th class="p-3 rounded-l-lg">Ngày</th>
               <th class="p-3">Thông tin Xe</th>
               <th class="p-3">Film</th>
               <th class="p-3">Vị trí dán</th>
               <th class="p-3">Tổng Tiền</th>
               <th class="p-3">Thợ Thi Công</th>
-              <th class="p-3">Mỗi Thợ Nhận</th>
+              <th class="p-3">Chi Tiết Nhận</th>
               <th class="p-3 rounded-r-lg">Ghi Chú</th>
             </tr>
           </thead>
-          <tbody id="dataTable" class="divide-y divide-slate-100 text-slate-700">
+          <tbody id="dataTable" class="divide-y divide-slate-800 text-slate-300">
             <tr>
-              <td colspan="8" class="p-4 text-center text-slate-400">Đang tải dữ liệu từ Google Sheets...</td>
+              <td colspan="8" class="p-4 text-center text-slate-500">Đang tải dữ liệu từ Google Sheets...</td>
             </tr>
           </tbody>
         </table>
@@ -232,57 +225,21 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_FLTz9hh7dCdD7bi2d26HrZi8Cx2GUQeVfEYEHqmq1csuT0wC2ThiCtnaBNqchIvkhw/exec";
 
+    // 2. KTV cố định
+    const fixedStaffList = ['Vũ', 'Tú', 'Tùng', 'Thịnh'];
     let globalDataList = [];
-    const defaultStaffList = ['Vũ', 'Thịnh', 'Tuấn', 'Huy', 'Phong', 'Nam'];
-
-    function getStaffList() {
-      const saved = localStorage.getItem('f4_staff_list');
-      return saved ? JSON.parse(saved) : defaultStaffList;
-    }
 
     function renderStaffUI() {
-      const staffList = getStaffList();
       const checkboxContainer = document.getElementById('workerCheckboxContainer');
-      checkboxContainer.innerHTML = staffList.map(name => `
-        <label class="flex items-center space-x-2 bg-white p-2 rounded border cursor-pointer hover:bg-blue-50">
-          <input type="checkbox" class="worker-checkbox accent-emerald-600 w-4 h-4" value="${name}">
-          <span>${name}</span>
+      checkboxContainer.innerHTML = fixedStaffList.map(name => `
+        <label class="flex items-center space-x-2.5 bg-[#0b0f19] p-3 rounded-xl border border-slate-700 cursor-pointer hover:border-cyan-500 transition">
+          <input type="checkbox" value="${name}" class="worker-checkbox accent-cyan-500 w-4 h-4">
+          <span class="font-bold text-slate-200 text-sm">${name}</span>
         </label>
       `).join('');
 
       document.querySelectorAll('.worker-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
-
-      const tagsContainer = document.getElementById('staffTagsContainer');
-      tagsContainer.innerHTML = staffList.map(name => `
-        <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded border border-slate-300">
-          ${name}
-          <button type="button" onclick="removeStaff('${name}')" class="text-red-500 font-bold hover:text-red-700 ml-1">✕</button>
-        </span>
-      `).join('');
     }
-
-    function addStaff() {
-      const nameInput = document.getElementById('newStaffName');
-      const newName = nameInput.value.trim();
-      if (!newName) return;
-      let staffList = getStaffList();
-      if (!staffList.includes(newName)) {
-        staffList.push(newName);
-        localStorage.setItem('f4_staff_list', JSON.stringify(staffList));
-        renderStaffUI();
-      }
-      nameInput.value = '';
-    }
-
-    function removeStaff(nameToRemove) {
-      let staffList = getStaffList().filter(name => name !== nameToRemove);
-      localStorage.setItem('f4_staff_list', JSON.stringify(staffList));
-      renderStaffUI();
-    }
-
-    document.getElementById('toggleStaffManageBtn').addEventListener('click', () => {
-      document.getElementById('staffManageBox').classList.toggle('hidden');
-    });
 
     const setPresetTime = () => {
       const now = new Date();
@@ -297,11 +254,49 @@
     function getSelectedWorkers() {
       let workers = [];
       document.querySelectorAll('.worker-checkbox:checked').forEach(cb => workers.push(cb.value));
-      const customWorker = document.getElementById('customWorker').value.trim();
-      if (customWorker) {
-        customWorker.split(',').forEach(w => { if (w.trim()) workers.push(w.trim()); });
-      }
       return workers;
+    }
+
+    // 3. TÍNH TOÁN VÀ CHIA TỶ LỆ TIỀN CÔNG THỢ TỰ ĐỘNG
+    function calculateWorkerSplits(total, workers) {
+      if (workers.length === 0 || total === 0) return { breakdown: {}, summaryText: "Chưa chọn thợ" };
+
+      const setWorkers = new Set(workers);
+      let shares = {};
+
+      // TH1: Vũ - Thịnh (50% - 50%)
+      if (workers.length === 2 && setWorkers.has('Vũ') && setWorkers.has('Thịnh')) {
+        shares = { 'Vũ': 0.50, 'Thịnh': 0.50 };
+      }
+      // TH2: Vũ - Tú - Tùng (Vũ 60%, Tú 20%, Tùng 20%)
+      else if (workers.length === 3 && setWorkers.has('Vũ') && setWorkers.has('Tú') && setWorkers.has('Tùng')) {
+        shares = { 'Vũ': 0.60, 'Tú': 0.20, 'Tùng': 0.20 };
+      }
+      // TH3: Vũ - Tú HOẶC Vũ - Tùng (Vũ 70%, Tú/Tùng 30%)
+      else if (workers.length === 2 && setWorkers.has('Vũ') && (setWorkers.has('Tú') || setWorkers.has('Tùng'))) {
+        const otherWorker = setWorkers.has('Tú') ? 'Tú' : 'Tùng';
+        shares = { 'Vũ': 0.70, [otherWorker]: 0.30 };
+      }
+      // Mặc định: Chia đều nếu chọn các trường hợp khác
+      else {
+        const equalShare = 1 / workers.length;
+        workers.forEach(w => shares[w] = equalShare);
+      }
+
+      let breakdown = {};
+      let summaryTextList = [];
+
+      workers.forEach(w => {
+        const percent = shares[w] || 0;
+        const amount = Math.round(total * percent);
+        breakdown[w] = amount;
+        summaryTextList.push(`${w}: ${Math.round(percent * 100)}% (${amount.toLocaleString('vi-VN')}đ)`);
+      });
+
+      return {
+        breakdown,
+        summaryText: summaryTextList.join(' | ')
+      };
     }
 
     function calculateTotal() {
@@ -329,37 +324,41 @@
       document.getElementById('totalPriceDisplay').innerText = total.toLocaleString('vi-VN') + " VNĐ";
 
       const workers = getSelectedWorkers();
-      const workerCount = workers.length;
-      let perWorkerPrice = 0;
+      const splitResult = calculateWorkerSplits(total, workers);
 
-      if (workerCount > 0 && total > 0) {
-        perWorkerPrice = Math.round(total / workerCount);
-        document.getElementById('splitCalcDisplay').innerText = `${workerCount} thợ (${total.toLocaleString('vi-VN')} ÷ ${workerCount}) = ${perWorkerPrice.toLocaleString('vi-VN')} VNĐ/người`;
-      } else if (workerCount > 0) {
-        document.getElementById('splitCalcDisplay').innerText = `${workerCount} thợ thi công`;
+      const splitCalcDisplay = document.getElementById('splitCalcDisplay');
+      const splitDetailList = document.getElementById('splitDetailList');
+
+      if (workers.length > 0) {
+        splitCalcDisplay.innerText = `${workers.length} thợ thi công (${workers.join(', ')})`;
+        splitDetailList.innerHTML = Object.keys(splitResult.breakdown).map(w => `
+          <div class="flex justify-between">
+            <span>${w}</span>
+            <span class="font-bold text-amber-400">${splitResult.breakdown[w].toLocaleString('vi-VN')} VNĐ</span>
+          </div>
+        `).join('');
       } else {
-        document.getElementById('splitCalcDisplay').innerText = "Chưa chọn thợ";
+        splitCalcDisplay.innerText = "Chưa chọn thợ";
+        splitDetailList.innerHTML = "";
       }
 
-      return { total, positionsText: selectedPositions.length > 0 ? selectedPositions.join(', ') : 'Chưa chọn', workerCount, perWorkerPrice };
+      return { 
+        total, 
+        positionsText: selectedPositions.length > 0 ? selectedPositions.join(', ') : 'Chưa chọn', 
+        workers, 
+        splitResult 
+      };
     }
 
     document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
     document.getElementById('suon_count').addEventListener('change', calculateTotal);
     document.getElementById('noc_xe').addEventListener('change', calculateTotal);
-    document.getElementById('customWorker').addEventListener('input', calculateTotal);
-    document.getElementById('monthPicker').addEventListener('change', () => {
-      fetchSheetData();
-    });
+    document.getElementById('monthPicker').addEventListener('change', fetchSheetData);
 
     function formatDateOnly(timeStr) {
       if (!timeStr) return 'N/A';
       let str = String(timeStr).replace("'", "").trim();
-      
-      if (str.includes('/')) {
-        return str.split(' ')[0];
-      }
-      
+      if (str.includes('/')) return str.split(' ')[0];
       if (str.includes('-')) {
         let parts = str.split('T')[0].split('-');
         if (parts.length === 3) {
@@ -373,13 +372,13 @@
       if (globalDataList.length === 0) {
         document.getElementById('monthlyCarCount').innerText = `0 xe`;
         document.getElementById('monthlyTotalDisplay').innerText = `0 VNĐ`;
-        document.getElementById('workerSummaryContainer').innerHTML = `<p class="text-xs text-blue-200 col-span-full italic">Chưa có dữ liệu thi công cho tháng này.</p>`;
+        document.getElementById('workerSummaryContainer').innerHTML = `<p class="text-xs text-slate-500 col-span-full italic">Chưa có dữ liệu thi công cho tháng này.</p>`;
         return;
       }
 
       let grandTotal = 0;
       let carCount = 0;
-      let workerMap = {};
+      let workerMap = { 'Vũ': 0, 'Tú': 0, 'Tùng': 0, 'Thịnh': 0 };
 
       globalDataList.forEach(item => {
         const itemTotal = Number(item.totalPrice) || 0;
@@ -388,9 +387,9 @@
 
         const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
         if (workersArray.length > 0) {
-          const splitAmount = item.perWorker ? Number(item.perWorker) : Math.round(itemTotal / workersArray.length);
-          workersArray.forEach(worker => {
-            workerMap[worker] = (workerMap[worker] || 0) + splitAmount;
+          const splits = calculateWorkerSplits(itemTotal, workersArray);
+          Object.keys(splits.breakdown).forEach(w => {
+            workerMap[w] = (workerMap[w] || 0) + splits.breakdown[w];
           });
         }
       });
@@ -399,24 +398,17 @@
       document.getElementById('monthlyTotalDisplay').innerText = grandTotal.toLocaleString('vi-VN') + " VNĐ";
 
       const workerSummaryContainer = document.getElementById('workerSummaryContainer');
-      const workerNames = Object.keys(workerMap);
-
-      if (workerNames.length === 0) {
-        workerSummaryContainer.innerHTML = `<p class="text-xs text-blue-200 col-span-full italic">Chưa có dữ liệu thi công cho tháng này.</p>`;
-      } else {
-        workerSummaryContainer.innerHTML = workerNames.map(name => `
-          <div class="bg-white p-2.5 rounded-lg text-center shadow-sm border border-slate-100">
-            <p class="text-xs font-bold text-emerald-600 uppercase">${name}</p>
-            <p class="text-sm font-extrabold text-blue-700 mt-0.5">${workerMap[name].toLocaleString('vi-VN')} đ</p>
-          </div>
-        `).join('');
-      }
+      workerSummaryContainer.innerHTML = fixedStaffList.map(name => `
+        <div class="bg-[#0b0f19] p-3 rounded-xl text-center border border-slate-700/60 shadow-inner">
+          <p class="text-xs font-extrabold text-cyan-400 uppercase tracking-wider">${name}</p>
+          <p class="text-sm font-black text-amber-400 mt-1">${(workerMap[name] || 0).toLocaleString('vi-VN')} đ</p>
+        </div>
+      `).join('');
     }
 
     function fetchSheetData() {
       if (!GOOGLE_SCRIPT_URL) return;
 
-      // Hiệu ứng bấm nút làm mới
       const refreshBtn = document.getElementById('refreshBtn');
       const refreshIcon = document.getElementById('refreshIcon');
       const refreshText = document.getElementById('refreshText');
@@ -452,7 +444,7 @@
       tbody.innerHTML = '';
 
       if (globalDataList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-400">Chưa có dữ liệu thi công nào cho tháng này.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Chưa có dữ liệu thi công nào cho tháng này.</td></tr>';
         return;
       }
 
@@ -460,19 +452,18 @@
         const displayDate = formatDateOnly(item.timestamp);
         const totalPrice = Number(item.totalPrice) || 0;
         const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
-        const workerCount = workersArray.length || 1;
-        const perWorker = item.perWorker ? Number(item.perWorker) : Math.round(totalPrice / workerCount);
+        const splits = calculateWorkerSplits(totalPrice, workersArray);
 
         tbody.innerHTML += `
-          <tr class="hover:bg-slate-50 transition">
-            <td class="p-3 font-mono text-xs text-slate-700 font-bold">${displayDate}</td>
-            <td class="p-3 font-bold text-slate-800">${item.carName}</td>
-            <td class="p-3"><span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs font-semibold">${item.filmType}</span></td>
-            <td class="p-3 text-slate-600">${item.position}</td>
-            <td class="p-3 font-bold text-slate-800">${totalPrice.toLocaleString('vi-VN')} VNĐ</td>
-            <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-semibold">${item.workerName}</span></td>
-            <td class="p-3 font-bold text-amber-600">${perWorker.toLocaleString('vi-VN')} VNĐ/người</td>
-            <td class="p-3 text-xs text-slate-500 italic whitespace-pre-wrap">${item.note || '-'}</td>
+          <tr class="hover:bg-[#1c263b]/50 transition border-b border-slate-800">
+            <td class="p-3 font-mono text-xs text-slate-400 font-semibold">${displayDate}</td>
+            <td class="p-3 font-bold text-white">${item.carName}</td>
+            <td class="p-3"><span class="bg-cyan-950 text-cyan-300 border border-cyan-800 px-2 py-0.5 rounded text-xs font-semibold">${item.filmType}</span></td>
+            <td class="p-3 text-slate-300">${item.position}</td>
+            <td class="p-3 font-black text-amber-400">${totalPrice.toLocaleString('vi-VN')} VNĐ</td>
+            <td class="p-3"><span class="bg-slate-800 text-slate-200 border border-slate-700 px-2 py-1 rounded-lg text-xs font-bold">${item.workerName}</span></td>
+            <td class="p-3 text-xs text-slate-300 font-medium">${splits.summaryText}</td>
+            <td class="p-3 text-xs text-slate-400 italic whitespace-pre-wrap">${item.note || '-'}</td>
           </tr>
         `;
       });
@@ -482,7 +473,6 @@
       document.getElementById('carForm').reset();
       document.querySelectorAll('.price-checkbox').forEach(cb => cb.checked = false);
       document.querySelectorAll('.worker-checkbox').forEach(cb => cb.checked = false);
-      document.getElementById('customWorker').value = '';
       document.getElementById('note').value = '';
       document.getElementById('suon_count').value = "0";
       document.getElementById('noc_xe').value = "";
@@ -509,8 +499,7 @@
         return;
       }
 
-      const workers = getSelectedWorkers();
-      if (workers.length === 0) {
+      if (calc.workers.length === 0) {
         alert("⚠️ Vui lòng chọn ít nhất 1 thợ thi công!");
         return;
       }
@@ -524,8 +513,8 @@
         filmType: document.getElementById('filmType').value,
         position: calc.positionsText,
         totalPrice: calc.total,
-        workerName: workers.join(', '),
-        perWorker: calc.perWorkerPrice,
+        workerName: calc.workers.join(', '),
+        perWorker: calc.splitResult.summaryText,
         note: document.getElementById('note').value.trim(),
         timestamp: document.getElementById('timestamp').value
       };
@@ -556,17 +545,21 @@
         alert("Chưa có dữ liệu!");
         return;
       }
-      const excelData = globalDataList.map((item, index) => ({
-        "STT": index + 1,
-        "Ngày Thi Công": formatDateOnly(item.timestamp),
-        "Tên/Biển Số Xe": item.carName,
-        "Loại Film": item.filmType,
-        "Vị Trí Dán": item.position,
-        "Tổng Tiền (VNĐ)": item.totalPrice,
-        "Thợ Thi Công": item.workerName,
-        "Chia Mỗi Thợ (VNĐ)": item.perWorker,
-        "Ghi Chú": item.note || ''
-      }));
+      const excelData = globalDataList.map((item, index) => {
+        const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
+        const splits = calculateWorkerSplits(item.totalPrice, workersArray);
+        return {
+          "STT": index + 1,
+          "Ngày Thi Công": formatDateOnly(item.timestamp),
+          "Tên/Biển Số Xe": item.carName,
+          "Loại Film": item.filmType,
+          "Vị Trí Dán": item.position,
+          "Tổng Tiền (VNĐ)": item.totalPrice,
+          "Thợ Thi Công": item.workerName,
+          "Chi Tiết Chia Tiền": splits.summaryText,
+          "Ghi Chú": item.note || ''
+        };
+      });
 
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
