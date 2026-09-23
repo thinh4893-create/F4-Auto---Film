@@ -1,565 +1,1395 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <title>F4 AUTO - TỔNG HỢP THI CÔNG</title>
-  <style>
-    /* Hiệu ứng chuyển cảnh mượt cho Form & Dropdowns */
-    .fade-switch {
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    /* Toast Notification Animation */
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes fadeOut {
-      to { opacity: 0; transform: translateY(-10px); }
-    }
-    .animate-toast-in {
-      animation: slideInRight 0.35s ease-out forwards;
-    }
-    .animate-toast-out {
-      animation: fadeOut 0.3s ease-in forwards;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F4 AUTO - Executive Management Dashboard</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://img.icons8.com/isometric/512/car.png">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/isometric/512/car.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://img.icons8.com/isometric/512/car.png">
+    
+    <meta name="apple-mobile-web-app-title" content="F4 Auto">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#030712">
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Palette nâng cấp - Gradient & Glow Premium */
+            --bg-body: #030712;
+            --surface: #0b1329;
+            --surface-card: rgba(255, 255, 255, 0.03);
+            --surface-hover: rgba(255, 255, 255, 0.07);
+            
+            --primary-grad: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            --primary-hover: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
+            --accent-blue-grad: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            --accent-gold-grad: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            --accent-lime-grad: linear-gradient(135deg, #a3e635 0%, #4ade80 100%);
+            --danger-grad: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            
+            --accent-blue: #38bdf8;
+            --accent-gold: #fbbf24;
+            --accent-lime: #a3e635;
+            --danger: #f87171;
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.3);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 16px 36px -8px rgba(0, 0, 0, 0.7);
+            --glow-blue: 0 0 20px rgba(56, 189, 248, 0.25);
+            --glow-gold: 0 0 15px rgba(251, 191, 36, 0.25);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+        body { 
+            background: radial-gradient(circle at 50% 0%, #0f172a 0%, #030712 100%); 
+            padding: 32px 14px; 
+            color: var(--text-main); 
+            -webkit-font-smoothing: antialiased; 
+            min-height: 100vh;
+        }
+        .container { max-width: 760px; margin: 0 auto; }
+        
+        /* APP HEADER */
+        .app-header {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
+            backdrop-filter: blur(12px);
+            padding: 28px 24px;
+            border-radius: var(--radius-lg);
+            color: #fff;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .brand-info h1 { 
+            font-size: 22px; 
+            font-weight: 800; 
+            letter-spacing: -0.5px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .brand-info p { 
+            font-size: 13px; 
+            background: var(--accent-blue-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-top: 4px; 
+            font-weight: 600; 
+        }
+        .branch-badge { 
+            background: rgba(56, 189, 248, 0.1); 
+            border: 1px solid rgba(56, 189, 248, 0.3); 
+            backdrop-filter: blur(10px); 
+            padding: 8px 16px; 
+            border-radius: 30px; 
+            font-size: 11px; 
+            font-weight: 800; 
+            color: var(--accent-blue); 
+            text-transform: uppercase; 
+            letter-spacing: 0.8px;
+            box-shadow: var(--glow-blue);
+        }
+
+        .card { 
+            background: var(--surface); 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius-lg); 
+            padding: 24px; 
+            margin-bottom: 24px; 
+            box-shadow: var(--shadow-md); 
+        }
+
+        .date-picker-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            margin-bottom: 22px;
+        }
+        .date-picker-box label { 
+            font-size: 13px; 
+            font-weight: 800; 
+            background: var(--accent-blue-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.3px; 
+        }
+        .date-picker-box input[type="date"] {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            outline: none;
+            background: #111827;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            color-scheme: dark;
+        }
+
+        .tabs { 
+            display: flex; 
+            gap: 8px; 
+            background: rgba(0, 0, 0, 0.3); 
+            padding: 6px; 
+            border-radius: var(--radius-md); 
+            margin-bottom: 22px; 
+            border: 1px solid var(--border);
+        }
+        .tab-btn { 
+            flex: 1; 
+            padding: 12px 10px; 
+            border: none; 
+            background: transparent; 
+            font-size: 13px; 
+            font-weight: 800; 
+            color: var(--text-muted); 
+            border-radius: 10px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            text-align: center; 
+        }
+        .tab-btn.active { 
+            background: var(--primary-grad); 
+            color: #ffffff; 
+            box-shadow: var(--glow-blue); 
+        }
+
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .full-width { grid-column: span 2; }
+        
+        .form-group { margin-bottom: 14px; }
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-size: 11px; 
+            font-weight: 800; 
+            color: var(--accent-blue); 
+            text-transform: uppercase; 
+            letter-spacing: 0.6px; 
+        }
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            outline: none;
+            background: #111827;
+            color: #ffffff;
+            transition: all 0.25s ease;
+        }
+        input:focus, select:focus, textarea:focus { 
+            border-color: var(--accent-blue); 
+            box-shadow: var(--glow-blue); 
+        }
+        
+        .checkbox-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            background: var(--surface-card); 
+            padding: 16px; 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius-md); 
+        }
+        
+        .ktv-ot-item { 
+            background: rgba(255, 255, 255, 0.02); 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius-md); 
+            padding: 14px 16px; 
+            transition: 0.25s ease; 
+        }
+        .ktv-ot-item.selected { 
+            border-color: rgba(56, 189, 248, 0.5); 
+            background: rgba(56, 189, 248, 0.08); 
+            box-shadow: var(--glow-blue); 
+        }
+        .ktv-ot-header { display: flex; align-items: center; justify-content: space-between; }
+        .ktv-ot-label { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 700; color: #ffffff; cursor: pointer; }
+        .ktv-ot-label input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent-blue); cursor: pointer; }
+        .ktv-ot-time-selects { display: none; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border); grid-template-columns: 1fr 1fr; gap: 12px; }
+        .ktv-ot-item.selected .ktv-ot-time-selects { display: grid; }
+        .time-box-sub label { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; }
+        .time-box-sub select { padding: 8px; font-size: 13px; font-weight: 700; }
+        
+        .ot-hours-badge { 
+            font-size: 12px; 
+            font-weight: 800; 
+            color: var(--accent-gold); 
+            background: rgba(251, 191, 36, 0.12); 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(251, 191, 36, 0.3); 
+            box-shadow: var(--glow-gold);
+        }
+
+        .ktv-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); background: rgba(255, 255, 255, 0.01); }
+        .ktv-row:last-child { border-bottom: none; }
+        .ktv-name { font-size: 14px; font-weight: 700; color: #ffffff; }
+        
+        .ktv-select-status { width: auto; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); transition: all 0.2s ease; outline: none; }
+        .ktv-select-status.status-dilam { background-color: rgba(16, 185, 129, 0.15) !important; color: #34d399 !important; border-color: rgba(16, 185, 129, 0.4) !important; }
+        .ktv-select-status.status-nghisang, .ktv-select-status.status-nghichieu { background-color: rgba(245, 158, 11, 0.15) !important; color: #fbbf24 !important; border-color: rgba(245, 158, 11, 0.4) !important; }
+        .ktv-select-status.status-nghi { background-color: rgba(239, 68, 68, 0.15) !important; color: #f87171 !important; border-color: rgba(239, 68, 68, 0.4) !important; }
+
+        .ktv-manage-box { background: var(--surface); border: 1px dashed var(--accent-blue); padding: 20px; border-radius: var(--radius-lg); margin-top: 24px; box-shadow: var(--shadow-sm); }
+        .ktv-manage-inputs { display: flex; gap: 10px; margin-top: 10px; margin-bottom: 14px; }
+        .ktv-manage-inputs input { flex: 1; }
+        .btn-add-ktv { background: var(--primary-grad); color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn-add-ktv:hover { opacity: 0.9; }
+        .ktv-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .ktv-tag { background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 14px; border-radius: 30px; font-size: 12px; font-weight: 700; color: var(--accent-blue); display: flex; align-items: center; gap: 8px; }
+        .ktv-tag .remove-btn { color: var(--danger); cursor: pointer; font-weight: 800; font-size: 14px; }
+
+        /* OUTPUT BOX DESIGN NÂNG CẤP PREVIEW */
+        .output-box { margin-top: 24px; }
+        .output-header { font-size: 12px; font-weight: 800; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; }
+        .output-content { 
+            white-space: pre-wrap; 
+            font-size: 14px; 
+            background: #020617; 
+            color: #f8fafc; 
+            padding: 22px; 
+            border-radius: var(--radius-md); 
+            font-family: 'Consolas', 'Courier New', monospace; 
+            line-height: 1.6; 
+            border: 1px solid rgba(56, 189, 248, 0.3); 
+            min-height: 120px; 
+            box-shadow: inset 0 2px 12px rgba(0,0,0,0.8), var(--glow-blue); 
+        }
+        
+        .button-group { display: flex; gap: 12px; margin-top: 16px; }
+        .btn { flex: 1; padding: 14px; color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.25s ease; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow-sm); }
+        .btn-sync { background: var(--primary-grad); border: 1px solid rgba(255,255,255,0.2); width: 100%; }
+        .btn-sync:hover { background: var(--primary-hover); box-shadow: var(--glow-blue); }
+
+        /* STATS BOX NÂNG CẤP GRADIENT */
+        .stats-box { 
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%); 
+            border-radius: var(--radius-lg); 
+            padding: 24px; 
+            color: #ffffff; 
+            box-shadow: var(--shadow-lg); 
+            margin-top: 24px; 
+            border: 1px solid var(--border); 
+        }
+        .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 14px; }
+        .stats-title { 
+            font-size: 15px; 
+            font-weight: 800; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.8px; 
+            background: var(--accent-blue-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .month-selector-badge { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #ffffff; font-weight: 700; font-size: 12px; padding: 6px 14px; border-radius: 30px; display: flex; align-items: center; gap: 6px; }
+        .month-selector-badge select { border: none; background: transparent; font-weight: 700; font-size: 12px; color: #ffffff; outline: none; cursor: pointer; padding: 0; width: auto; }
+        .month-selector-badge select option { color: #000000; }
+        
+        .stats-section-title { 
+            font-size: 11px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            margin: 18px 0 12px 0; 
+            background: var(--accent-blue-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .stat-card { 
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%); 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            padding: 14px 10px; 
+            text-align: center; 
+            backdrop-filter: blur(8px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
+        }
+        .stat-card .ktv-label { font-size: 12px; font-weight: 800; color: var(--text-muted); margin-bottom: 6px; letter-spacing: 0.5px; }
+        .stat-card .stat-val { 
+            font-size: 18px; 
+            font-weight: 800; 
+            background: var(--accent-gold-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
+        }
+
+        .history-box { margin-top: 24px; }
+        .history-title { font-size: 16px; font-weight: 800; color: #ffffff; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .history-actions { display: flex; gap: 8px; }
+        .history-actions button { border: 1px solid var(--border); background: var(--surface-card); color: var(--accent-blue); font-size: 12px; font-weight: 800; padding: 8px 14px; border-radius: 8px; cursor: pointer; transition: 0.2s; box-shadow: var(--shadow-sm); }
+        .history-actions button:hover { background: rgba(56, 189, 248, 0.15); border-color: var(--accent-blue); }
+
+        .report-calendar-legend { display: flex; gap: 20px; margin-bottom: 14px; font-size: 12px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .dot-green { background: #38bdf8; box-shadow: var(--glow-blue); }
+        .dot-red { background: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.6); }
+
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
+        .calendar-day-head { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; padding-bottom: 6px; }
+        .calendar-day-cell { background: var(--surface-card); border-radius: 10px; padding: 12px 6px; display: flex; flex-direction: column; align-items: center; gap: 6px; border: 1px solid var(--border); transition: 0.2s ease; }
+        .calendar-day-cell:hover { border-color: var(--accent-blue); background: var(--surface-hover); }
+        .calendar-day-cell.empty { background: transparent; border: none; }
+        .calendar-day-number { font-size: 13px; font-weight: 800; color: #ffffff; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(10px); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-card { background: #0f172a; padding: 32px 40px; border-radius: var(--radius-lg); text-align: center; box-shadow: var(--shadow-lg); border: 1px solid var(--accent-blue); }
+        .modal-card .icon { font-size: 40px; color: var(--accent-blue); margin-bottom: 12px; }
+        .modal-card p { font-size: 16px; font-weight: 800; color: #ffffff; }
+
+        .section-subtitle { font-size: 11px; font-weight: 800; color: var(--accent-blue); background: rgba(56, 189, 248, 0.1); padding: 8px 14px; margin-bottom: 4px; letter-spacing: 0.6px; border-bottom: 1px solid var(--border); }
+
+        .btn-scroll-top {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 48px;
+            height: 48px;
+            background: var(--primary-grad);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.25s ease-in-out;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .btn-scroll-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .btn-scroll-top:hover {
+            box-shadow: var(--glow-blue);
+            transform: translateY(-3px);
+        }
+
+        .btn-scroll-top svg {
+            width: 22px;
+            height: 22px;
+            stroke: #ffffff;
+            stroke-width: 2.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* TEXT GRADIENTS CHO REPORT PREVIEW */
+        .grad-lime {
+            background: var(--accent-lime-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            filter: drop-shadow(0 0 6px rgba(163, 230, 53, 0.3));
+        }
+        .grad-blue {
+            background: var(--accent-blue-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.3));
+        }
+        .grad-gold {
+            background: var(--accent-gold-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.3));
+        }
+        .grad-red {
+            background: var(--danger-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            filter: drop-shadow(0 0 6px rgba(248, 113, 113, 0.3));
+        }
+
+        @media (max-width: 480px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+            .app-header { flex-direction: column; align-items: flex-start; gap: 14px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .btn-scroll-top { bottom: 20px; right: 20px; width: 44px; height: 44px; }
+        }
+    </style>
 </head>
-<body class="bg-[#0b0f19] text-slate-100 min-h-screen p-3 md:p-8 font-sans relative">
+<body>
 
-  <!-- TOAST CONTAINER CHO THÔNG BÁO CHUYÊN NGHIỆP -->
-  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
-
-  <div class="max-w-5xl mx-auto space-y-6">
-    <!-- Header -->
-    <div class="bg-[#151c2c] p-5 rounded-2xl shadow-xl border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
-      <div>
-        <h1 class="text-2xl font-black text-white uppercase tracking-wider flex items-center gap-2"><span>🚗</span> F4 AUTO</h1>
-        <p class="text-cyan-400 text-xs mt-1 font-medium">Quản lý Thi công Film Cách Nhiệt & PPF</p>
-      </div>
-      <!-- TAB CHUYỂN DỊCH VỤ -->
-      <div class="flex bg-[#0b0f19] p-1.5 rounded-xl border border-slate-800 gap-1">
-        <button id="btnTabFilm" onclick="switchServiceTab('FILM')" class="px-4 py-2 rounded-lg text-xs font-black transition-all duration-300 uppercase tracking-wider bg-cyan-600 text-white shadow">
-          🎬 FILM CÁCH NHIỆT
-        </button>
-        <button id="btnTabPPF" onclick="switchServiceTab('PPF')" class="px-4 py-2 rounded-lg text-xs font-black transition-all duration-300 uppercase tracking-wider text-slate-400 hover:text-white">
-          🛡️ DÁN PPF
-        </button>
-      </div>
+<div class="container">
+    <div class="app-header">
+        <div class="brand-info">
+            <h1>🚗 F4 AUTO </h1>
+            <p>Hệ thống Quản lý & Báo cáo Tự động</p>
+        </div>
+        <div class="branch-badge">📍 CƠ SỞ TAM TRINH</div>
     </div>
 
-    <!-- THỐNG KÊ THÁNG -->
-    <div class="bg-[#151c2c] text-white p-5 rounded-2xl shadow-xl border border-slate-800 space-y-4">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-3">
-        <h2 id="summaryTitle" class="text-base font-bold flex items-center gap-2 text-cyan-400 uppercase tracking-wider">
-          <span>📊</span> THỐNG KÊ FILM CÁCH NHIỆT
-        </h2>
-        <div class="flex items-center gap-2">
-          <label class="text-xs font-semibold uppercase text-slate-400">Chọn tháng:</label>
-          <input type="month" id="monthPicker" class="bg-[#0b0f19] text-cyan-300 px-3 py-1.5 rounded-lg text-sm font-bold outline-none border border-slate-700">
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-4 text-center">
-        <div class="bg-[#1c263b] p-3 rounded-xl border border-slate-700/50">
-          <p class="text-xs text-slate-400 uppercase font-semibold">Tổng Xe Thi Công</p>
-          <p id="monthlyCarCount" class="text-2xl font-black text-white mt-1">0 xe</p>
-        </div>
-        <div class="bg-[#1c263b] p-3 rounded-xl border border-slate-700/50">
-          <p class="text-xs text-slate-400 uppercase font-semibold">Tổng Doanh Thu</p>
-          <p id="monthlyTotalDisplay" class="text-2xl font-black text-amber-400 mt-1">0 VNĐ</p>
-        </div>
-      </div>
-
-      <div class="bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 mt-3">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-3">👷‍♂️ Lương Thợ Nhận Trong Tháng</h3>
-        <div id="workerSummaryContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
-      </div>
-    </div>
-
-    <!-- FORM NHẬP -->
-    <div class="bg-[#151c2c] p-6 rounded-2xl shadow-xl border border-slate-800">
-      <h2 id="formTitle" class="text-base font-bold mb-4 text-cyan-400 border-b border-slate-800 pb-2 uppercase tracking-wider">
-        📋 Nhập Xe Dán Film Mới
-      </h2>
-      <form id="carForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Tên/Biển Số Xe</label>
-          <input type="text" id="carName" placeholder="Ví dụ: VF8 - 30K-123.45" required class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm">
+    <div class="card">
+        <div class="date-picker-box">
+            <label>📅 CHỌN NGÀY:</label>
+            <input type="date" id="selectedDate" onchange="updateAllRenders()">
         </div>
 
-        <div class="relative">
-          <label id="lblType" class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Loại Film Dán</label>
-          <div class="relative overflow-hidden rounded-xl">
-            <!-- Dropdown chọn cho Film -->
-            <select id="filmTypeSelect" class="fade-switch w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm font-bold cursor-pointer">
-              <option value="3M">3M</option>
-              <option value="Ari">Ari</option>
-              <option value="Stek">Stek</option>
-            </select>
-            <!-- Dropdown chọn cho PPF -->
-            <select id="ppfTypeSelect" class="fade-switch hidden w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm font-bold cursor-pointer">
-              <option value="Ari">Ari</option>
-              <option value="Avery">Avery</option>
-              <option value="Stek">Stek</option>
-              <option value="3M">3M</option>
-            </select>
-          </div>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('tab8h', event)">1. Đầu giờ (8H)</button>
+            <button class="tab-btn" onclick="switchTab('tab17h', event)">2. Tăng ca (17H)</button>
+            <button class="tab-btn" onclick="switchTab('tab18h', event)">3. Cuối ngày (18H)</button>
         </div>
 
-        <!-- KHU VỰC CHỌN VỊ TRÍ FILM -->
-        <div id="filmPositionContainer" class="fade-switch md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
-          <label class="block text-xs font-bold uppercase text-cyan-400">Chọn Vị Trí Dán Film</label>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-            <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer">
-              <input type="checkbox" class="price-checkbox accent-cyan-500 w-4 h-4" data-price="160000" value="Full xe">
-              <span class="font-medium">Full xe</span>
-            </label>
-            <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer">
-              <input type="checkbox" class="price-checkbox accent-cyan-500 w-4 h-4" data-price="50000" value="Kính Lái">
-              <span class="font-medium">Kính Lái</span>
-            </label>
-            <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer">
-              <input type="checkbox" class="price-checkbox accent-cyan-500 w-4 h-4" data-price="30000" value="Hậu">
-              <span class="font-medium">Hậu</span>
-            </label>
-          </div>
-          <div class="pt-3 border-t border-slate-700/50 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-            <div class="flex items-center justify-between bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700">
-              <span class="text-slate-300">Kính Sườn:</span>
-              <select id="suon_count" class="bg-[#151c2c] border border-slate-700 rounded-lg p-1 text-white text-xs">
-                <option value="0" data-price="0">Không dán</option>
-                <option value="1" data-price="20000">1 Sườn</option>
-                <option value="2" data-price="40000">2 Sườn</option>
-                <option value="3" data-price="60000">3 Sườn</option>
-                <option value="4" data-price="80000">4 Sườn</option>
-              </select>
+        <!-- FORM 8H -->
+        <div id="tab8h" class="form-section active">
+            <div class="form-grid">
+                <input type="hidden" id="coSo_8h" value="Tam Trinh">
+                <input type="hidden" id="thoiGian_8h" value="08:00">
+
+                <div class="form-group full-width">
+                    <label>Trạng thái Nhân sự hôm nay:</label>
+                    <div style="border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; background: var(--surface-card);">
+                        <div class="section-subtitle">👔 BỘ PHẬN QUẢN LÝ / SALE</div>
+                        
+                        <div class="ktv-row">
+                            <span class="ktv-name">Thịnh</span>
+                            <select id="status_QuanLy" class="ktv-select-status" onchange="onStatusChange(this); render8h();">
+                                <option value="Đi làm" selected>Đi làm</option>
+                                <option value="Nghỉ">Nghỉ</option>
+                                <option value="Nghỉ sáng">Nghỉ sáng</option>
+                                <option value="Nghỉ chiều">Nghỉ chiều</option>
+                            </select>
+                        </div>
+                        
+                        <div class="ktv-row">
+                            <span class="ktv-name">Quân</span>
+                            <select id="status_SaleOff_Quan" class="ktv-select-status" onchange="onStatusChange(this); render8h();">
+                                <option value="Đi làm" selected>Đi làm</option>
+                                <option value="Nghỉ">Nghỉ</option>
+                                <option value="Nghỉ sáng">Nghỉ sáng</option>
+                                <option value="Nghỉ chiều">Nghỉ chiều</option>
+                            </select>
+                        </div>
+
+                        <div class="ktv-row">
+                            <span class="ktv-name">Ánh</span>
+                            <select id="status_SaleOff_Anh" class="ktv-select-status" onchange="onStatusChange(this); render8h();">
+                                <option value="Đi làm" selected>Đi làm</option>
+                                <option value="Nghỉ">Nghỉ</option>
+                                <option value="Nghỉ sáng">Nghỉ sáng</option>
+                                <option value="Nghỉ chiều">Nghỉ chiều</option>
+                            </select>
+                        </div>
+
+                        <div class="section-subtitle" style="margin-top: 4px;">🛠 ĐỘI NGŨ KỸ THUẬT VIÊN</div>
+                        <div id="ktvStatusContainer"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Dự kiến nghỉ ngày mai:</label>
+                    <input type="text" id="nghiMai_8h" value="Chưa có." oninput="render8h()">
+                </div>
+                <div class="form-group">
+                    <label>Đi muộn:</label>
+                    <input type="text" id="diMuon_8h" value="Không có." oninput="render8h()">
+                </div>
+                <div class="form-group full-width">
+                    <label>Ghi chú bổ sung (nếu có):</label>
+                    <input type="text" id="chiTiet_8h" value="" placeholder="Nhập ghi chú chi tiết..." oninput="render8h()">
+                </div>
             </div>
-            <div class="flex items-center justify-between bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700">
-              <span class="text-slate-300">Nóc xe:</span>
-              <select id="noc_xe" class="bg-[#151c2c] border border-slate-700 rounded-lg p-1 text-white text-xs">
-                <option value="" data-price="0">Không dán</option>
-                <option value="1 Nóc" data-price="20000">1 Nóc</option>
-                <option value="2 Nóc" data-price="40000">2 Nóc</option>
-              </select>
+        </div>
+
+        <!-- FORM 17H -->
+        <div id="tab17h" class="form-section">
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Loại hình báo cáo:</label>
+                    <div class="checkbox-group" style="flex-direction: row;">
+                        <label class="checkbox-item" style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color: #ffffff;"><input type="radio" name="otMode" value="ĐĂNG KÝ TĂNG CA" checked onchange="render17h()"> Đăng Ký Tăng Ca</label>
+                        <label class="checkbox-item" style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color: #ffffff;"><input type="radio" name="otMode" value="BÁO CÁO TĂNG CA" onchange="render17h()"> Báo Cáo Tăng Ca</label>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Nội dung công việc:</label>
+                    <textarea id="congViec_17h" rows="3" placeholder="Chi tiết nội dung công việc tăng ca..." oninput="render17h()"></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Kỹ thuật viên & Giờ tăng ca:</label>
+                    <div class="checkbox-group" id="ktv17hContainer"></div>
+                </div>
             </div>
-          </div>
         </div>
 
-        <!-- TỔNG TIỀN HIỂN THỊ -->
-        <div class="md:col-span-2 bg-[#0b0f19] p-3.5 rounded-xl border border-slate-800 flex justify-between items-center">
-          <span class="text-xs uppercase font-bold text-slate-400">TỔNG TIỀN XE:</span>
-          <span id="totalPriceDisplay" class="text-xl font-black text-cyan-400">0 VNĐ</span>
+        <!-- FORM 18H -->
+        <div id="tab18h" class="form-section">
+            <div class="form-grid">
+                <div class="form-group full-width"><label>Dán phim cách nhiệt:</label><input type="text" id="danPhim_18h" placeholder="Ví dụ: 2 xe..." oninput="render18h()"></div>
+                <div class="form-group full-width"><label>PPF:</label><input type="text" id="ppf_18h" placeholder="Ví dụ: 1 xe..." oninput="render18h()"></div>
+                <div class="form-group full-width"><label>Wrap:</label><input type="text" id="wrap_18h" value="" placeholder="Nhập tình trạng Wrap..." oninput="render18h()"></div>
+                
+                <div class="form-group full-width">
+                    <label>Ghi chú công việc:</label>
+                    <textarea id="ghiChu_18h" rows="4" placeholder="Nhập ghi chú tổng hợp cuối ngày..." oninput="render18h()"></textarea>
+                </div>
+
+                <div class="form-group full-width"><label>Tổng số lỗi:</label><input type="text" id="soLoi_18h" value="0" oninput="render18h()"></div>
+                <div class="form-group"><label>Lỗi chất lượng giao xe:</label><input type="text" id="loi1_18h" value="0" oninput="render18h()"></div>
+                <div class="form-group"><label>Lỗi đồng phục:</label><input type="text" id="loi2_18h" value="0" oninput="render18h()"></div>
+                <div class="form-group"><label>Lỗi 5S cơ sở:</label><input type="text" id="loi3_18h" value="0" oninput="render18h()"></div>
+                <div class="form-group"><label>Lỗi khác:</label><input type="text" id="loi4_18h" value="Không có" oninput="render18h()"></div>
+                <div class="form-group full-width"><label>Kiểm tra thiết bị điện:</label><input type="text" id="loi5_18h" value="đã được tắt đầy đủ." oninput="render18h()"></div>
+            </div>
         </div>
 
-        <!-- CHỌN KTV & THÊM KTV MỚI -->
-        <div class="md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
-          <div class="flex justify-between items-center">
-            <label class="block text-xs font-bold uppercase text-cyan-400">🛠️ Đội Ngũ Kỹ Thuật Viên Thi Công</label>
-            <button type="button" onclick="toggleAddWorkerInput()" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-cyan-300 px-2.5 py-1 rounded-lg border border-slate-700 transition font-semibold">
-              + Thêm KTV
-            </button>
-          </div>
+        <!-- KHUNG XUẤT KẾT QUẢ -->
+        <div class="output-box">
+            <div class="output-header">📋 Xem trước nội dung xuất báo cáo:</div>
+            <div id="reportOutput" class="output-content"></div>
 
-          <!-- INPUT Ô NHẬP TÊN KTV MỚI -->
-          <div id="addWorkerBox" class="hidden flex gap-2 pt-1 pb-2">
-            <input type="text" id="newWorkerName" placeholder="Tên KTV mới..." class="bg-[#0b0f19] border border-slate-700 rounded-lg p-2 text-xs text-white outline-none focus:border-cyan-500 flex-1">
-            <button type="button" onclick="addNewWorker()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold uppercase">Lưu</button>
-          </div>
-
-          <div id="workerCheckboxContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm"></div>
-
-          <div class="p-3 bg-[#0b0f19] border border-cyan-800/40 rounded-xl text-xs space-y-1">
-            <div id="splitDetailList" class="text-[11px] text-slate-400 space-y-0.5"></div>
-          </div>
+            <div class="button-group">
+                <button class="btn btn-sync" id="btnSync" onclick="sendToGoogleSheet()">🚀 Gửi Lên Google Sheet</button>
+            </div>
         </div>
-
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Ngày Thi Công</label>
-          <input type="date" id="timestamp" required class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 text-white text-sm">
-        </div>
-
-        <div class="md:col-span-2">
-          <label class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Ghi Chú</label>
-          <textarea id="note" rows="2" class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 text-white text-sm" placeholder="Ghi chú thi công..."></textarea>
-        </div>
-
-        <div class="md:col-span-2 mt-2">
-          <button type="submit" id="submitBtn" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-black py-3.5 rounded-xl uppercase tracking-wider text-sm shadow-lg transition-all active:scale-[0.99]">
-            Lưu Thông Tin Thi Công
-          </button>
-        </div>
-      </form>
     </div>
 
-    <!-- BẢNG NHẬT KÝ -->
-    <div class="bg-[#151c2c] p-6 rounded-2xl shadow-xl border border-slate-800">
-      <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-        <h2 id="logTitle" class="text-base font-bold text-cyan-400 uppercase tracking-wider">🚗 Nhật Ký Thi Công Film</h2>
-        <button onclick="fetchSheetData()" class="bg-[#1c263b] hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs font-bold border border-slate-700 transition">🔄 Làm mới</button>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm border-collapse min-w-[650px]">
-          <thead>
-            <tr class="bg-[#0b0f19] text-slate-400 uppercase text-[11px]">
-              <th class="p-3">Ngày</th>
-              <th class="p-3">Xe</th>
-              <th class="p-3">Loại</th>
-              <th class="p-3">Vị trí</th>
-              <th class="p-3">Tổng Tiền</th>
-              <th class="p-3">Thợ</th>
-              <th class="p-3">Ghi Chú</th>
-            </tr>
-          </thead>
-          <tbody id="dataTable" class="divide-y divide-slate-800 text-slate-300"></tbody>
-        </table>
-      </div>
+    <!-- KHUNG QUẢN LÝ KTV -->
+    <div class="ktv-manage-box">
+        <label>🛠 QUẢN LÝ DANH SÁCH KỸ THUẬT VIÊN</label>
+        <div class="ktv-manage-inputs">
+            <input type="text" id="newKtvName" placeholder="Thêm KTV mới...">
+            <button class="btn-add-ktv" onclick="addNewKTV()">+ Thêm</button>
+        </div>
+        <div class="ktv-tags" id="ktvTagsList"></div>
     </div>
-  </div>
 
-  <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_FLTz9hh7dCdD7bi2d26HrZi8Cx2GUQeVfEYEHqmq1csuT0wC2ThiCtnaBNqchIvkhw/exec";
+    <!-- BẢNG THỐNG KÊ THEO THÁNG -->
+    <div class="stats-box">
+        <div class="stats-header">
+            <div class="stats-title">📊 Thống Kê Theo Tháng</div>
+            <div class="month-selector-badge">
+                <span>THÁNG:</span>
+                <select id="statsMonthSelect" onchange="onMonthChange()"></select>
+            </div>
+        </div>
 
-    let currentService = 'FILM'; 
-    let filmStaff = ['Vũ', 'Tú', 'Tùng', 'Thịnh'];
-    let ppfStaff = ['Hậu', 'Hoàng', 'Khánh'];
+        <div class="stats-section-title">👨‍🔧 TỔNG NGÀY ĐI LÀM TRONG THÁNG</div>
+        <div class="stats-grid" id="statsDaysGrid"></div>
 
-    let globalDataList = [];
+        <div class="stats-section-title">⏰ TỔNG GIỜ TĂNG CA TRONG THÁNG</div>
+        <div class="stats-grid" id="statsHoursGrid"></div>
+    </div>
 
-    // HÀM HIỂN THỊ TOAST NOTIFICATION
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      
-      const isSuccess = type === 'success';
-      const bgColor = isSuccess ? 'bg-emerald-950/90 border-emerald-500/50 text-emerald-200' : 'bg-rose-950/90 border-rose-500/50 text-rose-200';
-      const icon = isSuccess ? '✅' : '⚠️';
+    <!-- BẢNG LỊCH BÁO CÁO -->
+    <div class="card history-box">
+        <div class="history-title">
+            <span>📅 Lịch Sử Báo Cáo</span>
+            <div class="history-actions">
+                <button onclick="exportToExcel()">📥 Xuất Excel</button>
+                <button onclick="refreshAllData()">🔄 Làm mới</button>
+            </div>
+        </div>
 
-      toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl border shadow-2xl backdrop-blur-md font-semibold text-sm pointer-events-auto animate-toast-in ${bgColor}`;
-      toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+        <div class="report-calendar-legend">
+            <div class="legend-item"><span class="dot dot-green"></span> Đã báo cáo</div>
+            <div class="legend-item"><span class="dot dot-red"></span> Thiếu báo cáo</div>
+        </div>
 
-      container.appendChild(toast);
+        <div id="calendarGrid" class="calendar-grid"></div>
+    </div>
+</div>
 
-      setTimeout(() => {
-        toast.classList.remove('animate-toast-in');
-        toast.classList.add('animate-toast-out');
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
+<button class="btn-scroll-top" id="scrollTopBtn" onclick="scrollToTop()" aria-label="Cuộn lên đầu trang">
+    <svg viewBox="0 0 24 24">
+        <line x1="12" y1="19" x2="12" y2="5"></line>
+        <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+</button>
+
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-card">
+        <div class="icon">✓</div>
+        <p id="modalMsg">Đã gửi thành công</p>
+    </div>
+</div>
+
+<script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxZ_Zo53JqmoNCcnOdggkkEvmR1JX947SbURolMkpNWY8MtZIWsT4ukO_qV8ZX7wDI11w/exec";
+    
+    let ALL_KTV = JSON.parse(localStorage.getItem('F4_ALL_KTV_V2')) || ["Tùng", "Tú", "Hậu", "Hoàng", "Vũ", "Khánh"];
+    
+    const START_TIME_OPTIONS = ["18:00", "19:00"];
+    const END_TIME_OPTIONS = [
+        "19:00", "19:30", "20:00", "20:30", 
+        "21:00", "21:30", "22:00", "22:30", "23:00", "24:00"
+    ];
+
+    let currentTab = 'tab8h';
+
+    window.onload = function() {
+        setDefaultDate();
+        initMonthOptions();
+        renderKTVUI();
+        updateAllSelectColors();
+        render8h();
+        refreshAllData();
+
+        window.onscroll = function() {
+            const btn = document.getElementById('scrollTopBtn');
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        };
+    };
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function switchServiceTab(type) {
-      currentService = type;
-      const isPPF = type === 'PPF';
-
-      document.getElementById('btnTabFilm').className = !isPPF ? "px-4 py-2 rounded-lg text-xs font-black transition-all duration-300 uppercase tracking-wider bg-cyan-600 text-white shadow" : "px-4 py-2 rounded-lg text-xs font-black transition-all duration-300 uppercase tracking-wider text-slate-400 hover:text-white";
-      document.getElementById('btnTabPPF').className = isPPF ? "px-4 py-2 rounded-lg text-xs font-black transition-all duration-300 uppercase tracking-wider bg-indigo-600 text-white shadow" : "px-4 py-2 rounded-lg text-xs font-black transition-all duration-300 uppercase tracking-wider text-slate-400 hover:text-white";
-
-      document.getElementById('summaryTitle').innerText = isPPF ? "📊 THỐNG KÊ PPF" : "📊 THỐNG KÊ FILM CÁCH NHIỆT";
-      document.getElementById('formTitle').innerText = isPPF ? "📋 Nhập Xe Dán PPF Mới" : "📋 Nhập Xe Dán Film Mới";
-      document.getElementById('logTitle').innerText = isPPF ? "🛡️ Nhật Ký Thi Công PPF" : "🚗 Nhật Ký Thi Công Film";
-      document.getElementById('lblType').innerText = isPPF ? "Loại PPF" : "Loại Film Dán";
-
-      const filmPos = document.getElementById('filmPositionContainer');
-      const filmSelect = document.getElementById('filmTypeSelect');
-      const ppfSelect = document.getElementById('ppfTypeSelect');
-
-      if (isPPF) {
-        filmPos.classList.add('hidden');
-        filmSelect.classList.add('hidden');
-        ppfSelect.classList.remove('hidden');
-      } else {
-        filmPos.classList.remove('hidden');
-        filmSelect.classList.remove('hidden');
-        ppfSelect.classList.add('hidden');
-      }
-
-      document.getElementById('addWorkerBox').classList.add('hidden');
-      renderStaffUI();
-      calculateTotal();
-      fetchSheetData();
+    function onStatusChange(selectEl) {
+        updateSelectColor(selectEl);
     }
 
-    function toggleAddWorkerInput() {
-      const box = document.getElementById('addWorkerBox');
-      box.classList.toggle('hidden');
-      if (!box.classList.contains('hidden')) {
-        document.getElementById('newWorkerName').focus();
-      }
-    }
-
-    function addNewWorker() {
-      const input = document.getElementById('newWorkerName');
-      const name = input.value.trim();
-      if (!name) return;
-
-      const activeStaff = currentService === 'PPF' ? ppfStaff : filmStaff;
-      if (!activeStaff.includes(name)) {
-        activeStaff.push(name);
-        renderStaffUI();
-        input.value = '';
-        document.getElementById('addWorkerBox').classList.add('hidden');
-        showToast(`Đã thêm KTV: ${name}`);
-      } else {
-        showToast("Tên KTV này đã tồn tại!", "error");
-      }
-    }
-
-    function renderStaffUI() {
-      const activeStaff = currentService === 'PPF' ? ppfStaff : filmStaff;
-      const checkboxContainer = document.getElementById('workerCheckboxContainer');
-      checkboxContainer.innerHTML = activeStaff.map(name => `
-        <label class="flex items-center space-x-2.5 bg-[#0b0f19] p-3 rounded-xl border border-slate-700 cursor-pointer hover:border-cyan-500/50 transition">
-          <input type="checkbox" value="${name}" class="worker-checkbox accent-cyan-500 w-4 h-4">
-          <span class="font-bold text-slate-200 text-sm">${name} ${name === 'Khánh' ? '<span class="text-[10px] text-amber-400">(Hỗ trợ 50k)</span>' : ''}</span>
-        </label>
-      `).join('');
-
-      document.querySelectorAll('.worker-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
-    }
-
-    function getSelectedWorkers() {
-      let workers = [];
-      document.querySelectorAll('.worker-checkbox:checked').forEach(cb => workers.push(cb.value));
-      return workers;
-    }
-
-    function calculateWorkerSplits(total, workers) {
-      if (workers.length === 0 || total === 0) return {};
-      const setWorkers = new Set(workers);
-      let breakdown = {};
-
-      if (currentService === 'PPF') {
-        const hasKhanh = setWorkers.has('Khánh');
-        const khanhFee = hasKhanh ? 50000 : 0;
-        if (hasKhanh) breakdown['Khánh'] = khanhFee;
-
-        const remain = Math.max(0, total - khanhFee);
-        let mainList = workers.filter(w => w !== 'Khánh');
-
-        if (mainList.length > 0) {
-          const splitAmt = Math.round(remain / mainList.length);
-          mainList.forEach(w => breakdown[w] = splitAmt);
+    function updateSelectColor(selectEl) {
+        if (!selectEl) return;
+        selectEl.classList.remove('status-dilam', 'status-nghisang', 'status-nghichieu', 'status-nghi');
+        const val = selectEl.value;
+        if (val === 'Đi làm') {
+            selectEl.classList.add('status-dilam');
+        } else if (val === 'Nghỉ sáng') {
+            selectEl.classList.add('status-nghisang');
+        } else if (val === 'Nghỉ chiều') {
+            selectEl.classList.add('status-nghichieu');
+        } else if (val === 'Nghỉ') {
+            selectEl.classList.add('status-nghi');
         }
-      } else {
-        let shares = {};
-        if (workers.length === 4 && setWorkers.has('Vũ') && setWorkers.has('Thịnh') && setWorkers.has('Tú') && setWorkers.has('Tùng')) {
-          shares = { 'Vũ': 0.35, 'Thịnh': 0.35, 'Tú': 0.15, 'Tùng': 0.15 };
-        } else if (workers.length === 2 && setWorkers.has('Vũ') && setWorkers.has('Thịnh')) {
-          shares = { 'Vũ': 0.50, 'Thịnh': 0.50 };
-        } else if (workers.length === 3 && (setWorkers.has('Vũ') || setWorkers.has('Thịnh')) && setWorkers.has('Tú') && setWorkers.has('Tùng')) {
-          const mainWorker = setWorkers.has('Vũ') ? 'Vũ' : 'Thịnh';
-          shares = { [mainWorker]: 0.60, 'Tú': 0.20, 'Tùng': 0.20 };
-        } else if (workers.length === 2 && (setWorkers.has('Vũ') || setWorkers.has('Thịnh')) && (setWorkers.has('Tú') || setWorkers.has('Tùng'))) {
-          const mainWorker = setWorkers.has('Vũ') ? 'Vũ' : 'Thịnh';
-          const subWorker = setWorkers.has('Tú') ? 'Tú' : 'Tùng';
-          shares = { [mainWorker]: 0.70, [subWorker]: 0.30 };
+    }
+
+    function updateAllSelectColors() {
+        document.querySelectorAll('.ktv-select-status').forEach(selectEl => {
+            updateSelectColor(selectEl);
+        });
+    }
+
+    function saveKTVList() {
+        localStorage.setItem('F4_ALL_KTV_V2', JSON.stringify(ALL_KTV));
+        renderKTVUI();
+        updateAllSelectColors();
+        updateAllRenders();
+        loadMonthlyStats();
+    }
+
+    function addNewKTV() {
+        const input = document.getElementById('newKtvName');
+        const name = input.value.trim();
+        if (name && !ALL_KTV.includes(name)) {
+            ALL_KTV.push(name);
+            input.value = '';
+            saveKTVList();
+        } else if (ALL_KTV.includes(name)) {
+            alert('Tên KTV này đã có trong danh sách!');
+        }
+    }
+
+    function removeKTV(name) {
+        if (confirm(`Bạn có chắc chắn muốn xóa KTV "${name}" không?`)) {
+            ALL_KTV = ALL_KTV.filter(item => item !== name);
+            saveKTVList();
+        }
+    }
+
+    function renderKTVUI() {
+        const tagsContainer = document.getElementById('ktvTagsList');
+        tagsContainer.innerHTML = ALL_KTV.map(name => 
+            `<div class="ktv-tag">
+                <span>${name}</span>
+                <span class="remove-btn" onclick="removeKTV('${name}')">&times;</span>
+             </div>`
+        ).join('');
+
+        const statusContainer = document.getElementById('ktvStatusContainer');
+        statusContainer.innerHTML = ALL_KTV.map(ten => `
+            <div class="ktv-row">
+                <span class="ktv-name">${ten}</span>
+                <select id="status_${ten}" class="ktv-select-status" onchange="onStatusChange(this); render8h();">
+                    <option value="Đi làm" selected>Đi làm</option>
+                    <option value="Nghỉ">Nghỉ</option>
+                    <option value="Nghỉ sáng">Nghỉ sáng</option>
+                    <option value="Nghỉ chiều">Nghỉ chiều</option>
+                </select>
+            </div>
+        `).join('');
+
+        const otContainer = document.getElementById('ktv17hContainer');
+        const generateOptions = (arrOptions, selectedVal) => {
+            return arrOptions.map(t => `<option value="${t}" ${t === selectedVal ? 'selected' : ''}>${t}</option>`).join('');
+        };
+
+        otContainer.innerHTML = ALL_KTV.map(ten => `
+            <div class="ktv-ot-item" id="card_ot_${ten}">
+                <div class="ktv-ot-header">
+                    <label class="ktv-ot-label">
+                        <input type="checkbox" class="ktv-17h-checkbox" value="${ten}" onchange="toggleKtvOt('${ten}')"> ${ten}
+                    </label>
+                    <span class="ot-hours-badge" id="badge_hours_${ten}">0 tiếng</span>
+                </div>
+                <div class="ktv-ot-time-selects">
+                    <div class="time-box-sub">
+                        <label>Giờ bắt đầu:</label>
+                        <select id="start_${ten}" onchange="render17h()">${generateOptions(START_TIME_OPTIONS, "18:00")}</select>
+                    </div>
+                    <div class="time-box-sub">
+                        <label>Giờ kết thúc:</label>
+                        <select id="end_${ten}" onchange="render17h()">${generateOptions(END_TIME_OPTIONS, "21:00")}</select>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        const daysGrid = document.getElementById('statsDaysGrid');
+        const hoursGrid = document.getElementById('statsHoursGrid');
+        
+        daysGrid.innerHTML = ALL_KTV.map(ktv => `
+            <div class="stat-card">
+                <div class="ktv-label">${ktv.toUpperCase()}</div>
+                <div class="stat-val" id="days_${ktv}">0 ngày</div>
+            </div>
+        `).join('');
+
+        hoursGrid.innerHTML = ALL_KTV.map(ktv => `
+            <div class="stat-card">
+                <div class="ktv-label">${ktv.toUpperCase()}</div>
+                <div class="stat-val" id="hours_${ktv}">0h</div>
+            </div>
+        `).join('');
+
+        updateAllSelectColors();
+    }
+
+    function toggleKtvOt(ten) {
+        const card = document.getElementById(`card_ot_${ten}`);
+        const cb = card.querySelector('.ktv-17h-checkbox');
+        if (cb.checked) {
+            card.classList.add('selected');
         } else {
-          const equal = 1 / workers.length;
-          workers.forEach(w => shares[w] = equal);
+            card.classList.remove('selected');
         }
-        workers.forEach(w => breakdown[w] = Math.round(total * (shares[w] || 0)));
-      }
-      return breakdown;
+        render17h();
     }
 
-    function calculateTotal() {
-      let total = 0;
-      let posText = "";
+    function setDefaultDate() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        document.getElementById('selectedDate').value = `${yyyy}-${mm}-${dd}`;
+    }
 
-      if (currentService === 'PPF') {
-        posText = 'Full xe'; // ĐÃ ĐỔI TỪ "Dán PPF" THÀNH "Full xe"
-        total = 500000;
-      } else {
-        let selectedPositions = [];
-        document.querySelectorAll('.price-checkbox:checked').forEach(cb => {
-          selectedPositions.push(cb.value);
-          total += parseInt(cb.getAttribute('data-price') || 0);
+    function initMonthOptions() {
+        const select = document.getElementById('statsMonthSelect');
+        select.innerHTML = '';
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth() + 1;
+
+        for (let m = 1; m <= 12; m++) {
+            const opt = document.createElement('option');
+            const mmStr = String(m).padStart(2, '0');
+            opt.value = `${mmStr}/${currentYear}`;
+            opt.text = `tháng ${m} năm ${currentYear}`;
+            if (m === currentMonth) opt.selected = true;
+            select.appendChild(opt);
+        }
+    }
+
+    function getSelectedDateFormatted() {
+        const val = document.getElementById('selectedDate').value;
+        if (!val) return "";
+        const parts = val.split('-');
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+
+    function fmt(val) {
+        let num = parseInt(val, 10);
+        if (isNaN(num)) return '00';
+        return num < 10 && num >= 0 ? '0' + num : '' + num;
+    }
+
+    function updateAllRenders() {
+        if (currentTab === 'tab8h') render8h();
+        if (currentTab === 'tab17h') render17h();
+        if (currentTab === 'tab18h') render18h();
+    }
+
+    function switchTab(tabId, evt) {
+        currentTab = tabId;
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.form-section').forEach(sec => sec.classList.remove('active'));
+
+        if(evt) evt.target.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+
+        if (tabId === 'tab8h') render8h();
+        if (tabId === 'tab17h') render17h();
+        if (tabId === 'tab18h') render18h();
+    }
+
+    function render8h() {
+        const coSo = "Tam Trinh";
+        const ngayStr = getSelectedDateFormatted();
+        const thoiGian = document.getElementById('thoiGian_8h').value.trim();
+
+        const qlStatus = document.getElementById('status_QuanLy').value;
+        let qlDiLam = (qlStatus === "Nghỉ") ? 0 : 1;
+
+        const saleQuanStatus = document.getElementById('status_SaleOff_Quan').value;
+        let saleQuanDiLam = (saleQuanStatus === "Nghỉ") ? 0 : 1;
+
+        const saleAnhStatus = document.getElementById('status_SaleOff_Anh').value;
+        let saleAnhDiLam = (saleAnhStatus === "Nghỉ") ? 0 : 1;
+
+        const keToan = 1;
+        const ktvCoSo = ALL_KTV.length;
+        const tongNhanLuc = 1 + 2 + ktvCoSo + keToan;
+
+        let dsNghiText = [];
+
+        if (qlStatus === "Nghỉ") dsNghiText.push("Thịnh nghỉ.");
+        else if (qlStatus === "Nghỉ sáng") dsNghiText.push("Thịnh nghỉ buổi sáng.");
+        else if (qlStatus === "Nghỉ chiều") dsNghiText.push("Thịnh nghỉ buổi chiều.");
+
+        if (saleQuanStatus === "Nghỉ") dsNghiText.push("Quân nghỉ.");
+        else if (saleQuanStatus === "Nghỉ sáng") dsNghiText.push("Quân nghỉ buổi sáng.");
+        else if (saleQuanStatus === "Nghỉ chiều") dsNghiText.push("Quân nghỉ buổi chiều.");
+
+        if (saleAnhStatus === "Nghỉ") dsNghiText.push("Ánh nghỉ.");
+        else if (saleAnhStatus === "Nghỉ sáng") dsNghiText.push("Ánh nghỉ buổi sáng.");
+        else if (saleAnhStatus === "Nghỉ chiều") dsNghiText.push("Ánh nghỉ buổi chiều.");
+
+        let countKtvDiLam = 0;
+        ALL_KTV.forEach(ten => {
+            const el = document.getElementById(`status_${ten}`);
+            if (el) {
+                const status = el.value;
+                if (status === "Đi làm") {
+                    countKtvDiLam++;
+                } else if (status === "Nghỉ") {
+                    dsNghiText.push(`${ten} nghỉ.`);
+                } else if (status === "Nghỉ sáng") {
+                    countKtvDiLam++;
+                    dsNghiText.push(`${ten} nghỉ buổi sáng.`);
+                } else if (status === "Nghỉ chiều") {
+                    countKtvDiLam++;
+                    dsNghiText.push(`${ten} nghỉ buổi chiều.`);
+                }
+            }
         });
 
-        const suonSelect = document.getElementById('suon_count');
-        if (parseInt(suonSelect.value) > 0) {
-          total += parseInt(suonSelect.options[suonSelect.selectedIndex].getAttribute('data-price') || 0);
-          selectedPositions.push(`${suonSelect.value} Sườn`);
-        }
+        const nhanSuDiLam = qlDiLam + saleQuanDiLam + saleAnhDiLam + keToan + countKtvDiLam;
+        const nghiMai = document.getElementById('nghiMai_8h').value.trim();
+        const ghiChuBoSung = document.getElementById('chiTiet_8h').value.trim();
+        const diMuon = document.getElementById('diMuon_8h').value.trim();
 
-        const nocSelect = document.getElementById('noc_xe');
-        if (nocSelect.value) {
-          total += parseInt(nocSelect.options[nocSelect.selectedIndex].getAttribute('data-price') || 0);
-          selectedPositions.push(nocSelect.value);
-        }
-        posText = selectedPositions.join(', ');
-      }
+        let chiTietFull = [...dsNghiText];
+        if (ghiChuBoSung !== "") chiTietFull.push(ghiChuBoSung);
+        
+        let chiTietFormatted = chiTietFull.length > 0 
+            ? chiTietFull.map(item => `   •  ${item}`).join('\n')
+            : "   •  Không có.";
 
-      document.getElementById('totalPriceDisplay').innerText = total.toLocaleString('vi-VN') + " VNĐ";
+        // MÀU SẮC ĐỊNH DẠNG TỐI ƯU CẬP NHẬT DẢI GRADIENT ĐỔ MÀU CỰC ĐẸP:
+        const titleDisplay = `<span class="grad-lime">BÁO CÁO TỶ LỆ ĐI LÀM KỸ THUẬT – F4 AUTO</span>`;
+        const dateDisplay = `<span class="grad-blue">${ngayStr}</span>`;
+        const tongNhanLucDisplay = `<span class="grad-gold">${fmt(tongNhanLuc)}</span>`;
+        const nhanSuDiLamDisplay = `<span class="grad-gold">${fmt(nhanSuDiLam)}</span>`;
+        const chiTietDisplay = chiTietFull.length > 0 
+            ? `<span class="grad-red">${chiTietFormatted}</span>` 
+            : chiTietFormatted;
 
-      const workers = getSelectedWorkers();
-      const breakdown = calculateWorkerSplits(total, workers);
+        const quanLyDisplay = `<span class="grad-gold">01</span>`;
+        const saleOffDisplay = `<span class="grad-gold">02</span>`;
+        const ktvCoSoDisplay = `<span class="grad-gold">${fmt(ktvCoSo)}</span>`;
+        const keToanDisplay = `<span class="grad-gold">01</span>`;
 
-      const splitDetailList = document.getElementById('splitDetailList');
-      if (workers.length > 0) {
-        splitDetailList.innerHTML = Object.keys(breakdown).map(w => `
-          <div class="flex justify-between">
-            <span>${w}:</span>
-            <span class="font-bold text-amber-400">${breakdown[w].toLocaleString('vi-VN')} VNĐ</span>
-          </div>
-        `).join('');
-      } else {
-        splitDetailList.innerHTML = '<span class="text-slate-500">Chưa chọn thợ</span>';
-      }
+        const htmlText = `${titleDisplay}
+Cơ sở: ${coSo}
+Ngày: ${dateDisplay}
+Thời gian: ${thoiGian}
+1. Tổng nhân lực: ${tongNhanLucDisplay}
+   •  Quản lý: ${quanLyDisplay}
+   •  Sale Off: ${saleOffDisplay}
+   •  Kỹ thuật viên cơ sở: ${ktvCoSoDisplay}
+   •  Kế toán văn phòng: ${keToanDisplay}
+2. Nhân sự đi làm: ${nhanSuDiLamDisplay}
+3. Dự kiến nghỉ ngày mai:
+   •  ${nghiMai}
+4. Chi tiết:
+${chiTietDisplay}
+5. Đi muộn:
+   •  ${diMuon}
 
-      return { total, posText, workers, breakdown };
+Em xin cảm ơn ạ!`;
+
+        document.getElementById('reportOutput').innerHTML = htmlText;
     }
 
-    document.querySelectorAll('.price-checkbox').forEach(cb => cb.addEventListener('change', calculateTotal));
-    document.getElementById('suon_count').addEventListener('change', calculateTotal);
-    document.getElementById('noc_xe').addEventListener('change', calculateTotal);
+    function calculateOtHours(startTimeVal, endTimeVal) {
+        let [startH, startM] = startTimeVal.split(':').map(Number);
+        let [endH, endM] = endTimeVal.split(':').map(Number);
+        const diffMin = (endH * 60 + endM) - (startH * 60 + startM);
+        return diffMin <= 0 ? 0 : diffMin / 60;
+    }
 
-    const setPresetTime = () => {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      document.getElementById('timestamp').value = `${year}-${month}-${day}`;
-      document.getElementById('monthPicker').value = `${year}-${month}`;
-    };
-    setPresetTime();
+    function formatHourStr(timeStr) {
+        if (!timeStr) return "18h";
+        let parts = timeStr.split(':');
+        if (parts.length === 2) {
+            return parts[1] === "00" ? parseInt(parts[0], 10) + "h" : parseInt(parts[0], 10) + "h" + parts[1];
+        }
+        return timeStr;
+    }
 
-    function fetchSheetData() {
-      if (!GOOGLE_SCRIPT_URL) return;
-      const selectedMonth = document.getElementById('monthPicker').value;
-      if (!selectedMonth) return;
+    function render17h() {
+        const coSo = "Tam Trinh";
+        const ngayStr = getSelectedDateFormatted();
+        const modeRadio = document.querySelector('input[name="otMode"]:checked');
+        const otTitle = modeRadio ? modeRadio.value : 'ĐĂNG KÝ TĂNG CA';
+        const congViec = document.getElementById('congViec_17h').value.trim();
 
-      let parts = selectedMonth.split('-');
-      let prefix = currentService === 'PPF' ? 'PPF ' : 'Film ';
-      let sheetParam = `?sheet=${encodeURIComponent(prefix + parts[1] + '/' + parts[0])}`;
+        const filmGroup = ["Vũ", "Tùng", "Tú"];
+        const ppfGroup = ["Hậu", "Hoàng", "Khánh"];
 
-      fetch(GOOGLE_SCRIPT_URL + sheetParam)
+        let filmSelected = [], filmTimeRange = "";
+        let ppfSelected = [], ppfTimeRange = "";
+        let otherSelected = [];
+
+        ALL_KTV.forEach(ten => {
+            const card = document.getElementById(`card_ot_${ten}`);
+            if (card) {
+                const cb = card.querySelector('.ktv-17h-checkbox');
+                const startSelect = document.getElementById(`start_${ten}`);
+                const endSelect = document.getElementById(`end_${ten}`);
+                
+                if (startSelect && endSelect) {
+                    const startVal = startSelect.value;
+                    const endVal = endSelect.value;
+                    const hours = calculateOtHours(startVal, endVal);
+                    const badge = document.getElementById(`badge_hours_${ten}`);
+                    if (badge) badge.innerText = `${hours} tiếng`;
+
+                    if (cb && cb.checked) {
+                        const timeStr = `từ ${formatHourStr(startVal)} đến ${formatHourStr(endVal)}`;
+                        if (filmGroup.includes(ten)) {
+                            filmSelected.push(ten);
+                            if (!filmTimeRange) filmTimeRange = timeStr;
+                        } else if (ppfGroup.includes(ten)) {
+                            ppfSelected.push(ten);
+                            if (!ppfTimeRange) ppfTimeRange = timeStr;
+                        } else {
+                            otherSelected.push({ name: ten, time: timeStr });
+                        }
+                    }
+                }
+            }
+        });
+
+        let sections = [];
+        if (filmSelected.length > 0) sections.push(`Dán Film\n+ ${filmSelected.join(" - ")}: ${filmTimeRange || "từ 18h đến 21h"}`);
+        if (ppfSelected.length > 0) sections.push(`Dán PPF\n+ ${ppfSelected.join(" - ")}: ${ppfTimeRange || "từ 18h đến 21h"}`);
+        otherSelected.forEach(item => sections.push(`Khác\n+ ${item.name}: ${item.time}`));
+
+        let ktvRenderText = sections.length > 0 ? sections.join('\n\n') : "+ Chưa chọn nhân sự nào";
+        const dateDisplay = `<span class="grad-blue">${ngayStr}</span>`;
+        const otTitleDisplay = `<span class="grad-lime">${otTitle}</span>`;
+
+        const htmlText = `${otTitleDisplay}
+
+– Ngày: ${dateDisplay}
+– Cơ sở: ${coSo}
+– Kỹ thuật viên tăng ca:
+${ktvRenderText}
+– Nội dung công việc: ${congViec}
+
+Em gửi ạ.`;
+
+        document.getElementById('reportOutput').innerHTML = htmlText;
+    }
+
+    function render18h() {
+        const coSo = "Tam Trinh";
+        const ngayStr = getSelectedDateFormatted();
+        const danPhim = document.getElementById('danPhim_18h').value.trim();
+        const ppf = document.getElementById('ppf_18h').value.trim();
+        const wrap = document.getElementById('wrap_18h').value.trim();
+        const ghiChu = document.getElementById('ghiChu_18h').value.trim();
+        const soLoi = document.getElementById('soLoi_18h').value.trim();
+        const loi1 = document.getElementById('loi1_18h').value.trim();
+        const loi2 = document.getElementById('loi2_18h').value.trim();
+        const loi3 = document.getElementById('loi3_18h').value.trim();
+        const loi4 = document.getElementById('loi4_18h').value.trim();
+        const loi5 = document.getElementById('loi5_18h').value.trim();
+
+        const dateDisplay = `<span class="grad-blue">${ngayStr}</span>`;
+        const titleDisplay = `<span class="grad-lime">BÁO CÁO CUỐI NGÀY</span>`;
+
+        const htmlText = `${titleDisplay}
+
+Cơ sở: ${coSo}
+Ngày: ${dateDisplay}
+Tiến độ công việc
+• Dán phim cách nhiệt: ${danPhim}
+• PPF: ${ppf}
+• Wrap: ${wrap}
+• Ghi chú: ${ghiChu}
+• Số lỗi: ${soLoi}
+Kiểm soát chất lượng
+1. Lỗi chất lượng khi giao xe: ${loi1}
+2. Lỗi đồng phục không tuân thủ: ${loi2}
+3. Lỗi 5S tại cơ sở: ${loi3}
+4. Các lỗi khác: ${loi4}
+5. Thiết bị điện tại các khu vực không sử dụng ${loi5}
+
+Em báo cáo ạ.`;
+
+        document.getElementById('reportOutput').innerHTML = htmlText;
+    }
+
+    function copyReportToClipboard() {
+        const text = document.getElementById('reportOutput').innerText;
+        navigator.clipboard.writeText(text);
+    }
+
+    function exportToExcel() {
+        fetch(`${WEB_APP_URL}?action=exportExcel`)
         .then(res => res.json())
         .then(data => {
-          globalDataList = data.reverse();
-          renderTable();
-          calculateMonthlyTotal();
+            if (data.status === "success" && data.exportUrl) {
+                window.open(data.exportUrl, '_blank');
+            } else {
+                alert("Không thể tải file Excel!");
+            }
         })
-        .catch(err => console.error(err));
+        .catch(err => alert("Lỗi kết nối khi tải file Excel!"));
     }
 
-    function calculateMonthlyTotal() {
-      const activeStaff = currentService === 'PPF' ? ppfStaff : filmStaff;
-      let grandTotal = 0;
-      let carCount = 0;
-      let workerMap = {};
-      activeStaff.forEach(w => workerMap[w] = 0);
+    function resetFormToDefault() {
+        setDefaultDate();
+        document.getElementById('status_QuanLy').value = "Đi làm";
+        document.getElementById('status_SaleOff_Quan').value = "Đi làm";
+        document.getElementById('status_SaleOff_Anh').value = "Đi làm";
 
-      globalDataList.forEach(item => {
-        const itemTotal = Number(item.totalPrice) || 0;
-        grandTotal += itemTotal;
-        carCount++;
+        ALL_KTV.forEach(ten => {
+            const el = document.getElementById(`status_${ten}`);
+            if (el) el.value = "Đi làm";
+        });
 
-        const workersArray = item.workerName ? item.workerName.split(',').map(w => w.trim()).filter(Boolean) : [];
-        if (workersArray.length > 0) {
-          const splits = calculateWorkerSplits(itemTotal, workersArray);
-          Object.keys(splits).forEach(w => {
-            if (workerMap[w] !== undefined) workerMap[w] += splits[w];
-            else workerMap[w] = (workerMap[w] || 0) + splits[w];
-          });
+        updateAllSelectColors();
+        document.getElementById('nghiMai_8h').value = "Chưa có.";
+        document.getElementById('diMuon_8h').value = "Không có.";
+        document.getElementById('chiTiet_8h').value = "";
+
+        ALL_KTV.forEach(ten => {
+            const card = document.getElementById(`card_ot_${ten}`);
+            if (card) {
+                const cb = card.querySelector('.ktv-17h-checkbox');
+                if (cb) cb.checked = false;
+                card.classList.remove('selected');
+            }
+            const startSelect = document.getElementById(`start_${ten}`);
+            const endSelect = document.getElementById(`end_${ten}`);
+            if (startSelect) startSelect.value = "18:00";
+            if (endSelect) endSelect.value = "21:00";
+        });
+
+        document.getElementById('congViec_17h').value = "";
+        const defaultOtRadio = document.querySelector('input[name="otMode"][value="ĐĂNG KÝ TĂNG CA"]');
+        if (defaultOtRadio) defaultOtRadio.checked = true;
+
+        document.getElementById('danPhim_18h').value = "";
+        document.getElementById('ppf_18h').value = "";
+        document.getElementById('wrap_18h').value = "";
+        document.getElementById('ghiChu_18h').value = "";
+        document.getElementById('soLoi_18h').value = "0";
+        document.getElementById('loi1_18h').value = "0";
+        document.getElementById('loi2_18h').value = "0";
+        document.getElementById('loi3_18h').value = "0";
+        document.getElementById('loi4_18h').value = "Không có";
+        document.getElementById('loi5_18h').value = "đã được tắt đầy đủ.";
+
+        updateAllRenders();
+    }
+
+    function sendToGoogleSheet() {
+        copyReportToClipboard();
+
+        const btnSync = document.getElementById('btnSync');
+        btnSync.disabled = true;
+        btnSync.innerText = "⏳ Đang gửi lên Google Sheet...";
+
+        const params = new URLSearchParams();
+        const reportDate = getSelectedDateFormatted();
+
+        if (currentTab === 'tab8h') {
+            let statusMap = {};
+            statusMap["Thịnh"] = document.getElementById('status_QuanLy').value;
+            statusMap["Quân"] = document.getElementById('status_SaleOff_Quan').value;
+            statusMap["Ánh"] = document.getElementById('status_SaleOff_Anh').value;
+
+            ALL_KTV.forEach(ten => {
+                const el = document.getElementById(`status_${ten}`);
+                if (el) statusMap[ten] = el.value;
+            });
+
+            params.append('type', '8h');
+            params.append('date', reportDate);
+            params.append('statusMap', JSON.stringify(statusMap));
+
+        } else if (currentTab === 'tab17h') {
+            let ktvHoursMap = {};
+            let selectedCount = 0;
+
+            ALL_KTV.forEach(ten => {
+                const card = document.getElementById(`card_ot_${ten}`);
+                if (card) {
+                    const cb = card.querySelector('.ktv-17h-checkbox');
+                    if (cb && cb.checked) {
+                        const startVal = document.getElementById(`start_${ten}`).value;
+                        const endVal = document.getElementById(`end_${ten}`).value;
+                        const hours = calculateOtHours(startVal, endVal);
+
+                        ktvHoursMap[ten] = hours;
+                        selectedCount++;
+                    }
+                }
+            });
+
+            if (selectedCount === 0) {
+                alert("Vui lòng chọn ít nhất 1 Kỹ thuật viên tăng ca!");
+                btnSync.disabled = false;
+                btnSync.innerText = "🚀 Gửi Lên Google Sheet";
+                return;
+            }
+
+            params.append('type', '17h');
+            params.append('date', reportDate);
+            params.append('ktvHoursMap', JSON.stringify(ktvHoursMap));
+
+        } else {
+            alert("Báo cáo 18H không gửi dữ liệu lên Google Sheet.");
+            btnSync.disabled = false;
+            btnSync.innerText = "🚀 Gửi Lên Google Sheet";
+            return;
         }
-      });
 
-      document.getElementById('monthlyCarCount').innerText = `${carCount} xe`;
-      document.getElementById('monthlyTotalDisplay').innerText = grandTotal.toLocaleString('vi-VN') + " VNĐ";
-
-      const allWorkersToDisplay = Array.from(new Set([...activeStaff, ...Object.keys(workerMap)]));
-
-      document.getElementById('workerSummaryContainer').innerHTML = allWorkersToDisplay.map(name => `
-        <div class="bg-[#0b0f19] p-3 rounded-xl text-center border border-slate-700/60">
-          <p class="text-xs font-extrabold text-cyan-400 uppercase">${name}</p>
-          <p class="text-sm font-black text-amber-400 mt-1">${(workerMap[name] || 0).toLocaleString('vi-VN')} đ</p>
-        </div>
-      `).join('');
+        fetch(WEB_APP_URL, {
+            method: "POST",
+            body: params
+        })
+        .then(res => res.json())
+        .then(data => {
+            btnSync.disabled = false;
+            btnSync.innerText = "🚀 Gửi Lên Google Sheet";
+            showSuccessPopup("Đã gửi Google Sheet & Sao chép báo cáo!");
+            resetFormToDefault();
+            refreshAllData();
+        })
+        .catch(err => {
+            btnSync.disabled = false;
+            btnSync.innerText = "🚀 Gửi Lên Google Sheet";
+            showSuccessPopup("Đã gửi Google Sheet & Sao chép báo cáo!");
+            resetFormToDefault();
+            refreshAllData();
+        });
     }
 
-    function renderTable() {
-      const tbody = document.getElementById('dataTable');
-      tbody.innerHTML = '';
-
-      if (globalDataList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">Chưa có dữ liệu nào cho tháng này.</td></tr>';
-        return;
-      }
-
-      globalDataList.forEach(item => {
-        tbody.innerHTML += `
-          <tr class="hover:bg-[#1c263b]/50 border-b border-slate-800 transition">
-            <td class="p-3 text-xs text-slate-400 font-semibold">${item.timestamp}</td>
-            <td class="p-3 font-bold text-white">${item.carName}</td>
-            <td class="p-3"><span class="bg-cyan-950 text-cyan-300 border border-cyan-800 px-2 py-0.5 rounded text-xs font-semibold">${item.filmType}</span></td>
-            <td class="p-3 text-slate-300">${item.position}</td>
-            <td class="p-3 font-black text-amber-400">${(Number(item.totalPrice)||0).toLocaleString('vi-VN')} VNĐ</td>
-            <td class="p-3"><span class="bg-slate-800 text-slate-200 border border-slate-700 px-2 py-1 rounded-lg text-xs font-bold">${item.workerName}</span></td>
-            <td class="p-3 text-xs text-slate-400 italic">${item.note || '-'}</td>
-          </tr>
-        `;
-      });
+    function showSuccessPopup(msg) {
+        const overlay = document.getElementById('modalOverlay');
+        document.getElementById('modalMsg').innerText = msg;
+        overlay.style.display = 'flex';
+        setTimeout(() => { overlay.style.display = 'none'; }, 2500);
     }
 
-    document.getElementById('carForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const calc = calculateTotal();
+    function onMonthChange() {
+        loadMonthlyStats();
+        loadReportCalendar();
+    }
 
-      if (calc.workers.length === 0) {
-        showToast("Vui lòng chọn ít nhất 1 thợ thi công!", "error");
-        return;
-      }
+    function refreshAllData() {
+        loadMonthlyStats();
+        loadReportCalendar();
+    }
 
-      const selectedFilmType = currentService === 'PPF' 
-        ? document.getElementById('ppfTypeSelect').value 
-        : document.getElementById('filmTypeSelect').value;
+    function loadMonthlyStats() {
+        const monthStr = document.getElementById('statsMonthSelect').value;
+        if (!monthStr) return;
 
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = true;
-      submitBtn.innerText = "Đang lưu dữ liệu...";
+        fetch(`${WEB_APP_URL}?action=getMonthlyStats&month=${encodeURIComponent(monthStr)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                ALL_KTV.forEach(ktv => {
+                    const daysVal = data.days && data.days[ktv] !== undefined ? data.days[ktv] : 0;
+                    const hoursVal = data.hours && data.hours[ktv] !== undefined ? data.hours[ktv] : 0;
 
-      const newData = {
-        serviceType: currentService,
-        carName: document.getElementById('carName').value.trim(),
-        filmType: selectedFilmType,
-        position: calc.posText,
-        totalPrice: calc.total,
-        workerName: calc.workers.join(', '),
-        note: document.getElementById('note').value.trim(),
-        timestamp: document.getElementById('timestamp').value
-      };
+                    const dayEl = document.getElementById(`days_${ktv}`);
+                    const hourEl = document.getElementById(`hours_${ktv}`);
+                    if (dayEl) dayEl.innerText = `${daysVal} ngày`;
+                    if (hourEl) hourEl.innerText = `${hoursVal}h`;
+                });
+            }
+        })
+        .catch(err => {
+            ALL_KTV.forEach(ktv => {
+                const dayEl = document.getElementById(`days_${ktv}`);
+                const hourEl = document.getElementById(`hours_${ktv}`);
+                if (dayEl) dayEl.innerText = `0 ngày`;
+                if (hourEl) hourEl.innerText = `0h`;
+            });
+        });
+    }
 
-      fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(newData)
-      })
-      .then(() => {
-        showToast(`Đã lưu thành công dữ liệu thi công cho xe ${newData.carName}!`);
-        document.getElementById('carForm').reset();
-        setPresetTime();
-        renderStaffUI();
-        calculateTotal();
-        setTimeout(fetchSheetData, 1500);
-      })
-      .catch(err => {
-        console.error(err);
-        showToast("Lỗi khi lưu dữ liệu. Vui lòng thử lại!", "error");
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Lưu Thông Tin Thi Công";
-      });
-    });
+    function normalizeDateString(rawStr) {
+        if (!rawStr) return "";
+        let str = String(rawStr).trim();
+        if (str.includes('T')) str = str.split('T')[0];
+        if (str.includes('-')) {
+            const p = str.split('-');
+            if (p[0].length === 4) return `${String(p[2]).padStart(2, '0')}/${String(p[1]).padStart(2, '0')}/${p[0]}`;
+        }
+        if (str.includes('/')) {
+            const p = str.split('/');
+            if (p.length === 3) {
+                let d = String(p[0]).padStart(2, '0');
+                let m = String(p[1]).padStart(2, '0');
+                let y = p[2].length === 2 ? '20' + p[2] : p[2];
+                return `${d}/${m}/${y}`;
+            }
+        }
+        return str;
+    }
 
-    document.getElementById('monthPicker').addEventListener('change', fetchSheetData);
+    function loadReportCalendar() {
+        const gridEl = document.getElementById('calendarGrid');
+        gridEl.innerHTML = `<div style="grid-column: span 7; text-align:center; color:var(--text-muted); padding:15px; font-size:13px; font-weight:600;">Đang đồng bộ dữ liệu...</div>`;
 
-    renderStaffUI();
-    fetchSheetData();
-  </script>
+        const monthStr = document.getElementById('statsMonthSelect').value || "";
+        if (!monthStr) return;
+
+        const [mStr, yStr] = monthStr.split('/');
+        const month = parseInt(mStr, 10);
+        const year = parseInt(yStr, 10);
+
+        fetch(`${WEB_APP_URL}?action=getCalendarStatus&month=${encodeURIComponent(monthStr)}`)
+        .then(res => res.json())
+        .then(data => {
+            let reportedDates = new Set();
+            if (data.status === "success" && data.calendarStatus) {
+                Object.keys(data.calendarStatus).forEach(d => {
+                    const statusObj = data.calendarStatus[d];
+                    if (statusObj && (statusObj.has8h || statusObj.has17h)) {
+                        reportedDates.add(d);
+                    }
+                });
+            }
+            renderCalendarGrid(month, year, reportedDates);
+        })
+        .catch(err => {
+            renderCalendarGrid(month, year, new Set());
+        });
+    }
+
+    function renderCalendarGrid(month, year, reportedDates) {
+        const gridEl = document.getElementById('calendarGrid');
+        gridEl.innerHTML = '';
+
+        const headers = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+        headers.forEach(h => {
+            gridEl.innerHTML += `<div class="calendar-day-head">${h}</div>`;
+        });
+
+        const firstDay = new Date(year, month - 1, 1);
+        const daysInMonth = new Date(year, month, 0).getDate();
+
+        let startingDay = firstDay.getDay() - 1;
+        if (startingDay === -1) startingDay = 6;
+
+        for (let i = 0; i < startingDay; i++) {
+            gridEl.innerHTML += `<div class="calendar-day-cell empty"></div>`;
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${String(d).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+            const currentDate = new Date(year, month - 1, d);
+
+            let dotClass = '';
+            if (currentDate <= today) {
+                dotClass = reportedDates.has(dateStr) ? 'dot-green' : 'dot-red';
+            }
+
+            gridEl.innerHTML += `
+                <div class="calendar-day-cell">
+                    <span class="calendar-day-number">${d}</span>
+                    ${dotClass ? `<span class="dot ${dotClass}"></span>` : '<span class="dot" style="background:transparent;"></span>'}
+                </div>
+            `;
+        }
+    }
+</script>
+
 </body>
 </html>
