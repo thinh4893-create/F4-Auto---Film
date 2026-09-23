@@ -13,7 +13,7 @@
     <div class="bg-[#151c2c] p-5 rounded-2xl shadow-xl border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
       <div>
         <h1 class="text-2xl font-black text-white uppercase tracking-wider flex items-center gap-2"><span>🚗</span> F4 AUTO</h1>
-        <p class="text-cyan-400 text-xs mt-1 font-medium">Quản lý Thi công Phim Cách Nhiệt & PPF</p>
+        <p class="text-cyan-400 text-xs mt-1 font-medium">Quản lý Thi công Film Cách Nhiệt & PPF</p>
       </div>
       <!-- TAB CHUYỂN DỊCH VỤ -->
       <div class="flex bg-[#0b0f19] p-1.5 rounded-xl border border-slate-800 gap-1">
@@ -30,7 +30,7 @@
     <div class="bg-[#151c2c] text-white p-5 rounded-2xl shadow-xl border border-slate-800 space-y-4">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-3">
         <h2 id="summaryTitle" class="text-base font-bold flex items-center gap-2 text-cyan-400 uppercase tracking-wider">
-          <span>📊</span> THỐNG KÊ PHIM CÁCH NHIỆT
+          <span>📊</span> THỐNG KÊ FILM CÁCH NHIỆT
         </h2>
         <div class="flex items-center gap-2">
           <label class="text-xs font-semibold uppercase text-slate-400">Chọn tháng:</label>
@@ -58,7 +58,7 @@
     <!-- FORM NHẬP -->
     <div class="bg-[#151c2c] p-6 rounded-2xl shadow-xl border border-slate-800">
       <h2 id="formTitle" class="text-base font-bold mb-4 text-cyan-400 border-b border-slate-800 pb-2 uppercase tracking-wider">
-        📋 Nhập Xe Dán Phim Mới
+        📋 Nhập Xe Dán Film Mới
       </h2>
       <form id="carForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -67,9 +67,14 @@
         </div>
 
         <div>
-          <label id="lblType" class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Loại Phim Dán</label>
-          <!-- Cả Input gõ tay (Cho Film) và Dropdown (Cho PPF) -->
-          <input type="text" id="filmTypeInput" placeholder="Ví dụ: 3M, Ntech..." class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm">
+          <label id="lblType" class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Loại Film Dán</label>
+          <!-- Dropdown chọn cho Film (3M - Ari - Stek) -->
+          <select id="filmTypeSelect" class="w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm font-bold">
+            <option value="3M">3M</option>
+            <option value="Ari">Ari</option>
+            <option value="Stek">Stek</option>
+          </select>
+          <!-- Dropdown chọn cho PPF -->
           <select id="ppfTypeSelect" class="hidden w-full bg-[#0b0f19] border border-slate-700 rounded-xl p-3 focus:border-cyan-500 outline-none text-white text-sm font-bold">
             <option value="Ari">Ari</option>
             <option value="Avery">Avery</option>
@@ -80,7 +85,7 @@
 
         <!-- KHU VỰC CHỌN VỊ TRÍ FILM -->
         <div id="filmPositionContainer" class="md:col-span-2 bg-[#1c263b] p-4 rounded-xl border border-slate-700/50 space-y-3">
-          <label class="block text-xs font-bold uppercase text-cyan-400">Chọn Vị Trí Dán Phim</label>
+          <label class="block text-xs font-bold uppercase text-cyan-400">Chọn Vị Trí Dán Film</label>
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
             <label class="flex items-center space-x-2 bg-[#0b0f19] p-2.5 rounded-lg border border-slate-700 cursor-pointer">
               <input type="checkbox" class="price-checkbox accent-cyan-500 w-4 h-4" data-price="160000" value="Full xe">
@@ -154,7 +159,7 @@
     <!-- BẢNG NHẬT KÝ -->
     <div class="bg-[#151c2c] p-6 rounded-2xl shadow-xl border border-slate-800">
       <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-        <h2 id="logTitle" class="text-base font-bold text-cyan-400 uppercase tracking-wider">🚗 Nhật Ký Thi Công Phim</h2>
+        <h2 id="logTitle" class="text-base font-bold text-cyan-400 uppercase tracking-wider">🚗 Nhật Ký Thi Công Film</h2>
         <button onclick="fetchSheetData()" class="bg-[#1c263b] text-slate-200 px-3 py-2 rounded-xl text-xs font-bold border border-slate-700">🔄 Làm mới</button>
       </div>
 
@@ -193,18 +198,18 @@
       document.getElementById('btnTabFilm').className = !isPPF ? "px-4 py-2 rounded-lg text-xs font-black bg-cyan-600 text-white shadow uppercase" : "px-4 py-2 rounded-lg text-xs font-black text-slate-400 hover:text-white uppercase";
       document.getElementById('btnTabPPF').className = isPPF ? "px-4 py-2 rounded-lg text-xs font-black bg-indigo-600 text-white shadow uppercase" : "px-4 py-2 rounded-lg text-xs font-black text-slate-400 hover:text-white uppercase";
 
-      document.getElementById('summaryTitle').innerText = isPPF ? "📊 THỐNG KÊ PPF" : "📊 THỐNG KÊ PHIM CÁCH NHIỆT";
-      document.getElementById('formTitle').innerText = isPPF ? "📋 Nhập Xe Dán PPF Mới" : "📋 Nhập Xe Dán Phim Mới";
-      document.getElementById('logTitle').innerText = isPPF ? "🛡️ Nhật Ký Thi Công PPF" : "🚗 Nhật Ký Thi Công Phim";
-      document.getElementById('lblType').innerText = isPPF ? "Loại PPF" : "Loại Phim Dán";
+      document.getElementById('summaryTitle').innerText = isPPF ? "📊 THỐNG KÊ PPF" : "📊 THỐNG KÊ FILM CÁCH NHIỆT";
+      document.getElementById('formTitle').innerText = isPPF ? "📋 Nhập Xe Dán PPF Mới" : "📋 Nhập Xe Dán Film Mới";
+      document.getElementById('logTitle').innerText = isPPF ? "🛡️ Nhật Ký Thi Công PPF" : "🚗 Nhật Ký Thi Công Film";
+      document.getElementById('lblType').innerText = isPPF ? "Loại PPF" : "Loại Film Dán";
 
       if (isPPF) {
         document.getElementById('filmPositionContainer').classList.add('hidden');
-        document.getElementById('filmTypeInput').classList.add('hidden');
+        document.getElementById('filmTypeSelect').classList.add('hidden');
         document.getElementById('ppfTypeSelect').classList.remove('hidden');
       } else {
         document.getElementById('filmPositionContainer').classList.remove('hidden');
-        document.getElementById('filmTypeInput').classList.remove('hidden');
+        document.getElementById('filmTypeSelect').classList.remove('hidden');
         document.getElementById('ppfTypeSelect').classList.add('hidden');
       }
 
@@ -421,12 +426,7 @@
 
       const selectedFilmType = currentService === 'PPF' 
         ? document.getElementById('ppfTypeSelect').value 
-        : document.getElementById('filmTypeInput').value.trim();
-
-      if (!selectedFilmType && currentService !== 'PPF') {
-        alert("⚠️ Vui lòng nhập loại phim!");
-        return;
-      }
+        : document.getElementById('filmTypeSelect').value;
 
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
