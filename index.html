@@ -10,26 +10,27 @@
     .fade-switch {
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    /* Toast Notification Animation */
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+    /* Modal Popup Animation căn giữa màn hình */
+    @keyframes modalScaleIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
-    @keyframes fadeOut {
-      to { opacity: 0; transform: translateY(-10px); }
+    @keyframes modalScaleOut {
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(0.85); opacity: 0; }
     }
-    .animate-toast-in {
-      animation: slideInRight 0.35s ease-out forwards;
+    .animate-modal-in {
+      animation: modalScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    .animate-toast-out {
-      animation: fadeOut 0.3s ease-in forwards;
+    .animate-modal-out {
+      animation: modalScaleOut 0.2s cubic-bezier(0.7, 0, 0.84, 0) forwards;
     }
   </style>
 </head>
 <body class="bg-[#0f172a] text-slate-100 min-h-screen p-3 md:p-8 font-sans relative">
 
-  <!-- TOAST CONTAINER CHO THÔNG BÁO CHUYÊN NGHIỆP -->
-  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <!-- MODAL POPUP THÔNG BÁO CĂN GIỮA MÀN HÌNH -->
+  <div id="toastContainer" class="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none bg-black/40 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
 
   <div class="max-w-5xl mx-auto space-y-6">
     <!-- Header -->
@@ -228,25 +229,37 @@
 
     let globalDataList = [];
 
-    // HÀM HIỂN THỊ TOAST NOTIFICATION
+    // HÀM HIỂN THỊ POPUP THÔNG BÁO CĂN GIỮA MÀN HÌNH
     function showToast(message, type = 'success') {
       const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      
       const isSuccess = type === 'success';
-      const bgColor = isSuccess ? 'bg-emerald-950/90 border-emerald-500/50 text-emerald-200' : 'bg-rose-950/90 border-rose-500/50 text-rose-200';
+      const bgColor = isSuccess ? 'bg-[#1e293b] border-emerald-500/60 text-emerald-300' : 'bg-[#1e293b] border-rose-500/60 text-rose-300';
       const icon = isSuccess ? '✅' : '⚠️';
 
-      toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl border shadow-2xl backdrop-blur-md font-semibold text-sm pointer-events-auto animate-toast-in ${bgColor}`;
-      toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+      container.innerHTML = `
+        <div class="bg-[#1e293b] border ${bgColor} p-6 rounded-2xl shadow-2xl flex flex-col items-center text-center gap-3 min-w-[280px] max-w-sm animate-modal-in pointer-events-auto">
+          <div class="text-4xl">${icon}</div>
+          <p class="font-bold text-base text-white">${message}</p>
+        </div>
+      `;
 
-      container.appendChild(toast);
+      container.classList.remove('pointer-events-none', 'opacity-0');
+      container.classList.add('opacity-100');
 
       setTimeout(() => {
-        toast.classList.remove('animate-toast-in');
-        toast.classList.add('animate-toast-out');
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
+        const popup = container.firstElementChild;
+        if (popup) {
+          popup.classList.remove('animate-modal-in');
+          popup.classList.add('animate-modal-out');
+        }
+        container.classList.remove('opacity-100');
+        container.classList.add('opacity-0');
+
+        setTimeout(() => {
+          container.innerHTML = '';
+          container.classList.add('pointer-events-none');
+        }, 200);
+      }, 2000);
     }
 
     function switchServiceTab(type) {
@@ -553,7 +566,7 @@
         body: JSON.stringify(newData)
       })
       .then(() => {
-        showToast(`Đã lưu thành công dữ liệu thi công cho xe ${newData.carName}!`);
+        showToast(`Lưu thành công dữ liệu cho xe ${newData.carName}!`);
         document.getElementById('carForm').reset();
         setPresetTime();
         renderStaffUI();
